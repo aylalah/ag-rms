@@ -1,21 +1,32 @@
-import Loader from '@ui/elements/loader';
-import tailwind from './styles/tailwind.css';
-import toastify from 'react-toastify/dist/ReactToastify.css';
-import useAppStore from '@stores';
-import { cssBundleHref } from '@remix-run/css-bundle';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useFetchers } from '@remix-run/react';
-import { ToastContainer } from 'react-toastify';
-import { useEffect } from 'react';
-import type { LinksFunction, MetaFunction } from '@remix-run/node';
+import Loader from "@ui/elements/loader";
+import tailwind from "./styles/tailwind.css";
+import toastify from "react-toastify/dist/ReactToastify.css";
+import useAppStore from "@stores";
+import { cssBundleHref } from "@remix-run/css-bundle";
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useFetchers,
+} from "@remix-run/react";
+import { ToastContainer } from "react-toastify";
+import { useEffect } from "react";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 
 export const links: LinksFunction = () => [
-  { rel: 'stylesheet', href: tailwind },
-  { rel: 'stylesheet', href: toastify },
-  ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
+  { rel: "stylesheet", href: tailwind },
+  { rel: "stylesheet", href: toastify },
+  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }];
+  return [
+    { title: "New Remix App" },
+    { name: "description", content: "Welcome to Remix!" },
+  ];
 };
 
 export default function App() {
@@ -29,7 +40,12 @@ export default function App() {
       </head>
       <body>
         <Loader />
-        <ToastContainer hideProgressBar={true} closeOnClick autoClose={2000} pauseOnHover={true} />
+        <ToastContainer
+          hideProgressBar={true}
+          closeOnClick
+          autoClose={2000}
+          pauseOnHover={true}
+        />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
