@@ -1,0 +1,2 @@
+[install.scopes]
+"@agustodev" = { url = "https://npm.pkg.github.com/", token = "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" }

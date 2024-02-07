@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider                         = "zod-prisma-types"
+  createOptionalDefaultValuesTypes = true
+  output                           = "../app/helpers/zodPrisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Methodology {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  url         String
+  ratingModel Rating[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Questionnaire {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  url         String
+  ratingModel Rating[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Industry {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  clientModel Client[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum RatingStatus {
+  draft
+  active
+  concluded
+  cancelled
+}
+
+model Rating {
+  id                 String        @id @default(cuid())
+  rating             String?
+  ratingClass        String?
+  ratingClassModel   RatingClass?  @relation(fields: [ratingClass], references: [id])
+  ratingYear         String?
+  supervisor         Json
+  primaryAnalyst     Json?
+  secondaryAnalyst   Json?
+  client             String
+  clientModel        Client        @relation(fields: [client], references: [id])
+  methodology        String
+  questionnaire      String
+  methodologyModel   Methodology   @relation(fields: [methodology], references: [id])
+  questionnaireModel Questionnaire @relation(fields: [questionnaire], references: [id])
+  responses          Json?
+  status             RatingStatus? @default(draft)
+  issuedDate         String?
+  expiryDate         String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model RatingClass {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  ratingModel Rating[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Client {
+  id                  String    @id @default(cuid())
+  industry            String
+  industryModel       Industry  @relation(fields: [industry], references: [id])
+  username            String    @unique
+  password            String
+  companyName         String
+  companyEmail        String    @unique
+  logo                String?   @db.Text
+  companyPhoneNumbers String?
+  numberAndStreet     String?
+  building            String?
+  area                String?
+  landmark            String?
+  regionOrState       String?
+  country             String?   @default("Nigeria")
+  website             String?
+  role                String?   @default("client")
+  contactModel        Contact[]
+  ratingModel         Rating[]
+  createdBy           String?
+  isDeleted           Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Contact {
+  id           String   @id @default(cuid())
+  fullName     String
+  email        String
+  position     String?
+  phoneNumbers String?
+  client       String
+  address      String?  @db.Text
+  clientModel  Client   @relation(fields: [client], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  user      String
+  action    String
+  table     String
+  message   String   @db.Text
+  prevDocs  String   @db.Text
+  newDocs   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

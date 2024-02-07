@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap');
+
+* {
+  font-family: 'Rethink Sans', sans-serif;
+}
+
+html,
+body {
+  font-family: 'Rethink Sans', sans-serif;
+  @apply bg-base-200 text-base-content overflow-hidden;
+}
+
+div.Toastify__toast-body div {
+  @apply text-sm font-medium;
+}
+
+.wrapper {
+  @apply px-6 mx-auto lg:px-0 lg:max-w-7xl w-full;
+}
+
+.app-menu .active {
+  @apply bg-primary text-base-100;
+}
