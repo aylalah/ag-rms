@@ -8,9 +8,25 @@ import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  const search = new URL(request.url).searchParams.get('search') || '';
+  const page = Number(new URL(request.url).searchParams.get('page')) || 1;
+  const limit = Number(new URL(request.url).searchParams.get('limit')) || 15;
 
   const queryData = RMSservice(token)
-    .clients.all({ limit: 10, page: 1, include: { industryModel: true } })
+    .clients.all({
+      limit,
+      page,
+      where: {
+        OR: [
+          { companyName: { contains: search } },
+          { industryModel: { name: { contains: search } } },
+          { country: { contains: search } },
+          { companyEmail: { contains: search } },
+          { companyPhoneNumbers: { contains: search } },
+        ],
+      },
+      include: { industryModel: true },
+    })
     .then((res) => {
       const { clients, error } = res || {};
       const { docs, ...meta } = clients || {};
@@ -20,7 +36,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         industry: client?.industryModel?.name,
         createdAt: dayjs(client.createdAt).format('MMMM DD, YYYY'),
       }));
-      return { thead, tbody, meta, error, searchTitle: 'Search Clients' };
+      return { thead, tbody, meta, error, searchTitle: 'Search by clients, emails, industries, phone & countries ' };
     });
   return defer({ queryData });
 };
@@ -39,6 +55,7 @@ export default function Clients() {
               thead={thead}
               meta={meta as any}
               title="Clients"
+              searchTitle={searchTitle}
             />
           )}
         </Await>

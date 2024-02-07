@@ -6,7 +6,7 @@ interface TextInputProps extends ComponentPropsWithoutRef<'input'> {
 
 export default function TextInput({ label, className, ...props }: TextInputProps) {
   return (
-    <div className="w-full form-control">
+    <div className="w-full gap-0 form-control">
       <div className="label">
         <span className="label-text">{label}</span>
       </div>

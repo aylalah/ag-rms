@@ -8,9 +8,12 @@ import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  const search = new URL(request.url).searchParams.get('search') || '';
+  const page = Number(new URL(request.url).searchParams.get('page')) || 1;
+  const limit = Number(new URL(request.url).searchParams.get('limit')) || 15;
 
   const queryData = RMSservice(token)
-    .industries.all({ limit: 10, page: 1, orderBy: { name: 'asc' } })
+    .industries.all({ limit, page, orderBy: { name: 'asc' }, where: { name: { contains: search } } })
     .then((res) => {
       const { industries, error } = res || {};
       const { docs, ...meta } = industries || {};

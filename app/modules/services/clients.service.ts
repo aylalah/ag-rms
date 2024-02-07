@@ -109,13 +109,15 @@ export class ClientClass extends MainClass {
     try {
       const data = convertZodSchema(ClientSchema);
       const industry = await dbQuery.industry.findMany({ select: { id: true, name: true } });
-      const dataList = data.map((el) => {
-        if (el.field === 'industry') {
-          el.type = 'object';
-          el.list = industry.map((el) => ({ id: el.id, name: el.name }));
-        }
-        return el;
-      });
+      const dataList = data
+        .filter((el) => el?.field !== 'role')
+        .map((el) => {
+          if (el.field === 'industry') {
+            el.type = 'object';
+            el.list = industry.map((el) => ({ id: el.id, name: el.name }));
+          }
+          return el;
+        });
 
       return { formObject: dataList };
     } catch (error: unknown) {

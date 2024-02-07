@@ -34,7 +34,7 @@ export const ControlJsonTextArea = ({ el, value, isRequired }: any) => {
       required={isRequired}
       name={el}
       defaultValue={value}
-      className="w-full text-[15px] p-4 border shadow outline-none resize-none bg-surface border-line"
+      className="w-full text-[15px] p-4 border shadow outline-none resize-none bg-base-100 border-line"
       rows={12}
       placeholder={splitCamelCase(el)}
       onChange={(e) => setJsonValue(e.target.value)}
@@ -48,7 +48,7 @@ export const ControlTextArea = ({ ...props }: React.HTMLProps<HTMLTextAreaElemen
     <textarea
       {...props}
       name={props?.placeholder}
-      className="w-full text-[15px] p-4 border shadow outline-none resize-none bg-surface border-line"
+      className="w-full text-[15px] p-4 border shadow outline-none resize-none bg-base-100 border-line"
       rows={12}
       placeholder={splitCamelCase(`${props?.placeholder}`)}
     />
@@ -62,8 +62,8 @@ export const ControlInput = ({ ...props }: React.HTMLProps<HTMLInputElement>) =>
       name={props?.placeholder}
       readOnly={props?.placeholder === 'createdBy'}
       placeholder={splitCamelCase(`${props?.placeholder}`)}
-      className={`w-full p-4 border  shadow outline-none resize-none border-line text-[15px] ${
-        props?.placeholder === 'createdBy' ? 'bg-gray-300 dark:bg-gray-700 dark:opacity-50' : 'bg-surface'
+      className={`w-full px-4 py-3 border  shadow rounded outline-none resize-none border-line text-[15px] ${
+        props?.placeholder === 'createdBy' ? 'bg-gray-300 dark:bg-gray-700 dark:opacity-50' : 'bg-base-100'
       }`}
     ></input>
   );
@@ -71,11 +71,11 @@ export const ControlInput = ({ ...props }: React.HTMLProps<HTMLInputElement>) =>
 
 export const ControlBoolean = ({ ...props }: React.HTMLProps<HTMLSelectElement>) => {
   return (
-    <div className="px-3 border shadow bg-surface border-line">
+    <div className="px-3 border rounded shadow bg-base-100 border-line">
       <select
         {...props}
         name={props?.placeholder}
-        className="w-full py-3 text-[15px] outline-none cursor-pointer resize-none bg-surface "
+        className="w-full py-3 text-[15px] outline-none cursor-pointer resize-none bg-base-100 "
       >
         <option value="true">True</option>
         <option value="false">False</option>
@@ -90,11 +90,11 @@ interface ControlObjectProps extends React.HTMLProps<HTMLSelectElement> {
 
 export const ControlObject = ({ data, ...props }: ControlObjectProps) => {
   return (
-    <div className="px-3 border shadow bg-surface border-line">
+    <div className="px-3 border shadow bg-base-100 border-line">
       <select
         {...props}
         name={props?.placeholder}
-        className="w-full py-3 text-[15px] outline-none cursor-pointer resize-none bg-surface capitalize "
+        className="w-full py-3 text-[15px] outline-none cursor-pointer resize-none bg-base-100 capitalize "
       >
         <option value="">Select {props?.placeholder}</option>
         {data &&
@@ -112,13 +112,13 @@ export const ControlCheckboxes = ({ el, value }: any) => {
   return (
     <div className="grid flex-col grid-cols-3 gap-3">
       {value?.list?.map((ell: any, i: number) => (
-        <div key={i} className="flex items-center gap-2 p-3 shadow bg-surface">
+        <div key={i} className="flex items-center gap-2 p-3 shadow bg-base-100">
           <input
             value={ell?.id}
             name={el}
             id={ell?.id}
             type="checkDiv"
-            className="w-4 h-4 text-[15px] border shadow outline-none resize-none bg-surface border-line"
+            className="w-4 h-4 text-[15px] border shadow outline-none resize-none bg-base-100 border-line"
             defaultChecked={value?.active?.find((x: any) => x.id === ell.id)}
           />
           <label htmlFor={ell?.id} className="flex-1 text-sm font-medium capitalize cursor-pointer ">
@@ -182,7 +182,7 @@ export const ControlInputSelect = ({
   }, [list]);
 
   return (
-    <div className="box-border relative border shadow bg-surface border-line">
+    <div className="box-border relative border shadow bg-base-100 border-line">
       <div className="flex items-center">
         <input
           ref={inputRef}
@@ -192,7 +192,7 @@ export const ControlInputSelect = ({
           type="text"
           placeholder={splitCamelCase(`${props?.placeholder}`)}
           className={`w-full p-4 outline-none resize-none text-[15px] ${
-            props?.placeholder === 'createdBy' ? 'bg-gray-300 dark:bg-gray-700 dark:opacity-50' : 'bg-surface'
+            props?.placeholder === 'createdBy' ? 'bg-gray-300 dark:bg-gray-700 dark:opacity-50' : 'bg-base-100'
           }`}
         />
 
@@ -208,7 +208,7 @@ export const ControlInputSelect = ({
       <ul
         className={`${
           isFocus ? ' block opacity-100 ' : 'hidden opacity-0'
-        } absolute w-full border max-h-[13em] overflow-auto shadow bg-surface transition-all border-line z-10 left-[50%] -translate-x-[50%]`}
+        } absolute w-full border max-h-[13em] overflow-auto shadow bg-base-100 transition-all border-line z-10 left-[50%] -translate-x-[50%]`}
       >
         {list?.map((el: any, i: number) => (
           <li

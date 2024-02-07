@@ -16,6 +16,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const data = Object.fromEntries(fd.entries()) as any;
   const { token } = await validateCookie(request);
 
+  data.role = 'client';
   const { createClient, error } = await RMSservice(token).clients.create({ data });
   return json({ message: createClient, error });
 };
@@ -32,7 +33,7 @@ export default function Breeds() {
 
   return (
     <div className="h-full pb-10 overflow-hidden">
-      <FormLayout formObject={formObject as any} Fetcher={Fetcher} data={client} slug="breed" />
+      <FormLayout formObject={formObject as any} Fetcher={Fetcher} data={client} slug="client" />
     </div>
   );
 }
