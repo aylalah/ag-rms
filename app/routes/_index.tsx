@@ -23,6 +23,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         headers: { 'set-cookie': await appCookie.serialize(JSON.stringify(token)) },
       });
     }
+
     return json({ error });
   } catch (error) {
     console.error(error);

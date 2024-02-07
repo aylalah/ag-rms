@@ -15,11 +15,13 @@ export const appEncryptData = async <T>(data: T) => {
 
 export const appDecryptData = async (data?: string) => {
   let result = null;
+
   try {
     if (!data) return result;
     const bytes = CryptoJS.AES.decrypt(data, `${process.env.COOKIE_SECRET}`);
     const originalText = bytes.toString(CryptoJS.enc.Utf8);
     result = JSON.parse(originalText);
+
     return result;
   } catch (error) {
     return result;

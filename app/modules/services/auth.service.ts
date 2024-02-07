@@ -1,9 +1,13 @@
 import { AgustoServicesSdk } from '@helpers/config';
 import { appEncryptData } from '@helpers/validation';
 import { dbQuery } from '@helpers/prisma';
-import { MainClass } from '@modules/services/main';
+import { MainClass } from '@modules/services/main.service';
 
 export class AuthClass extends MainClass {
+  private async EncryptData(data: any) {
+    return await appEncryptData(data);
+  }
+
   public async login(input: { email: string; password: string }) {
     try {
       const { email } = input;
@@ -12,7 +16,9 @@ export class AuthClass extends MainClass {
       if (isAgustoMail) {
         const { user, token, error } = await AgustoServicesSdk.auth.Login({ email, password: input.password });
         if (error) throw new Error(error);
-        return { user, token };
+
+        const userJWT = await this.EncryptData({ ...user });
+        return { user, apiToken: token, token: userJWT };
       }
 
       const user = await dbQuery.client.findFirst({
@@ -25,11 +31,10 @@ export class AuthClass extends MainClass {
 
       const { password: userPassword, ...rest } = user;
 
-      const userJWT = await appEncryptData({
-        ...rest,
+      const userJWT = await this.EncryptData({
         id: user?.id,
         email: user?.companyEmail,
-        roles: user?.role,
+        role: user?.role,
         createdAt: user?.createdAt,
       });
 
@@ -40,8 +45,6 @@ export class AuthClass extends MainClass {
         prevDocs: '',
         newDocs: JSON.stringify(user),
       });
-
-      console.log('User');
 
       return { user: rest, token: userJWT };
     } catch (error: any) {

@@ -13,8 +13,8 @@ type AvatarProps = {
 
 export default function Avatar({ size = 'md', source, placeholder }: AvatarProps) {
   return (
-    <div className="avatar">
-      <div className={`${sizeList[size]} rounded-full bg-primary`}>
+    <div className="avatar placeholder">
+      <div className={`${sizeList[size]} rounded-full bg-[#0005]`}>
         {source && <img src={source} />}
         {placeholder && <span className="text-xs">{placeholder}</span>}
       </div>

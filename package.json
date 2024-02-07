@@ -21,6 +21,7 @@
     "bcryptjs": "^2.4.3",
     "crypto-js": "^4.2.0",
     "daisyui": "latest",
+    "dayjs": "^1.11.10",
     "framer-motion": "^11.0.3",
     "isbot": "^4.1.0",
     "react": "^18.2.0",

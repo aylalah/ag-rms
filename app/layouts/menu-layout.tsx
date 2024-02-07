@@ -1,56 +1,60 @@
-import { Avatar } from '@components';
+import { Avatar, Icons } from '@components';
 import { NavLink } from '@remix-run/react';
 
-type List = {
+interface IRoute {
   name: string;
   to: string;
+  icon: string;
+  group: string;
+}
+
+type IRouteGroup = {
+  [key: string]: IRoute[];
 };
 
-type MenuLinks = {
-  name: string;
-  to: string;
-  list: List[];
-}[];
-
-export default function MenuLayout({ children, links }: { children: React.ReactNode; links: MenuLinks }) {
+export default function MenuLayout({ children, links }: { children: React.ReactNode; links: IRouteGroup }) {
   return (
-    <div className="flex flex-col flex-1 h-screen">
-      <header className="h-[80px] bg-base-100 flex items-center app-menu">
-        <div className="flex items-center justify-between wrapper">
-          <div>
-            <ul className="flex gap-6">
-              {links.map((el, i) => (
-                <li key={i}>
-                  {el?.list?.length > 0 ? (
-                    <div className="dropdown dropdown-hover">
-                      <div tabIndex={0} role="button" className="border-none shadow-none bg-base-100 btn">
-                        Hover
-                      </div>
-                      <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                        {el.list.map((item, index) => (
-                          <NavLink to={item.to} className="text-sm capitalize border-none shadow-none bg-base-100 btn">
-                            {item.name}
-                          </NavLink>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <NavLink to={el.to} className="text-sm capitalize border-none shadow-none bg-base-100 btn">
-                      {el.name}
-                    </NavLink>
-                  )}
-                </li>
+    <div className="flex flex-1 h-screen p-6 pl-0 bg-primary">
+      <div className="flex  py-6  bg-primary app-menu w-[16em] p-4 flex-col ">
+        <div className="h-[80px] px-4">
+          <img src="/images/logoDark.png" alt="" className="w-[70%]" />
+        </div>
+
+        <ul className="flex flex-col justify-center flex-1 w-full px-4 capitalize rounded-xl text-base-100">
+          {Object.keys(links).map((el, i) => (
+            <li key={i}>
+              {/* {el} */}
+
+              {links[el as keyof typeof links].map((el, i) => (
+                <NavLink to={el.to} className="flex items-center gap-4 py-4 capitalize opacity-50">
+                  {Icons[el?.icon as keyof typeof Icons](18)}
+                  {el.name}
+                </NavLink>
               ))}
-            </ul>
-          </div>
+
+              {i === 0 && <div className="h-[0.4em] my-3 bg-[#FFF1]"></div>}
+            </li>
+          ))}
+        </ul>
+
+        <div className="h-[80px] flex items-center text-base-100 gap-3">
+          <Avatar size="sm" placeholder="CU" />
 
           <div>
-            <Avatar size="sm" />
+            <p className="text-sm opacity-80">Chijioke Udokporo</p>
+            <p className="text-sm font-bold opacity-80 text-secondary">Technology & Innovation</p>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="flex flex-col h-full py-10 wrapper">{children}</div>
+      <div className="flex flex-col flex-1 h-full gap-8 px-8 overflow-hidden rounded-lg bg-base-200">
+        <header className="flex justify-between items-center h-[60px] border-b wrapper">
+          <div>Hello World</div>
+
+          <div></div>
+        </header>
+        <div className="flex-1 h-full px-6 py-2 overflow-hidden wrapper">{children}</div>
+      </div>
     </div>
   );
 }

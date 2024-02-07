@@ -16,7 +16,10 @@ export class MainClass {
   protected async hasAccess(role: string[] | 'all') {
     await this.getUser();
 
+    console.log('User Role:', this.user?.role);
+
     if (!this.user?.id) throw new Error('You are not authorized to perform this action');
+
     if (role === 'all') return true;
     if (role.includes(this.user?.role)) return true;
     throw new Error('You are not authorized to perform this action');
