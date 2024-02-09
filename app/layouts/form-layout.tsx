@@ -28,12 +28,12 @@ type FormLayoutProps = {
 export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutProps) => {
   const method = data?.id ? 'PATCH' : 'POST';
   const title = data?.id ? 'Update' : 'Create';
-  //const isSubmitting = Fetcher?.state === 'submitting';
+  const isSubmitting = Fetcher?.state === 'submitting';
 
   return (
     <div className="h-[100%]">
       <Fetcher.Form method={method} className="flex h-full">
-        <fieldset className="grid grid-cols-3 flex-1 overflow-hidden h-[100%] gap-2">
+        <fieldset disabled={isSubmitting} className="grid grid-cols-3 flex-1 overflow-hidden h-[100%] gap-2">
           <div className="flex flex-col flex-1 h-[100%] col-span-2 gap-4 overflow-auto ">
             <Title title={`${title} ${props?.slug}`} />
 

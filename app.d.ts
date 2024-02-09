@@ -14,6 +14,7 @@ type User = {
   firstName: string;
   lastName: string;
   corporateEmail: string;
+  departmentRole: string;
   image: string;
   levelModel: {
     name: string;

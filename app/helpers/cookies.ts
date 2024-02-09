@@ -24,8 +24,9 @@ export const validateCookie = async (request: Request) => {
     if (request.headers.get('cookie')) {
       const cookie = request.headers.get('cookie');
       const data = await appCookie.parse(cookie);
-      token = JSON.parse(data) as string;
-      user = await appDecryptData(token);
+      const cookieData = JSON.parse(data) || {};
+      token = cookieData.token;
+      user = cookieData.user;
     }
 
     return { token, user: user as User };

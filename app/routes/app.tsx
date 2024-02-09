@@ -1,6 +1,10 @@
 import MenuLayout from '@layouts/menu-layout';
+import useAppStore from '@stores';
+import { appCookie, validateCookie } from '@helpers/cookies';
 import { Icons } from '@components';
-import { Outlet } from '@remix-run/react';
+import { json, LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { Outlet, useLoaderData } from '@remix-run/react';
+import { useEffect } from 'react';
 
 interface IRoute {
   name: string;
@@ -39,14 +43,14 @@ const MenuLinks = [
 
   {
     name: 'methodologies',
-    to: '/admin/methodologies',
+    to: '/app/methodologies',
     icon: 'Methodology',
     group: 'admin',
   },
 
   {
     name: 'questionnaires',
-    to: '/admin/questionnaires',
+    to: '/app/questionnaires',
     icon: 'Questionnaire',
     group: 'admin',
   },
@@ -65,7 +69,17 @@ export const groupedClientRoutes = MenuLinks.map((route) => {
     return acc;
   }, {});
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { user, token } = await validateCookie(request);
+  if (!user) return redirect('/', { headers: { 'Set-Cookie': await appCookie.serialize('', { maxAge: 0 }) } });
+  return json({ user });
+};
+
 export default function App() {
+  const { user } = useLoaderData<typeof loader>();
+  const { setUser } = useAppStore.user((state) => state);
+  useEffect(() => setUser(user as User), [user]);
+
   return (
     <MenuLayout links={groupedClientRoutes}>
       <Outlet />

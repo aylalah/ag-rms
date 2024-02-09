@@ -1,5 +1,6 @@
+import useAppStore from '@stores';
 import { Avatar, Icons } from '@components';
-import { NavLink } from '@remix-run/react';
+import { NavLink, useLoaderData } from '@remix-run/react';
 
 interface IRoute {
   name: string;
@@ -13,6 +14,7 @@ type IRouteGroup = {
 };
 
 export default function MenuLayout({ children, links }: { children: React.ReactNode; links: IRouteGroup }) {
+  const { user } = useAppStore.user((state) => state);
   return (
     <div className="flex flex-1 h-screen p-6 pl-0 bg-primary">
       <div className="bg-primary  app-menu  map flex w-[16em] flex-col p-4 py-6 ">
@@ -38,11 +40,13 @@ export default function MenuLayout({ children, links }: { children: React.ReactN
         </ul>
 
         <div className="text-base-100 flex h-[80px] items-center gap-3">
-          <Avatar size="sm" placeholder="CU" />
+          <Avatar size="sm" placeholder={`${user?.firstName?.[0] || ''}.${user?.lastName?.[0] || ''}`} />
 
           <div>
-            <p className="text-sm opacity-80">Chijioke Udokporo</p>
-            <p className="text-sm font-bold text-secondary opacity-80">Technology & Innovation</p>
+            <p className="text-sm opacity-80">
+              {user?.firstName} {user?.lastName}
+            </p>
+            <p className="text-sm font-bold text-secondary opacity-80">{user?.departmentRole}</p>
           </div>
         </div>
       </div>

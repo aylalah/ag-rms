@@ -3,6 +3,9 @@ import { Button, TextInput } from '@components';
 import { useEffect } from 'react';
 import { useFetcher } from '@remix-run/react';
 
+/* const email = 'adeolaboluogun@agusto.com';
+const password = 'adeola250398'; */
+
 const email = 'chijiokeudokporo@agusto.com';
 const password = 'chijioke61182';
 

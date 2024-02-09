@@ -16,11 +16,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const fd = await request.formData();
     const body = loginSchema.parse(Object.fromEntries(fd));
-    const { token, error } = await RMSservice().auth.login(body);
+    const { token, user, error } = await RMSservice().auth.login(body);
 
     if (token) {
       return redirectDocument('/app/dashboard', {
-        headers: { 'set-cookie': await appCookie.serialize(JSON.stringify(token)) },
+        headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, user })) },
       });
     }
 

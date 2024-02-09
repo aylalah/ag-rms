@@ -16,19 +16,18 @@ export class AuthClass extends MainClass {
       if (isAgustoMail) {
         const { user, token, error } = await AgustoServicesSdk.auth.Login({ email, password: input.password });
         if (error) throw new Error(error);
+        const Me = await AgustoServicesSdk.auth.Me({ token });
+        if (Me.error) throw new Error(Me.error);
 
         const userJWT = await this.EncryptData({ ...user });
-        return { user, apiToken: token, token: userJWT };
+        return { user: Me.data as User, apiToken: token, token: userJWT };
       }
 
       const user = await dbQuery.client.findFirst({
         where: { companyEmail: email, password: input.password },
       });
 
-      if (!user) {
-        throw new Error('User not found');
-      }
-
+      if (!user) throw new Error('User not found');
       const { password: userPassword, ...rest } = user;
 
       const userJWT = await this.EncryptData({
