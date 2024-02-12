@@ -20,8 +20,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       return { ...el, value: defaultValue };
     });
 
-    console.log(res);
-
     return json({ methodology: res?.methodology, error: res?.error, formObject: formattedFormObject });
   }
 };

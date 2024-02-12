@@ -50,7 +50,7 @@ export default function Clients() {
           {({ thead, tbody, searchTitle, meta }) => (
             <ListLayout
               createLink="/app/clients/create"
-              editLink="/app/clients/$id"
+              editLink="/app/clients/"
               tbody={tbody}
               thead={thead}
               meta={meta as any}
