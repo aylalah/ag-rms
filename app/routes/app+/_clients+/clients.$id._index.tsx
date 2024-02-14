@@ -1,7 +1,7 @@
 import RMSservice from '@modules/services';
 import { Button } from '@components';
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { NavLink, useLoaderData } from '@remix-run/react';
 import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -25,7 +25,9 @@ export default function ClientEdit() {
           <p className="text-lg font-bold">{client?.companyName} </p>
           <div className="flex items-center gap-4">
             <p className="text-sm opacity-80">{client?.industryModel?.name}</p>
-            <button className="font-bold text-secondary">Edit</button>
+            <NavLink to={`edit`} className="font-bold text-secondary">
+              Edit
+            </NavLink>
           </div>
         </div>
 
@@ -49,8 +51,9 @@ export default function ClientEdit() {
             </div>
           </div>
 
-          <div className="flex-1 p-2 bg-primary">
-            <p className="text-base font-bold text-base-100">Rating History</p>
+          <div className="flex-1 h-full overflow-hidden bg-primary">
+            <p className="flex flex-col p-4 text-base font-bold text-base-100">Rating History</p>
+            <div className="h-[100%] bg-base-100 rounded-lg">asd</div>
           </div>
         </div>
 
