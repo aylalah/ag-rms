@@ -17,7 +17,7 @@ export default function MenuLayout({ children, links }: { children: React.ReactN
   const { user } = useAppStore.user((state) => state);
   return (
     <div className="flex flex-1 h-screen p-6 pl-0 bg-primary">
-      <div className="bg-primary  app-menu  map flex w-[16em] flex-col p-4 py-6 ">
+      <div className="bg-primary  app-menu  map flex w-[15em] flex-col p-4 py-6 ">
         <div className="h-[80px] px-4">
           <img src="/images/logoDark.png" alt="" className="w-[70%]" />
         </div>
@@ -57,7 +57,7 @@ export default function MenuLayout({ children, links }: { children: React.ReactN
 
           <div></div>
         </header>
-        <div className="flex-1 h-full px-6 py-2 overflow-hidden wrapper">{children}</div>
+        <div className="flex-1 h-full px-4 py-2 overflow-hidden wrapper">{children}</div>
       </div>
     </div>
   );

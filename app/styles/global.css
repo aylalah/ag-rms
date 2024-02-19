@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css');
 
 * {
   font-family: 'Rethink Sans', sans-serif;
@@ -16,7 +17,7 @@ div.Toastify__toast-body div {
 }
 
 .wrapper {
-  @apply px-6 mx-auto lg:px-0 lg:max-w-7xl w-full;
+  @apply px-6 mx-auto lg:px-0 lg:max-w-[95%] w-full;
 }
 
 .app-menu .active {

@@ -14,10 +14,14 @@ module.exports = {
           ...require('daisyui/src/theming/themes')['light'],
           primary: '#002d53',
           secondary: '#eea71e',
-          surface: '#fff',
+        },
+        dark: {
+          ...require('daisyui/src/theming/themes')['dark'],
+          primary: '#002d53',
+          secondary: '#eea71e',
         },
       },
     ],
   },
-  plugins: [require('@tailwindcss/typography'), require('daisyui')],
+  plugins: [require('daisyui')],
 };

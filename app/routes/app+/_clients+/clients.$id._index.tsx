@@ -1,7 +1,10 @@
+import ContactCard from '@ui/cards/contact-card';
+import ContactForm from '@ui/forms/contact-form';
 import RMSservice from '@modules/services';
 import { Button } from '@components';
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { NavLink, useLoaderData } from '@remix-run/react';
+import { NavLink, useFetcher, useLoaderData } from '@remix-run/react';
+import { useState } from 'react';
 import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -9,14 +12,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params?.id as string;
   const { client, error } = await RMSservice(token).clients.one({ id });
 
-  console.log(client, id);
-
   if (error) throw redirect('/app/client');
   return { client, error };
 };
 
 export default function ClientEdit() {
   const { client, error } = useLoaderData<typeof loader>();
+  const Fetcher = useFetcher();
+  const [showForm, setShowForm] = useState(false);
+  const [selectedContact, setSelectedContact] = useState({} as any);
+
+  const onClose = () => {
+    setShowForm(false);
+    setSelectedContact({} as any);
+  };
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
@@ -57,8 +66,20 @@ export default function ClientEdit() {
           </div>
         </div>
 
-        <div className=" w-[17em] bg-base-100 p-4">112</div>
+        <div className=" w-[17em] bg-base-100 p-4">
+          {client?.contactModel?.map((contact) => <ContactCard contact={contact} key={contact.id} />)}
+        </div>
       </div>
+
+      {showForm && (
+        <ContactForm
+          onClose={onClose}
+          companyId={client?.id as string}
+          show={showForm}
+          Fetcher={Fetcher}
+          contact={selectedContact}
+        />
+      )}
     </div>
   );
 }

@@ -39,7 +39,10 @@ export class ClientClass extends MainClass {
       await this.hasAccess('all');
 
       const { id, include } = input;
-      const client = await dbQuery.client.findUnique({ where: { id }, include: { industryModel: true } });
+      const client = await dbQuery.client.findUnique({
+        where: { id },
+        include: { industryModel: true, contactModel: true },
+      });
 
       return { client };
     } catch (error: any) {
