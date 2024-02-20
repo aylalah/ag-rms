@@ -8,6 +8,7 @@ generator client {
 generator zod {
   provider                         = "zod-prisma-types"
   createOptionalDefaultValuesTypes = true
+  createRelationValuesTypes        = true
   output                           = "../app/helpers/zodPrisma"
 }
 
@@ -43,7 +44,7 @@ model Industry {
 }
 
 enum RatingStatus {
-  draft
+  pending
   active
   concluded
   cancelled
@@ -54,10 +55,10 @@ model Rating {
   rating             String?
   ratingClass        String?
   ratingClassModel   RatingClass?  @relation(fields: [ratingClass], references: [id])
-  ratingYear         String?
-  supervisor         Json
-  primaryAnalyst     Json?
-  secondaryAnalyst   Json?
+  ratingYear         Int?
+  supervisor         String
+  primaryAnalyst     String?
+  secondaryAnalyst   String?
   client             String
   clientModel        Client        @relation(fields: [client], references: [id])
   methodology        String
@@ -65,9 +66,9 @@ model Rating {
   methodologyModel   Methodology   @relation(fields: [methodology], references: [id])
   questionnaireModel Questionnaire @relation(fields: [questionnaire], references: [id])
   responses          Json?
-  status             RatingStatus? @default(draft)
-  issuedDate         String?
-  expiryDate         String?
+  status             RatingStatus? @default(pending)
+  issueDate         DateTime?
+  expiryDate         DateTime?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 }

@@ -5,6 +5,7 @@ export class MainClass {
   protected user: { id: string; role: string } | null;
   constructor(protected token?: string) {
     this.user = null;
+    this.token = token;
   }
 
   private getUser = async () => {
@@ -15,8 +16,6 @@ export class MainClass {
 
   protected async hasAccess(role: string[] | 'all') {
     await this.getUser();
-
-    console.log('User Role:', this.user?.role);
 
     if (!this.user?.id) throw new Error('You are not authorized to perform this action');
 

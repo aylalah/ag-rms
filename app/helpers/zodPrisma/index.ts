@@ -62,7 +62,7 @@ export const QuestionnaireScalarFieldEnumSchema = z.enum(['id','name','url','cre
 
 export const IndustryScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
-export const RatingScalarFieldEnumSchema = z.enum(['id','rating','ratingClass','ratingYear','supervisor','primaryAnalyst','secondaryAnalyst','client','methodology','questionnaire','responses','status','issuedDate','expiryDate','createdAt','updatedAt']);
+export const RatingScalarFieldEnumSchema = z.enum(['id','rating','ratingClass','ratingYear','supervisor','primaryAnalyst','secondaryAnalyst','client','methodology','questionnaire','responses','status','issueDate','expiryDate','createdAt','updatedAt']);
 
 export const RatingClassScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
@@ -74,15 +74,13 @@ export const LogScalarFieldEnumSchema = z.enum(['id','user','action','table','me
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
-export const JsonNullValueInputSchema = z.enum(['JsonNull',]).transform((value) => (value === 'JsonNull' ? Prisma.JsonNull : value));
-
 export const NullableJsonNullValueInputSchema = z.enum(['DbNull','JsonNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.DbNull : value);
 
 export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.JsonNull : value === 'AnyNull' ? Prisma.AnyNull : value);
 
 export const NullsOrderSchema = z.enum(['first','last']);
 
-export const RatingStatusSchema = z.enum(['draft','active','concluded','cancelled']);
+export const RatingStatusSchema = z.enum(['pending','active','concluded','cancelled']);
 
 export type RatingStatusType = `${z.infer<typeof RatingStatusSchema>}`
 
@@ -115,6 +113,32 @@ export const MethodologyOptionalDefaultsSchema = MethodologySchema.merge(z.objec
 
 export type MethodologyOptionalDefaults = z.infer<typeof MethodologyOptionalDefaultsSchema>
 
+// METHODOLOGY RELATION SCHEMA
+//------------------------------------------------------
+
+export type MethodologyRelations = {
+  ratingModel: RatingWithRelations[];
+};
+
+export type MethodologyWithRelations = z.infer<typeof MethodologySchema> & MethodologyRelations
+
+export const MethodologyWithRelationsSchema: z.ZodType<MethodologyWithRelations> = MethodologySchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
+}))
+
+// METHODOLOGY OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type MethodologyOptionalDefaultsRelations = {
+  ratingModel: RatingOptionalDefaultsWithRelations[];
+};
+
+export type MethodologyOptionalDefaultsWithRelations = z.infer<typeof MethodologyOptionalDefaultsSchema> & MethodologyOptionalDefaultsRelations
+
+export const MethodologyOptionalDefaultsWithRelationsSchema: z.ZodType<MethodologyOptionalDefaultsWithRelations> = MethodologyOptionalDefaultsSchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
+}))
+
 /////////////////////////////////////////
 // QUESTIONNAIRE SCHEMA
 /////////////////////////////////////////
@@ -140,6 +164,32 @@ export const QuestionnaireOptionalDefaultsSchema = QuestionnaireSchema.merge(z.o
 
 export type QuestionnaireOptionalDefaults = z.infer<typeof QuestionnaireOptionalDefaultsSchema>
 
+// QUESTIONNAIRE RELATION SCHEMA
+//------------------------------------------------------
+
+export type QuestionnaireRelations = {
+  ratingModel: RatingWithRelations[];
+};
+
+export type QuestionnaireWithRelations = z.infer<typeof QuestionnaireSchema> & QuestionnaireRelations
+
+export const QuestionnaireWithRelationsSchema: z.ZodType<QuestionnaireWithRelations> = QuestionnaireSchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
+}))
+
+// QUESTIONNAIRE OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type QuestionnaireOptionalDefaultsRelations = {
+  ratingModel: RatingOptionalDefaultsWithRelations[];
+};
+
+export type QuestionnaireOptionalDefaultsWithRelations = z.infer<typeof QuestionnaireOptionalDefaultsSchema> & QuestionnaireOptionalDefaultsRelations
+
+export const QuestionnaireOptionalDefaultsWithRelationsSchema: z.ZodType<QuestionnaireOptionalDefaultsWithRelations> = QuestionnaireOptionalDefaultsSchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
+}))
+
 /////////////////////////////////////////
 // INDUSTRY SCHEMA
 /////////////////////////////////////////
@@ -164,6 +214,32 @@ export const IndustryOptionalDefaultsSchema = IndustrySchema.merge(z.object({
 
 export type IndustryOptionalDefaults = z.infer<typeof IndustryOptionalDefaultsSchema>
 
+// INDUSTRY RELATION SCHEMA
+//------------------------------------------------------
+
+export type IndustryRelations = {
+  clientModel: ClientWithRelations[];
+};
+
+export type IndustryWithRelations = z.infer<typeof IndustrySchema> & IndustryRelations
+
+export const IndustryWithRelationsSchema: z.ZodType<IndustryWithRelations> = IndustrySchema.merge(z.object({
+  clientModel: z.lazy(() => ClientWithRelationsSchema).array(),
+}))
+
+// INDUSTRY OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type IndustryOptionalDefaultsRelations = {
+  clientModel: ClientOptionalDefaultsWithRelations[];
+};
+
+export type IndustryOptionalDefaultsWithRelations = z.infer<typeof IndustryOptionalDefaultsSchema> & IndustryOptionalDefaultsRelations
+
+export const IndustryOptionalDefaultsWithRelationsSchema: z.ZodType<IndustryOptionalDefaultsWithRelations> = IndustryOptionalDefaultsSchema.merge(z.object({
+  clientModel: z.lazy(() => ClientOptionalDefaultsWithRelationsSchema).array(),
+}))
+
 /////////////////////////////////////////
 // RATING SCHEMA
 /////////////////////////////////////////
@@ -173,16 +249,16 @@ export const RatingSchema = z.object({
   id: z.string().cuid(),
   rating: z.string().nullable(),
   ratingClass: z.string().nullable(),
-  ratingYear: z.string().nullable(),
-  supervisor: JsonValueSchema.nullable(),
-  primaryAnalyst: JsonValueSchema,
-  secondaryAnalyst: JsonValueSchema,
+  ratingYear: z.number().int().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().nullable(),
+  secondaryAnalyst: z.string().nullable(),
   client: z.string(),
   methodology: z.string(),
   questionnaire: z.string(),
   responses: JsonValueSchema,
-  issuedDate: z.string().nullable(),
-  expiryDate: z.string().nullable(),
+  issueDate: z.coerce.date().nullable(),
+  expiryDate: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
@@ -200,6 +276,48 @@ export const RatingOptionalDefaultsSchema = RatingSchema.merge(z.object({
 }))
 
 export type RatingOptionalDefaults = z.infer<typeof RatingOptionalDefaultsSchema>
+
+// RATING RELATION SCHEMA
+//------------------------------------------------------
+
+export type RatingRelations = {
+  ratingClassModel?: RatingClassWithRelations | null;
+  clientModel: ClientWithRelations;
+  methodologyModel: MethodologyWithRelations;
+  questionnaireModel: QuestionnaireWithRelations;
+};
+
+export type RatingWithRelations = Omit<z.infer<typeof RatingSchema>, "responses"> & {
+  responses?: JsonValueType | null;
+} & RatingRelations
+
+export const RatingWithRelationsSchema: z.ZodType<RatingWithRelations> = RatingSchema.merge(z.object({
+  ratingClassModel: z.lazy(() => RatingClassWithRelationsSchema).nullable(),
+  clientModel: z.lazy(() => ClientWithRelationsSchema),
+  methodologyModel: z.lazy(() => MethodologyWithRelationsSchema),
+  questionnaireModel: z.lazy(() => QuestionnaireWithRelationsSchema),
+}))
+
+// RATING OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type RatingOptionalDefaultsRelations = {
+  ratingClassModel?: RatingClassOptionalDefaultsWithRelations | null;
+  clientModel: ClientOptionalDefaultsWithRelations;
+  methodologyModel: MethodologyOptionalDefaultsWithRelations;
+  questionnaireModel: QuestionnaireOptionalDefaultsWithRelations;
+};
+
+export type RatingOptionalDefaultsWithRelations = Omit<z.infer<typeof RatingOptionalDefaultsSchema>, "responses"> & {
+  responses?: JsonValueType | null;
+} & RatingOptionalDefaultsRelations
+
+export const RatingOptionalDefaultsWithRelationsSchema: z.ZodType<RatingOptionalDefaultsWithRelations> = RatingOptionalDefaultsSchema.merge(z.object({
+  ratingClassModel: z.lazy(() => RatingClassOptionalDefaultsWithRelationsSchema).nullable(),
+  clientModel: z.lazy(() => ClientOptionalDefaultsWithRelationsSchema),
+  methodologyModel: z.lazy(() => MethodologyOptionalDefaultsWithRelationsSchema),
+  questionnaireModel: z.lazy(() => QuestionnaireOptionalDefaultsWithRelationsSchema),
+}))
 
 /////////////////////////////////////////
 // RATING CLASS SCHEMA
@@ -224,6 +342,32 @@ export const RatingClassOptionalDefaultsSchema = RatingClassSchema.merge(z.objec
 }))
 
 export type RatingClassOptionalDefaults = z.infer<typeof RatingClassOptionalDefaultsSchema>
+
+// RATING CLASS RELATION SCHEMA
+//------------------------------------------------------
+
+export type RatingClassRelations = {
+  ratingModel: RatingWithRelations[];
+};
+
+export type RatingClassWithRelations = z.infer<typeof RatingClassSchema> & RatingClassRelations
+
+export const RatingClassWithRelationsSchema: z.ZodType<RatingClassWithRelations> = RatingClassSchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
+}))
+
+// RATING CLASS OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type RatingClassOptionalDefaultsRelations = {
+  ratingModel: RatingOptionalDefaultsWithRelations[];
+};
+
+export type RatingClassOptionalDefaultsWithRelations = z.infer<typeof RatingClassOptionalDefaultsSchema> & RatingClassOptionalDefaultsRelations
+
+export const RatingClassOptionalDefaultsWithRelationsSchema: z.ZodType<RatingClassOptionalDefaultsWithRelations> = RatingClassOptionalDefaultsSchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
+}))
 
 /////////////////////////////////////////
 // CLIENT SCHEMA
@@ -268,6 +412,40 @@ export const ClientOptionalDefaultsSchema = ClientSchema.merge(z.object({
 
 export type ClientOptionalDefaults = z.infer<typeof ClientOptionalDefaultsSchema>
 
+// CLIENT RELATION SCHEMA
+//------------------------------------------------------
+
+export type ClientRelations = {
+  industryModel: IndustryWithRelations;
+  contactModel: ContactWithRelations[];
+  ratingModel: RatingWithRelations[];
+};
+
+export type ClientWithRelations = z.infer<typeof ClientSchema> & ClientRelations
+
+export const ClientWithRelationsSchema: z.ZodType<ClientWithRelations> = ClientSchema.merge(z.object({
+  industryModel: z.lazy(() => IndustryWithRelationsSchema),
+  contactModel: z.lazy(() => ContactWithRelationsSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
+}))
+
+// CLIENT OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type ClientOptionalDefaultsRelations = {
+  industryModel: IndustryOptionalDefaultsWithRelations;
+  contactModel: ContactOptionalDefaultsWithRelations[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
+};
+
+export type ClientOptionalDefaultsWithRelations = z.infer<typeof ClientOptionalDefaultsSchema> & ClientOptionalDefaultsRelations
+
+export const ClientOptionalDefaultsWithRelationsSchema: z.ZodType<ClientOptionalDefaultsWithRelations> = ClientOptionalDefaultsSchema.merge(z.object({
+  industryModel: z.lazy(() => IndustryOptionalDefaultsWithRelationsSchema),
+  contactModel: z.lazy(() => ContactOptionalDefaultsWithRelationsSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
+}))
+
 /////////////////////////////////////////
 // CONTACT SCHEMA
 /////////////////////////////////////////
@@ -296,6 +474,32 @@ export const ContactOptionalDefaultsSchema = ContactSchema.merge(z.object({
 }))
 
 export type ContactOptionalDefaults = z.infer<typeof ContactOptionalDefaultsSchema>
+
+// CONTACT RELATION SCHEMA
+//------------------------------------------------------
+
+export type ContactRelations = {
+  clientModel: ClientWithRelations;
+};
+
+export type ContactWithRelations = z.infer<typeof ContactSchema> & ContactRelations
+
+export const ContactWithRelationsSchema: z.ZodType<ContactWithRelations> = ContactSchema.merge(z.object({
+  clientModel: z.lazy(() => ClientWithRelationsSchema),
+}))
+
+// CONTACT OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type ContactOptionalDefaultsRelations = {
+  clientModel: ClientOptionalDefaultsWithRelations;
+};
+
+export type ContactOptionalDefaultsWithRelations = z.infer<typeof ContactOptionalDefaultsSchema> & ContactOptionalDefaultsRelations
+
+export const ContactOptionalDefaultsWithRelationsSchema: z.ZodType<ContactOptionalDefaultsWithRelations> = ContactOptionalDefaultsSchema.merge(z.object({
+  clientModel: z.lazy(() => ClientOptionalDefaultsWithRelationsSchema),
+}))
 
 /////////////////////////////////////////
 // LOG SCHEMA
@@ -450,7 +654,7 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
   questionnaire: z.boolean().optional(),
   responses: z.boolean().optional(),
   status: z.boolean().optional(),
-  issuedDate: z.boolean().optional(),
+  issueDate: z.boolean().optional(),
   expiryDate: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
@@ -789,17 +993,17 @@ export const RatingWhereInputSchema: z.ZodType<Prisma.RatingWhereInput> = z.obje
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rating: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   ratingClass: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ratingYear: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  supervisor: z.lazy(() => JsonFilterSchema).optional(),
-  primaryAnalyst: z.lazy(() => JsonNullableFilterSchema).optional(),
-  secondaryAnalyst: z.lazy(() => JsonNullableFilterSchema).optional(),
+  ratingYear: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
+  supervisor: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  primaryAnalyst: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   methodology: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   questionnaire: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   responses: z.lazy(() => JsonNullableFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  expiryDate: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   ratingClassModel: z.union([ z.lazy(() => RatingClassNullableRelationFilterSchema),z.lazy(() => RatingClassWhereInputSchema) ]).optional().nullable(),
@@ -821,7 +1025,7 @@ export const RatingOrderByWithRelationInputSchema: z.ZodType<Prisma.RatingOrderB
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   responses: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  issuedDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  issueDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   expiryDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
@@ -841,17 +1045,17 @@ export const RatingWhereUniqueInputSchema: z.ZodType<Prisma.RatingWhereUniqueInp
   NOT: z.union([ z.lazy(() => RatingWhereInputSchema),z.lazy(() => RatingWhereInputSchema).array() ]).optional(),
   rating: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   ratingClass: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ratingYear: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  supervisor: z.lazy(() => JsonFilterSchema).optional(),
-  primaryAnalyst: z.lazy(() => JsonNullableFilterSchema).optional(),
-  secondaryAnalyst: z.lazy(() => JsonNullableFilterSchema).optional(),
+  ratingYear: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
+  supervisor: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  primaryAnalyst: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   methodology: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   questionnaire: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   responses: z.lazy(() => JsonNullableFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  expiryDate: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   ratingClassModel: z.union([ z.lazy(() => RatingClassNullableRelationFilterSchema),z.lazy(() => RatingClassWhereInputSchema) ]).optional().nullable(),
@@ -873,13 +1077,15 @@ export const RatingOrderByWithAggregationInputSchema: z.ZodType<Prisma.RatingOrd
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   responses: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  issuedDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  issueDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   expiryDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => RatingCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => RatingAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => RatingMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => RatingMinOrderByAggregateInputSchema).optional()
+  _min: z.lazy(() => RatingMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => RatingSumOrderByAggregateInputSchema).optional()
 }).strict();
 
 export const RatingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.RatingScalarWhereWithAggregatesInput> = z.object({
@@ -889,17 +1095,17 @@ export const RatingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Rating
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   rating: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   ratingClass: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  ratingYear: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  supervisor: z.lazy(() => JsonWithAggregatesFilterSchema).optional(),
-  primaryAnalyst: z.lazy(() => JsonNullableWithAggregatesFilterSchema).optional(),
-  secondaryAnalyst: z.lazy(() => JsonNullableWithAggregatesFilterSchema).optional(),
+  ratingYear: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
+  supervisor: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  primaryAnalyst: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   methodology: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   questionnaire: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   responses: z.lazy(() => JsonNullableWithAggregatesFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableWithAggregatesFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  expiryDate: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  issueDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
+  expiryDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -1459,14 +1665,14 @@ export const IndustryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.IndustryUn
 export const RatingCreateInputSchema: z.ZodType<Prisma.RatingCreateInput> = z.object({
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
@@ -1479,17 +1685,17 @@ export const RatingUncheckedCreateInputSchema: z.ZodType<Prisma.RatingUncheckedC
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   methodology: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -1497,14 +1703,14 @@ export const RatingUncheckedCreateInputSchema: z.ZodType<Prisma.RatingUncheckedC
 export const RatingUpdateInputSchema: z.ZodType<Prisma.RatingUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
@@ -1517,17 +1723,17 @@ export const RatingUncheckedUpdateInputSchema: z.ZodType<Prisma.RatingUncheckedU
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -1536,17 +1742,17 @@ export const RatingCreateManyInputSchema: z.ZodType<Prisma.RatingCreateManyInput
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   methodology: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -1554,14 +1760,14 @@ export const RatingCreateManyInputSchema: z.ZodType<Prisma.RatingCreateManyInput
 export const RatingUpdateManyMutationInputSchema: z.ZodType<Prisma.RatingUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -1570,17 +1776,17 @@ export const RatingUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RatingUnchec
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -2132,20 +2338,15 @@ export const StringNullableFilterSchema: z.ZodType<Prisma.StringNullableFilter> 
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
-export const JsonFilterSchema: z.ZodType<Prisma.JsonFilter> = z.object({
-  equals: InputJsonValueSchema.optional(),
-  path: z.string().optional(),
-  string_contains: z.string().optional(),
-  string_starts_with: z.string().optional(),
-  string_ends_with: z.string().optional(),
-  array_contains: InputJsonValueSchema.optional().nullable(),
-  array_starts_with: InputJsonValueSchema.optional().nullable(),
-  array_ends_with: InputJsonValueSchema.optional().nullable(),
-  lt: InputJsonValueSchema.optional(),
-  lte: InputJsonValueSchema.optional(),
-  gt: InputJsonValueSchema.optional(),
-  gte: InputJsonValueSchema.optional(),
-  not: InputJsonValueSchema.optional()
+export const IntNullableFilterSchema: z.ZodType<Prisma.IntNullableFilter> = z.object({
+  equals: z.number().optional().nullable(),
+  in: z.number().array().optional().nullable(),
+  notIn: z.number().array().optional().nullable(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
 export const JsonNullableFilterSchema: z.ZodType<Prisma.JsonNullableFilter> = z.object({
@@ -2169,6 +2370,17 @@ export const EnumRatingStatusNullableFilterSchema: z.ZodType<Prisma.EnumRatingSt
   in: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
   notIn: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
   not: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NestedEnumRatingStatusNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
+export const DateTimeNullableFilterSchema: z.ZodType<Prisma.DateTimeNullableFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
 export const RatingClassNullableRelationFilterSchema: z.ZodType<Prisma.RatingClassNullableRelationFilter> = z.object({
@@ -2209,10 +2421,14 @@ export const RatingCountOrderByAggregateInputSchema: z.ZodType<Prisma.RatingCoun
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   responses: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
-  issuedDate: z.lazy(() => SortOrderSchema).optional(),
+  issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const RatingAvgOrderByAggregateInputSchema: z.ZodType<Prisma.RatingAvgOrderByAggregateInput> = z.object({
+  ratingYear: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RatingMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RatingMaxOrderByAggregateInput> = z.object({
@@ -2220,11 +2436,14 @@ export const RatingMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RatingMaxOrd
   rating: z.lazy(() => SortOrderSchema).optional(),
   ratingClass: z.lazy(() => SortOrderSchema).optional(),
   ratingYear: z.lazy(() => SortOrderSchema).optional(),
+  supervisor: z.lazy(() => SortOrderSchema).optional(),
+  primaryAnalyst: z.lazy(() => SortOrderSchema).optional(),
+  secondaryAnalyst: z.lazy(() => SortOrderSchema).optional(),
   client: z.lazy(() => SortOrderSchema).optional(),
   methodology: z.lazy(() => SortOrderSchema).optional(),
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
-  issuedDate: z.lazy(() => SortOrderSchema).optional(),
+  issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
@@ -2235,14 +2454,21 @@ export const RatingMinOrderByAggregateInputSchema: z.ZodType<Prisma.RatingMinOrd
   rating: z.lazy(() => SortOrderSchema).optional(),
   ratingClass: z.lazy(() => SortOrderSchema).optional(),
   ratingYear: z.lazy(() => SortOrderSchema).optional(),
+  supervisor: z.lazy(() => SortOrderSchema).optional(),
+  primaryAnalyst: z.lazy(() => SortOrderSchema).optional(),
+  secondaryAnalyst: z.lazy(() => SortOrderSchema).optional(),
   client: z.lazy(() => SortOrderSchema).optional(),
   methodology: z.lazy(() => SortOrderSchema).optional(),
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
-  issuedDate: z.lazy(() => SortOrderSchema).optional(),
+  issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const RatingSumOrderByAggregateInputSchema: z.ZodType<Prisma.RatingSumOrderByAggregateInput> = z.object({
+  ratingYear: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNullableWithAggregatesFilter> = z.object({
@@ -2262,23 +2488,20 @@ export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNu
   _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
 }).strict();
 
-export const JsonWithAggregatesFilterSchema: z.ZodType<Prisma.JsonWithAggregatesFilter> = z.object({
-  equals: InputJsonValueSchema.optional(),
-  path: z.string().optional(),
-  string_contains: z.string().optional(),
-  string_starts_with: z.string().optional(),
-  string_ends_with: z.string().optional(),
-  array_contains: InputJsonValueSchema.optional().nullable(),
-  array_starts_with: InputJsonValueSchema.optional().nullable(),
-  array_ends_with: InputJsonValueSchema.optional().nullable(),
-  lt: InputJsonValueSchema.optional(),
-  lte: InputJsonValueSchema.optional(),
-  gt: InputJsonValueSchema.optional(),
-  gte: InputJsonValueSchema.optional(),
-  not: InputJsonValueSchema.optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedJsonFilterSchema).optional(),
-  _max: z.lazy(() => NestedJsonFilterSchema).optional()
+export const IntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.IntNullableWithAggregatesFilter> = z.object({
+  equals: z.number().optional().nullable(),
+  in: z.number().array().optional().nullable(),
+  notIn: z.number().array().optional().nullable(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntNullableFilterSchema).optional()
 }).strict();
 
 export const JsonNullableWithAggregatesFilterSchema: z.ZodType<Prisma.JsonNullableWithAggregatesFilter> = z.object({
@@ -2308,6 +2531,20 @@ export const EnumRatingStatusNullableWithAggregatesFilterSchema: z.ZodType<Prism
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumRatingStatusNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumRatingStatusNullableFilterSchema).optional()
+}).strict();
+
+export const DateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeNullableWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
 }).strict();
 
 export const RatingClassCountOrderByAggregateInputSchema: z.ZodType<Prisma.RatingClassCountOrderByAggregateInput> = z.object({
@@ -2662,8 +2899,20 @@ export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.Nu
   set: z.string().optional().nullable()
 }).strict();
 
+export const NullableIntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableIntFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional().nullable(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
+}).strict();
+
 export const NullableEnumRatingStatusFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableEnumRatingStatusFieldUpdateOperationsInput> = z.object({
   set: z.lazy(() => RatingStatusSchema).optional().nullable()
+}).strict();
+
+export const NullableDateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableDateTimeFieldUpdateOperationsInput> = z.object({
+  set: z.coerce.date().optional().nullable()
 }).strict();
 
 export const RatingClassUpdateOneWithoutRatingModelNestedInputSchema: z.ZodType<Prisma.RatingClassUpdateOneWithoutRatingModelNestedInput> = z.object({
@@ -2939,11 +3188,33 @@ export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNull
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const NestedIntNullableFilterSchema: z.ZodType<Prisma.NestedIntNullableFilter> = z.object({
+  equals: z.number().optional().nullable(),
+  in: z.number().array().optional().nullable(),
+  notIn: z.number().array().optional().nullable(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
 export const NestedEnumRatingStatusNullableFilterSchema: z.ZodType<Prisma.NestedEnumRatingStatusNullableFilter> = z.object({
   equals: z.lazy(() => RatingStatusSchema).optional().nullable(),
   in: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
   notIn: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
   not: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NestedEnumRatingStatusNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
+export const NestedDateTimeNullableFilterSchema: z.ZodType<Prisma.NestedDateTimeNullableFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
 export const NestedStringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringNullableWithAggregatesFilter> = z.object({
@@ -2963,7 +3234,7 @@ export const NestedStringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.Ne
   _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
 }).strict();
 
-export const NestedIntNullableFilterSchema: z.ZodType<Prisma.NestedIntNullableFilter> = z.object({
+export const NestedIntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntNullableWithAggregatesFilter> = z.object({
   equals: z.number().optional().nullable(),
   in: z.number().array().optional().nullable(),
   notIn: z.number().array().optional().nullable(),
@@ -2971,23 +3242,23 @@ export const NestedIntNullableFilterSchema: z.ZodType<Prisma.NestedIntNullableFi
   lte: z.number().optional(),
   gt: z.number().optional(),
   gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatNullableFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntNullableFilterSchema).optional()
 }).strict();
 
-export const NestedJsonFilterSchema: z.ZodType<Prisma.NestedJsonFilter> = z.object({
-  equals: InputJsonValueSchema.optional(),
-  path: z.string().optional(),
-  string_contains: z.string().optional(),
-  string_starts_with: z.string().optional(),
-  string_ends_with: z.string().optional(),
-  array_contains: InputJsonValueSchema.optional().nullable(),
-  array_starts_with: InputJsonValueSchema.optional().nullable(),
-  array_ends_with: InputJsonValueSchema.optional().nullable(),
-  lt: InputJsonValueSchema.optional(),
-  lte: InputJsonValueSchema.optional(),
-  gt: InputJsonValueSchema.optional(),
-  gte: InputJsonValueSchema.optional(),
-  not: InputJsonValueSchema.optional()
+export const NestedFloatNullableFilterSchema: z.ZodType<Prisma.NestedFloatNullableFilter> = z.object({
+  equals: z.number().optional().nullable(),
+  in: z.number().array().optional().nullable(),
+  notIn: z.number().array().optional().nullable(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
 export const NestedJsonNullableFilterSchema: z.ZodType<Prisma.NestedJsonNullableFilter> = z.object({
@@ -3016,6 +3287,20 @@ export const NestedEnumRatingStatusNullableWithAggregatesFilterSchema: z.ZodType
   _max: z.lazy(() => NestedEnumRatingStatusNullableFilterSchema).optional()
 }).strict();
 
+export const NestedDateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDateTimeNullableWithAggregatesFilter> = z.object({
+  equals: z.coerce.date().optional().nullable(),
+  in: z.coerce.date().array().optional().nullable(),
+  notIn: z.coerce.date().array().optional().nullable(),
+  lt: z.coerce.date().optional(),
+  lte: z.coerce.date().optional(),
+  gt: z.coerce.date().optional(),
+  gte: z.coerce.date().optional(),
+  not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedDateTimeNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
+}).strict();
+
 export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
   equals: z.boolean().optional(),
   not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
@@ -3032,14 +3317,14 @@ export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWi
 export const RatingCreateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutMethodologyModelInput> = z.object({
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
@@ -3051,16 +3336,16 @@ export const RatingUncheckedCreateWithoutMethodologyModelInputSchema: z.ZodType<
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -3098,17 +3383,17 @@ export const RatingScalarWhereInputSchema: z.ZodType<Prisma.RatingScalarWhereInp
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rating: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   ratingClass: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ratingYear: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  supervisor: z.lazy(() => JsonFilterSchema).optional(),
-  primaryAnalyst: z.lazy(() => JsonNullableFilterSchema).optional(),
-  secondaryAnalyst: z.lazy(() => JsonNullableFilterSchema).optional(),
+  ratingYear: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
+  supervisor: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  primaryAnalyst: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   methodology: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   questionnaire: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   responses: z.lazy(() => JsonNullableFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  expiryDate: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -3116,14 +3401,14 @@ export const RatingScalarWhereInputSchema: z.ZodType<Prisma.RatingScalarWhereInp
 export const RatingCreateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutQuestionnaireModelInput> = z.object({
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
@@ -3135,16 +3420,16 @@ export const RatingUncheckedCreateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   methodology: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -3530,14 +3815,14 @@ export const QuestionnaireUncheckedUpdateWithoutRatingModelInputSchema: z.ZodTyp
 export const RatingCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutRatingClassModelInput> = z.object({
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   clientModel: z.lazy(() => ClientCreateNestedOneWithoutRatingModelInputSchema),
@@ -3548,17 +3833,17 @@ export const RatingCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
 export const RatingUncheckedCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutRatingClassModelInput> = z.object({
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   methodology: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -3643,14 +3928,14 @@ export const ContactCreateManyClientModelInputEnvelopeSchema: z.ZodType<Prisma.C
 export const RatingCreateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutClientModelInput> = z.object({
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
@@ -3662,16 +3947,16 @@ export const RatingUncheckedCreateWithoutClientModelInputSchema: z.ZodType<Prism
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   methodology: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -3874,16 +4159,16 @@ export const RatingCreateManyMethodologyModelInputSchema: z.ZodType<Prisma.Ratin
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -3891,14 +4176,14 @@ export const RatingCreateManyMethodologyModelInputSchema: z.ZodType<Prisma.Ratin
 export const RatingUpdateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.RatingUpdateWithoutMethodologyModelInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
@@ -3910,16 +4195,16 @@ export const RatingUncheckedUpdateWithoutMethodologyModelInputSchema: z.ZodType<
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3928,16 +4213,16 @@ export const RatingUncheckedUpdateManyWithoutMethodologyModelInputSchema: z.ZodT
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3946,16 +4231,16 @@ export const RatingCreateManyQuestionnaireModelInputSchema: z.ZodType<Prisma.Rat
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   methodology: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -3963,14 +4248,14 @@ export const RatingCreateManyQuestionnaireModelInputSchema: z.ZodType<Prisma.Rat
 export const RatingUpdateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.RatingUpdateWithoutQuestionnaireModelInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
@@ -3982,16 +4267,16 @@ export const RatingUncheckedUpdateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4000,16 +4285,16 @@ export const RatingUncheckedUpdateManyWithoutQuestionnaireModelInputSchema: z.Zo
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4109,17 +4394,17 @@ export const ClientUncheckedUpdateManyWithoutIndustryModelInputSchema: z.ZodType
 export const RatingCreateManyRatingClassModelInputSchema: z.ZodType<Prisma.RatingCreateManyRatingClassModelInput> = z.object({
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   client: z.string(),
   methodology: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -4127,14 +4412,14 @@ export const RatingCreateManyRatingClassModelInputSchema: z.ZodType<Prisma.Ratin
 export const RatingUpdateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingUpdateWithoutRatingClassModelInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
@@ -4145,17 +4430,17 @@ export const RatingUpdateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
 export const RatingUncheckedUpdateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutRatingClassModelInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4163,17 +4448,17 @@ export const RatingUncheckedUpdateWithoutRatingClassModelInputSchema: z.ZodType<
 export const RatingUncheckedUpdateManyWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateManyWithoutRatingClassModelInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4193,16 +4478,16 @@ export const RatingCreateManyClientModelInputSchema: z.ZodType<Prisma.RatingCrea
   id: z.string().cuid().optional(),
   rating: z.string().optional().nullable(),
   ratingClass: z.string().optional().nullable(),
-  ratingYear: z.string().optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.number().int().optional().nullable(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
   methodology: z.string(),
   questionnaire: z.string(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issuedDate: z.string().optional().nullable(),
-  expiryDate: z.string().optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -4243,14 +4528,14 @@ export const ContactUncheckedUpdateManyWithoutClientModelInputSchema: z.ZodType<
 export const RatingUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingUpdateWithoutClientModelInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
@@ -4262,16 +4547,16 @@ export const RatingUncheckedUpdateWithoutClientModelInputSchema: z.ZodType<Prism
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4280,16 +4565,16 @@ export const RatingUncheckedUpdateManyWithoutClientModelInputSchema: z.ZodType<P
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rating: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  supervisor: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  primaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  secondaryAnalyst: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   responses: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issuedDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();

@@ -46,7 +46,7 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
                 const list = el?.list;
 
                 return (
-                  <div key={i} className="flex flex-col gap-1 mb-3">
+                  <div key={i} className="flex grid flex-col grid-cols-1 gap-1 mb-3">
                     <p className="text-xs font-bold uppercase text-text text-light">
                       {splitCamelCase(field)} {isRequired && '*'}
                     </p>
@@ -57,6 +57,9 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
                     )}
                     {dataType === 'text' && (
                       <ControlInput placeholder={field} required={isRequired} type="text" defaultValue={defaultValue} />
+                    )}
+                    {dataType === 'date' && (
+                      <ControlInput placeholder={field} required={isRequired} type="date" defaultValue={defaultValue} />
                     )}
                     {dataType === 'email' && (
                       <ControlInput

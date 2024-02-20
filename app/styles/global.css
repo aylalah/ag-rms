@@ -27,3 +27,7 @@ div.Toastify__toast-body div {
 .map {
   background-image: url('https://agustoportals.sfo3.digitaloceanspaces.com/bg-videos/mapBg.png');
 }
+
+.pending {
+  @apply bg-info text-base-100 font-bold py-1 px-4 rounded-full;
+}

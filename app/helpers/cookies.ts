@@ -20,6 +20,8 @@ export const settingsCookie = createCookie('rms-settings', {
 export const validateCookie = async (request: Request) => {
   let token = '' as string;
   let user = null as User | null;
+  let apiToken = '' as string;
+
   try {
     if (request.headers.get('cookie')) {
       const cookie = request.headers.get('cookie');
@@ -27,11 +29,12 @@ export const validateCookie = async (request: Request) => {
       const cookieData = JSON.parse(data) || {};
       token = cookieData.token;
       user = cookieData.user;
+      apiToken = cookieData.apiToken;
     }
 
-    return { token, user: user as User };
+    return { token, user: user as User, apiToken };
   } catch (e) {
-    return { token, user };
+    return { token, user, apiToken };
   }
 };
 

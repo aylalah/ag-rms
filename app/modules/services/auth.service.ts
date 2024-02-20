@@ -16,10 +16,11 @@ export class AuthClass extends MainClass {
       if (isAgustoMail) {
         const { user, token, error } = await AgustoServicesSdk.auth.Login({ email, password: input.password });
         if (error) throw new Error(error);
-        const Me = await AgustoServicesSdk.auth.Me({ token });
+        const Me = (await AgustoServicesSdk.auth.Me({ token })) as any;
+
         if (Me.error) throw new Error(Me.error);
 
-        const userJWT = await this.EncryptData({ ...user });
+        const userJWT = await this.EncryptData({ ...user, unit: Me?.data?.unit });
         return { user: Me.data as User, apiToken: token, token: userJWT };
       }
 
