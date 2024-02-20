@@ -146,8 +146,9 @@ export default function ClientEdit() {
                     <th className="w-[2em] px-2">#</th>
                     <th>Primary Analyst</th>
                     <th>Secondary Analyst</th>
-                    <th className="p-3">Rating Year</th>
+                    <th>Rating Score</th>
                     <th>Rating Class</th>
+                    <th className="p-3">Rating Year</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -161,6 +162,7 @@ export default function ClientEdit() {
                       <td className="px-2">{index + 1}</td>
                       <td>{rating.primaryAnalyst || '-'}</td>
                       <td>{rating.secondaryAnalyst || '-'}</td>
+                      <td>{rating.ratingScore || '-'}</td>
                       <td>{rating.ratingClass || '-'}</td>
                       <td className="p-3">{rating.ratingYear || '-'}</td>
                       <td>
