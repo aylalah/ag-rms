@@ -2,7 +2,7 @@ import ContactCard from '@ui/cards/contact-card';
 import ContactForm from '@ui/forms/contact-form';
 import dayjs from 'dayjs';
 import RMSservice from '@modules/services';
-import { ActionFunctionArgs, defer, LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { ActionFunctionArgs, defer, LoaderFunctionArgs, redirectDocument } from '@remix-run/node';
 import { Button } from '@components';
 import { Client, ClientWithRelations, Contact } from '@helpers/zodPrisma';
 import { NavLink, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
@@ -13,13 +13,11 @@ import { validateCookie } from '@helpers/cookies';
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
   const id = params?.id as string;
+
   const ratingQuery = RMSservice(token)
     .clients.one({ id, include: { ratingModel: true } })
     .then((res) => {
       const { client, error } = res || {};
-
-      console.log(client);
-      if (error) throw redirect('/app/client');
       return { client, error };
     });
 
@@ -79,7 +77,16 @@ export default function ClientEdit() {
   };
 
   useEffect(() => {
-    ratingQuery?.then((data) => setClient(data?.client as any));
+    ratingQuery?.then((data) => {
+      if (!data?.client) return navigate('/app/clients', { replace: true });
+      setClient(data?.client as any);
+    });
+
+    toast.promise(
+      ratingQuery,
+      { pending: 'Loading client data', error: 'Failed to load form object' },
+      { toastId: 'form-object' }
+    );
   }, []);
 
   useEffect(() => {

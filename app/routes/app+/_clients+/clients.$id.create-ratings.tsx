@@ -55,9 +55,17 @@ export default function CreateRatings() {
     if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: 'create-rating' });
   }, [FetcherData]);
 
+  useEffect(() => {
+    toast.promise(
+      formObjectQuery,
+      { pending: 'Loading form data', error: 'Failed to load form object' },
+      { toastId: 'form-object' }
+    );
+  }, []);
+
   return (
     <div className="h-full pb-10 overflow-hidden">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={null}>
         <Await resolve={formObjectQuery}>
           {({ formObject }) => (
             <FormLayout formObject={formObject as any} Fetcher={Fetcher} data={rating} slug="rating" />

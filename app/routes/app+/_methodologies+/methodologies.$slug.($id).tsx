@@ -1,8 +1,9 @@
 import RMSservice from '@modules/services';
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from '@remix-run/node';
 import { FormLayout } from '@layouts/form-layout';
+import { toast } from 'react-toastify';
 import { useEffect } from 'react';
-import { useFetcher, useLoaderData } from '@remix-run/react';
+import { useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
 import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -36,7 +37,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ message: createMethodology, error });
   }
 
-  if (slug === 'edit' && id) {
+  if (slug === 'PATCH' && id) {
     const { updateMethodology, error } = await RMSservice(token).methodologies.update({ id, data });
     return json({ message: updateMethodology, error });
   }
@@ -48,13 +49,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Breeds() {
+  const navigate = useNavigate();
   const { methodology, formObject } = useLoaderData<typeof loader>();
   const Fetcher = useFetcher();
   const FetcherData = Fetcher?.data as { message: string; error: string };
 
   useEffect(() => {
-    if (FetcherData?.message) alert(FetcherData?.message);
-    if (FetcherData?.error) alert(FetcherData?.error);
+    if (FetcherData?.message) {
+      toast.success(FetcherData?.message, { toastId: 'create-rating' });
+      navigate(-1);
+      return;
+    }
+    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: 'create-rating' });
   }, [FetcherData]);
 
   return (

@@ -1,4 +1,5 @@
 import { FetcherWithComponents } from '@remix-run/react';
+import { useRef } from 'react';
 import {
   ControlBoolean,
   ControlCheckboxes,
@@ -29,6 +30,16 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
   const method = data?.id ? 'PATCH' : 'POST';
   const title = data?.id ? 'Update' : 'Create';
   const isSubmitting = Fetcher?.state === 'submitting';
+  const modalRef = useRef<HTMLDialogElement>(null);
+
+  const onDeleteClick = () => {
+    modalRef.current?.showModal();
+    //Fetcher?.submit({}, { method: 'DELETE' });
+  };
+
+  const onConfirmDelete = (decision: boolean) => {
+    if (decision) Fetcher?.submit({}, { method: 'DELETE' });
+  };
 
   return (
     <div className="h-[100%]">
@@ -119,10 +130,13 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
               </div>
 
               <div className="flex gap-4 py-3 border-b border-line">
-                <button className="flex-1 p-3 font-semibold rounded shadow bg-secondary text-base-100">Save</button>
-                <button className="flex-1 p-3 font-semibold border rounded shadow bg-surface text-text">
+                <button className="flex-1 p-3 font-semibold rounded shadow btn bg-secondary text-base-100">Save</button>
+                <span
+                  onClick={onDeleteClick}
+                  className="flex-1 p-3 font-semibold border rounded shadow bg-surface btn text-text"
+                >
                   Delete Item
-                </button>
+                </span>
               </div>
 
               <div className="flex flex-col h-full gap-4 overflow-hidden">
@@ -135,6 +149,23 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
           </div>
         </fieldset>
       </Fetcher.Form>
+
+      <dialog className="modal" ref={modalRef}>
+        <div className="modal-box">
+          <h3 className="font-semibold">Confirm Delete</h3>
+          <p className="py-2 text-sm font-normal">Delete Continue with delete ?</p>
+
+          <form method="dialog" className="flex justify-end w-full gap-4 mt-2">
+            <button onClick={() => onConfirmDelete(false)} className="btn btn-outlined">
+              Cancel
+            </button>
+
+            <button onClick={() => onConfirmDelete(true)} className="btn btn-secondary">
+              Delete
+            </button>
+          </form>
+        </div>
+      </dialog>
     </div>
   );
 };

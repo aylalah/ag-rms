@@ -2,7 +2,7 @@ import MenuLayout from '@layouts/menu-layout';
 import useAppStore from '@stores';
 import { appCookie, validateCookie } from '@helpers/cookies';
 import { Icons } from '@components';
-import { json, LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { json, LinksFunction, LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { useEffect } from 'react';
 

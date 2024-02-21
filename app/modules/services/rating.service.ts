@@ -55,6 +55,14 @@ export class RatingClass extends MainClass {
     try {
       const { data } = input;
       await this.hasAccess(['admin', 'hod']);
+
+      //const check for existing rating with year and client
+      const check = await dbQuery.rating.findFirst({
+        where: { ratingYear: data.ratingYear, client: data.client },
+      });
+
+      if (check) throw new Error('Rating already exists for this year and client');
+
       const result = await dbQuery.rating.create({ data });
 
       this.LogAction({
@@ -126,6 +134,15 @@ export class RatingClass extends MainClass {
       const dataList = data
         .filter((el) => el?.field !== 'role')
         .map((el) => {
+          //last 10 years
+          if (el.field === 'ratingYear') {
+            el.type = 'object';
+            el.list = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((el) => ({
+              id: el,
+              name: el,
+            }));
+          }
+
           if (el.field === 'status') {
             el.type = 'object';
             el.list = Object.keys(ratingStatus?.Values).map((el) => ({ id: el, name: el }));

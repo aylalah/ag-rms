@@ -3,7 +3,7 @@ export const convertZodSchema = (schema: any) => {
     field: string;
     required: boolean;
     type: string;
-    list?: { name: string; id: string }[];
+    list?: { name: string | number; id: string | number }[];
     value?: string | number | boolean | null;
   }[] = [];
 

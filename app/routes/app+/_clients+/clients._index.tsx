@@ -30,7 +30,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .then((res) => {
       const { clients, error } = res || {};
       const { docs, ...meta } = clients || {};
-      const thead = ['companyName', 'companyEmail', 'industry', 'companyPhoneNumbers', 'country', 'createdAt'];
+      const thead = ['companyName', 'industry', 'country', 'createdAt'];
       const tbody = docs?.map((client) => ({
         ...client,
         industry: client?.industryModel?.name,
@@ -49,6 +49,7 @@ export default function Clients() {
         <Await resolve={queryData}>
           {({ thead, tbody, searchTitle, meta }) => (
             <ListLayout
+              tableSize="table-fixed"
               createLink="/app/clients/create"
               editLink="/app/clients/"
               tbody={tbody}

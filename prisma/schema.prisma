@@ -56,7 +56,7 @@ model Rating {
   ratingScore        Int?
   ratingClass        String?
   ratingClassModel   RatingClass?  @relation(fields: [ratingClass], references: [id])
-  ratingYear         Int?
+  ratingYear         Int
   supervisor         String
   primaryAnalyst     String?
   secondaryAnalyst   String?
