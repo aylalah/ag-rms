@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import RatingsCard from '@ui/cards/ratings-card';
 import RMSservice from '@modules/services';
 import { Await, NavLink, useLoaderData } from '@remix-run/react';
 import { defer, LoaderFunctionArgs } from '@remix-run/node';
@@ -77,39 +78,7 @@ export default function Ratings() {
         <div className="grid grid-cols-4 gap-3">
           <Suspense fallback={<div>Loading...</div>}>
             <Await resolve={queryData}>
-              {({ thead, tbody, searchTitle, meta }) =>
-                tbody?.map((el) => (
-                  <div className="flex flex-col items-start gap-2 p-4 text-sm border rounded p- border-accent bg-base-100">
-                    <div className="flex items-center justify-between w-full">
-                      <span className="text-3xl font-bold">{el?.ratingClassModel?.name || '--'}</span>
-                      <span className={`${el?.status} capitalize  text-xs`}>{el?.status}</span>
-                    </div>
-
-                    <div>
-                      <div className="flex-1 text-sm font-bold">{el?.ratingTitle}</div>
-                      <div className="flex-1 text-sm font-normal">{el?.clientModel?.companyName}</div>
-                    </div>
-
-                    <div className="flex flex-col w-full gap-1">
-                      <p className="text-xs opacity-60">
-                        Issue Date : {!el?.issueDate ? '-' : dayjs(el?.issueDate).format('MMM DD, YYYY')}
-                      </p>
-                      <p className="text-xs opacity-60">
-                        Expiry Date : {!el?.expiryDate ? '-' : dayjs(el?.expiryDate).format('MMM DD, YYYY')}
-                      </p>
-                    </div>
-
-                    <div className="flex justify-end w-full">
-                      <NavLink
-                        to={`/app/ratings/${el?.id}`}
-                        className="text-sm font-bold text-secondary hover:underline"
-                      >
-                        View Details
-                      </NavLink>
-                    </div>
-                  </div>
-                ))
-              }
+              {({ thead, tbody, searchTitle, meta }) => tbody?.map((el) => <RatingsCard key={el.id} el={el as any} />)}
             </Await>
           </Suspense>
         </div>

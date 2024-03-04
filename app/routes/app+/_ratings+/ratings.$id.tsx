@@ -1,4 +1,6 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
+import RatingsSummaryCard from '@ui/cards/rating-summary-card';
 import RMSservice from '@modules/services';
 import { json, LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
@@ -8,22 +10,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
   const { token } = await validateCookie(request);
   const { rating, error } = await RMSservice(token)
-    .ratings.one({ id, include: { ratingClassModel: true, methodologyModel: true, questionnaireModel: true } })
+    .ratings.one({
+      id,
+      include: { ratingClassModel: true, methodologyModel: true, questionnaireModel: true, clientModel: true },
+    })
     .then((res) => ({ ...res }));
-
-  const questions = await axios
-    .get(`${rating?.questionnaireModel?.url}`)
-    .then((res) => res.data as { Header: string; Questions: string; SubQuestions: string }[]);
-
-  const block = questions.map((question) => {
-    const { Header, Questions, SubQuestions } = question;
-    const response = rating?.responses?.find((response) => response.question === Questions);
-    return { Header, Questions, SubQuestions, response };
-  });
-
-  //group by headers, then group by questions and sub-questions
-
-  console.log(block);
 
   return json({ rating, error });
 };
@@ -34,26 +25,36 @@ export default function Rating() {
   return (
     <div className="flex flex-col flex-1 h-full gap-4">
       <header className="">
-        <h1 className="text-2xl font-bold">{rating?.ratingTitle}</h1>
+        <h1 className="text-2xl font-bold">{rating?.clientModel?.companyName}</h1>
+        <p className="text-lg font-normal opacity-70">{rating?.ratingTitle}</p>
       </header>
 
       <div className="flex flex-1 h-full gap-4">
-        <div className="flex-1 bg-base-100"></div>
+        <div className="flex-1 bg-base-100">
+          
+        </div>
 
         <div className="w-[20em] flex flex-col gap-4 ">
-          <div className="p-4 bg-base-100">
+          <div className="p-4 border rounded bg-base-100 border-accent">
             <div className="flex justify-between flex-1 py-3 border-b">
               <h1 className="font-bold">Summary</h1>
               <span className={`${rating?.status}`}>{rating?.status}</span>
             </div>
 
-            <div className="py-4">
-              <h2 className="text-lg font-bold">Rating</h2>
-              <p className="text-2xl font-bold">4.5</p>
-            </div>
+            <RatingsSummaryCard title="Rating Class" subTitle={rating?.ratingClassModel?.name || '-'} />
+
+            <RatingsSummaryCard
+              title="Issue Date"
+              subTitle={!rating?.issueDate ? '-' : dayjs(rating?.issueDate).format('MMMM DD, YYYY')}
+            />
+
+            <RatingsSummaryCard
+              title="Expiry Date"
+              subTitle={!rating?.expiryDate ? '-' : dayjs(rating?.expiryDate).format('MMMM DD, YYYY')}
+            />
           </div>
 
-          <div className="p-4 bg-base-100">
+          <div className="p-4 border rounded bg-base-100 border-accent">
             <div className="flex-1 py-3 border-b">
               <h1 className="font-bold">Resources</h1>
             </div>

@@ -17,8 +17,6 @@ export class AuthClass extends MainClass {
       if (isAgustoMail) {
         const { user, token, error } = await AgustoServicesSdk.auth.Login({ email, password: input.password });
 
-        console.log({ user, token, error });
-
         if (error) throw new Error(error);
         const Me = (await AgustoServicesSdk.auth.Me({ token })) as any;
 

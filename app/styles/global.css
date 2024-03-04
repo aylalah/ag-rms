@@ -29,5 +29,5 @@ div.Toastify__toast-body div {
 }
 
 .pending {
-  @apply bg-info text-base-100 font-bold py-1 px-4 rounded-full;
+  @apply bg-info text-base-100 font-bold py-1 px-4 rounded-lg;
 }

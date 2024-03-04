@@ -1,3 +1,4 @@
+import axios from 'axios';
 import RMSservice from '@modules/services';
 import { ActionFunctionArgs, defer, json, LoaderFunctionArgs } from '@remix-run/node';
 import { Await, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
@@ -33,7 +34,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   data.issueDate = data.issueDate && new Date(data.issueDate);
   data.expiryDate = data.expiryDate && new Date(data.expiryDate);
 
-  console.log(data);
+  const questionnaireData = await RMSservice(token).questionnaires.one({ id: data.questionnaire });
+  const questionnairesUrl = questionnaireData?.questionnaire?.url;
+
+  if (!questionnairesUrl) return json({ error: 'Questionnaire not found' });
+
+  const questions = await axios
+    .get(questionnairesUrl)
+    .then((res) => res.data as { Header: string; Questions: string; SubQuestions: string; response: string }[]);
+
+  data.responses = questions.map((question) => {
+    const { Header, Questions, SubQuestions } = question;
+    return { Header, Questions, SubQuestions, response: '' };
+  });
 
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });

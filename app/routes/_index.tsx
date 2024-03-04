@@ -26,7 +26,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     return json({ error });
   } catch (error) {
-    console.error(error);
     return { error: 'Unable to login at this time. Please try again later.' };
   }
 };
