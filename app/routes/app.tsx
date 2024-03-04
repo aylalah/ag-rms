@@ -81,7 +81,7 @@ export default function App() {
   useEffect(() => setUser(user as User), [user]);
 
   return (
-    <MenuLayout links={groupedClientRoutes}>
+    <MenuLayout links={MenuLinks}>
       <Outlet />
     </MenuLayout>
   );

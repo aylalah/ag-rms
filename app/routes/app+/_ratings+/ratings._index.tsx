@@ -28,7 +28,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         updatedAt: dayjs(rating.updatedAt).format('MMMM DD, YYYY'),
       }));
 
-      console.log('tbody', tbody);
       return { thead, tbody, meta, error, searchTitle: 'Search by ratings' };
     });
   return defer({ queryData });

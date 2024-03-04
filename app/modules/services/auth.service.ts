@@ -9,12 +9,16 @@ export class AuthClass extends MainClass {
   }
 
   public async login(input: { email: string; password: string }) {
+    console.log(input.email, input.password);
     try {
       const { email } = input;
       const isAgustoMail = email.includes('@agusto.com');
 
       if (isAgustoMail) {
         const { user, token, error } = await AgustoServicesSdk.auth.Login({ email, password: input.password });
+
+        console.log({ user, token, error });
+
         if (error) throw new Error(error);
         const Me = (await AgustoServicesSdk.auth.Me({ token })) as any;
 

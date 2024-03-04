@@ -6,6 +6,10 @@ module.exports = {
   prefix: '',
   theme: {
     extend: {},
+    container: {
+      center: true,
+      padding: '1rem',
+    },
   },
   daisyui: {
     themes: [

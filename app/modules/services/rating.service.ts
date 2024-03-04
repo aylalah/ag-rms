@@ -43,6 +43,7 @@ export class RatingClass extends MainClass {
       const { id, include } = input;
       const rating = await dbQuery.rating.findUnique({
         where: { id },
+        include: { ...include },
       });
 
       return { rating };
