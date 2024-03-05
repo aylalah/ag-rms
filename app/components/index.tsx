@@ -1,3 +1,4 @@
+import Accordion from './accordion';
 import Avatar from './avatar';
 import Button from './button';
 import Select from './select';
@@ -26,4 +27,4 @@ const Icons = {
   Questionnaire: (size: number) => <Questionnaire size={size} />,
 };
 
-export { Button, Select, Icons, TextInput, Avatar };
+export { Button, Select, Icons, TextInput, Avatar, Accordion };

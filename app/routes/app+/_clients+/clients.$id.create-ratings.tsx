@@ -41,11 +41,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   const questions = await axios
     .get(questionnairesUrl)
-    .then((res) => res.data as { Header: string; Questions: string; SubQuestions: string; response: string }[]);
+    .then((res) => res.data as { Header: string; Question: string; SubQuestion: string; Response: string }[]);
 
   data.responses = questions.map((question) => {
-    const { Header, Questions, SubQuestions } = question;
-    return { Header, Questions, SubQuestions, response: '' };
+    const { SubQuestion, ...rest } = question;
+    return { ...rest, Response: '', SubQuestion: typeof SubQuestion !== 'object' ? [] : SubQuestion };
   });
 
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
