@@ -75,7 +75,7 @@ export default function Ratings() {
       </aside>
 
       <aside className="flex-1 h-full py-4 overflow-auto ">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           <Suspense fallback={<div>Loading...</div>}>
             <Await resolve={queryData}>
               {({ thead, tbody, searchTitle, meta }) => tbody?.map((el) => <RatingsCard key={el.id} el={el as any} />)}

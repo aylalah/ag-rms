@@ -6,7 +6,7 @@ export const appCookie = createCookie('rating-management-system', {
   httpOnly: true,
   secure: true,
   priority: 'high',
-  sameSite: 'strict',
+  sameSite: 'lax',
 });
 
 export const settingsCookie = createCookie('rms-settings', {
@@ -14,7 +14,7 @@ export const settingsCookie = createCookie('rms-settings', {
   httpOnly: true,
   secure: true,
   priority: 'low',
-  sameSite: 'strict',
+  sameSite: 'lax',
 });
 
 export const validateCookie = async (request: Request) => {

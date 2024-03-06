@@ -56,7 +56,7 @@ export default function Rating() {
       <div className="flex flex-1 h-full gap-4 ">
         <div className="flex-1 h-[90%] pb-10 overflow-auto bg-base-200">
           {Object.keys(ratingQuery?.responses).map((response, i) => (
-            <Accordion key={i} title={response} data={ratingQuery?.responses[response]} defaultChecked={false} />
+            <Accordion key={i} title={response} data={ratingQuery?.responses[response]} defaultChecked={i === 0} />
           ))}
         </div>
 
@@ -71,12 +71,16 @@ export default function Rating() {
 
             <RatingsSummaryCard
               title="Issue Date"
-              subTitle={!ratingQuery?.issueDate ? '-' : dayjs(ratingQuery?.rating?.issueDate).format('MMMM DD, YYYY')}
+              subTitle={
+                !ratingQuery?.rating?.issueDate ? '-' : dayjs(ratingQuery?.rating?.issueDate).format('MMMM DD, YYYY')
+              }
             />
 
             <RatingsSummaryCard
               title="Expiry Date"
-              subTitle={!ratingQuery?.expiryDate ? '-' : dayjs(ratingQuery?.expiryDate).format('MMMM DD, YYYY')}
+              subTitle={
+                !ratingQuery?.rating?.expiryDate ? '-' : dayjs(ratingQuery?.rating?.expiryDate).format('MMMM DD, YYYY')
+              }
             />
           </div>
 
