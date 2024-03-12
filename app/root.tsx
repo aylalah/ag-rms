@@ -1,24 +1,14 @@
 import Loader from '@ui/elements/loader';
-import tailwind from './styles/tailwind.css';
-import toastify from 'react-toastify/dist/ReactToastify.css';
-import { cssBundleHref } from '@remix-run/css-bundle';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useFetchers } from '@remix-run/react';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useFetchers } from '@remix-run/react';
 import { ToastContainer } from 'react-toastify';
-import { useEffect } from 'react';
-
-import type { LinksFunction, MetaFunction } from '@remix-run/node';
-
-export const links: LinksFunction = () => [
-  { rel: 'stylesheet', href: tailwind },
-  { rel: 'stylesheet', href: toastify },
-  ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
-];
+import './styles/tailwind.css';
+import 'react-toastify/dist/ReactToastify.css';
+import type { MetaFunction } from '@remix-run/node';
 
 export const meta: MetaFunction = ({ location }) => {
   const { pathname } = location;
-
-  const searchQuery = new URLSearchParams(location.search).get('q');
-  return [{ title: `Rating Management System - ${pathname.split('/').pop()}` }];
+  const subTitle = pathname?.split('/').pop();
+  return [{ title: `Rating Management System ${subTitle && `- ${capitalize(subTitle)}`}` }];
 };
 
 export default function App() {
@@ -36,7 +26,6 @@ export default function App() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );

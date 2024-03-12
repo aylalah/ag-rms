@@ -28,3 +28,13 @@ export const convertZodSchema = (schema: any) => {
 
   return convertedFormObject;
 };
+
+//splitCamelCase and toTitleCase are helper functions to convert camelCase to Title Case
+
+export const splitCamelCase = (str: string) => {
+  return str.replace(/([a-z])([A-Z])/g, '$1 $2');
+};
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};

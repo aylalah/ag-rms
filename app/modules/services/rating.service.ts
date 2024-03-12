@@ -36,14 +36,14 @@ export class RatingClass extends MainClass {
     }
   }
 
-  async one(input: { id: string; include?: Prisma.RatingInclude<DefaultArgs> | null | undefined }) {
+  async one(input: { id: string; include?: Prisma.RatingInclude<DefaultArgs> }) {
     try {
       await this.hasAccess('all');
 
       const { id, include } = input;
       const rating = await dbQuery.rating.findUnique({
         where: { id },
-        include: { ...include },
+        include: { ratingClassModel: true, methodologyModel: true, questionnaireModel: true, clientModel: true },
       });
 
       return { rating };

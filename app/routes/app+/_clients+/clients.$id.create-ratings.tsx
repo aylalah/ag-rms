@@ -1,5 +1,4 @@
 import axios from 'axios';
-import RMSservice from '@modules/services';
 import { ActionFunctionArgs, defer, json, LoaderFunctionArgs } from '@remix-run/node';
 import { Await, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
 import { FormLayout } from '@layouts/form-layout';
@@ -39,18 +38,32 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   if (!questionnairesUrl) return json({ error: 'Questionnaire not found' });
 
-  const questions = await axios
-    .get(questionnairesUrl)
-    .then((res) => res.data as { Header: string; Question: string; SubQuestion: string; Response: string }[]);
+  const questions = await axios.get(questionnairesUrl).then(
+    (res) =>
+      res.data as {
+        Header: string;
+        Question: string;
+        SubQuestion: string;
+        Response: { value: string; type: string }[];
+      }[]
+  );
 
   data.responses = questions.map((question) => {
-    const { SubQuestion, ...rest } = question;
+    const { SubQuestion, ...rest } = question || {};
     return {
       ...rest,
       Response: null,
       SubQuestion: typeof SubQuestion !== 'object' ? [] : SubQuestion?.map((el) => ({ Question: el, Response: null })),
     };
   });
+
+  data[0].Response = {
+    value:
+      'https://agustoportals.sfo3.digitaloceanspaces.com/Codesordinate%20Studio%20Brand%20Guideline-1710253671145.pdf',
+    type: 'file',
+  };
+
+  console.log(data);
 
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });

@@ -47,11 +47,11 @@ export default function Accordion({
     <div className="mb-3 collapse collapse-arrow">
       <input type="radio" name="my-accordion-2" defaultChecked={defaultChecked} />
       <div
-        className={`${defaultChecked ? 'text-base-100 bg-primary' : 'base-content bg-base-100'} flex justify-between text-base shadow  collapse-title `}
+        className={`${defaultChecked ? 'text-base-100 bg-primary' : 'base-content bg-base-100'} flex justify-between text-sm shadow  collapse-title `}
       >
         <div className="flex items-center gap-2 ">
           <i className="mr-2 ri-arrow-right-line" />
-          <h3 className="text-lg font-bold">{title}</h3>
+          <h3 className="text-base font-bold">{title}</h3>
         </div>
 
         <div className="flex items-center gap-2">
@@ -60,14 +60,14 @@ export default function Accordion({
       </div>
 
       <div className="collapse-content bg-base-300">
-        <div className="">
+        <div className="pt-4">
           {data.map((item: any, i: number) => (
-            <div key={i} className="flex flex-col justify-between w-full gap-2 p-3 border-t border-gray-300">
+            <div key={i} className="flex flex-col justify-between w-full gap-2 p-3 py-2 border-t border-gray-300">
               <AccordionCard key={i} index={i} el={item} isMain />
               <span>
                 {item?.SubQuestion?.length > 0 && (
                   <div className="grid grid-cols-2 gap-4">
-                    {item?.SubQuestion?.map((el, ii: number) => <AccordionCard key={ii} index={ii} el={el} />)}
+                    {item?.SubQuestion?.map((el: any, ii: number) => <AccordionCard key={ii} index={ii} el={el} />)}
                   </div>
                 )}
               </span>
@@ -88,25 +88,32 @@ const AccordionCard = ({
   isMain?: boolean;
   readOnly?: boolean;
   index: number;
-  el: any;
+  el: {
+    Question: string;
+    Response: {
+      type: 'file' | 'text';
+      value: string;
+    };
+  };
 }) => (
   <div className="flex flex-col gap-2">
-    <h3 className={` text-base ${isMain ? 'font-bold uppercase' : 'font-normal'}`}>
+    <h3 className={` ${isMain ? 'font-bold capitalize' : 'font-normal'}`}>
       {isMain ? index + 1 : alphabet[index]}) {el?.Question}
     </h3>
 
     <div className="flex gap-2">
       <div
         contentEditable={!readOnly}
-        defaultValue={el?.Response}
-        className={`w-full p-2 bg-base-100 flex items-center h-[3.3em]`}
+        defaultValue={el?.Response?.value}
+        className={`${el?.Response?.type === 'file' && 'opacity-50'} w-full p-2 bg-base-100 flex items-center h-[4em]`}
       >
-        {el?.Response}
+        {el?.Response?.value}
       </div>
 
       <div className="relative flex items-center justify-center gap-1 px-4 overflow-hidden border rounded bg-base-100 ">
         {/* <i className="ri-upload-2-line" /> */}
-        <input type="file" accept=".pdf" />
+        {!readOnly && <input type="file" accept=".pdf" />}
+        {readOnly && el?.Response?.type === 'file' && <button>View</button>}
       </div>
     </div>
   </div>

@@ -1,44 +1,14 @@
 {
   "folders": [
-    {
-      "name": "rms-mono",
-      "path": ".",
-    },
-    {
-      "name": "prisma",
-      "path": "./prisma",
-    },
-    {
-      "name": "styles",
-      "path": "./app/styles",
-    },
-    {
-      "name": "components",
-      "path": "./app/components",
-    },
-    {
-      "name": "ui",
-      "path": "./app/ui",
-    },
-    {
-      "name": "helpers",
-      "path": "./app/helpers",
-    },
-    {
-      "name": "stores",
-      "path": "./app/stores",
-    },
-    {
-      "name": "layouts",
-      "path": "./app/layouts",
-    },
-    {
-      "name": "modules",
-      "path": "./app/modules",
-    },
-    {
-      "name": "routes",
-      "path": "./app/routes",
-    },
+    { "name": "rms-mono", "path": "." },
+    { "name": "prisma", "path": "./prisma" },
+    { "name": "app", "path": "./app" },
+    { "name": "components", "path": "./app/components" },
+    { "name": "ui", "path": "./app/ui" },
+    { "name": "services", "path": "./app/modules/services" },
+    { "name": "routes", "path": "./app/routes" },
   ],
+  "settings": {
+    "cSpell.words": ["Farmly"],
+  },
 }

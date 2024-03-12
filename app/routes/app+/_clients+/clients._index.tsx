@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import RMSservice from '@modules/services';
 import { Await, useLoaderData } from '@remix-run/react';
 import { defer, LoaderFunctionArgs } from '@remix-run/node';
 import { ListLayout } from '@layouts/list-layout';
@@ -11,11 +10,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const search = new URL(request.url).searchParams.get('search') || '';
   const page = Number(new URL(request.url).searchParams.get('page')) || 1;
   const limit = Number(new URL(request.url).searchParams.get('limit')) || 15;
+  const sort = new URL(request.url).searchParams.get('sort') || { companyName: 'asc' };
 
   const queryData = RMSservice(token)
     .clients.all({
       limit,
       page,
+      orderBy: sort as any,
       where: {
         OR: [
           { companyName: { contains: search } },

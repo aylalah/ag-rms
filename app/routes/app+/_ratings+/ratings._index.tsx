@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import RatingsCard from '@ui/cards/ratings-card';
-import RMSservice from '@modules/services';
 import { Await, NavLink, useLoaderData } from '@remix-run/react';
 import { defer, LoaderFunctionArgs } from '@remix-run/node';
 import { Suspense, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -23,6 +23,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       const { ratings, error } = res || {};
       const { docs, ...meta } = ratings || {};
       const thead = ['ratingClass', 'ratingYear', 'issueDate', 'expiryDate'];
+
       const tbody = docs?.map((rating) => ({
         ...rating,
         createdAt: dayjs(rating.createdAt).format('MMMM DD, YYYY'),
@@ -37,6 +38,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
   const [meta, setMeta] = useState<any>({});
+
+  toast.promise(queryData, { pending: 'Loading ratings . . . ' });
+
   const onSearch = () => {};
 
   const onNext = () => {};
@@ -76,7 +80,7 @@ export default function Ratings() {
 
       <aside className="flex-1 h-full py-4 overflow-auto ">
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<></>}>
             <Await resolve={queryData}>
               {({ thead, tbody, searchTitle, meta }) => tbody?.map((el) => <RatingsCard key={el.id} el={el as any} />)}
             </Await>

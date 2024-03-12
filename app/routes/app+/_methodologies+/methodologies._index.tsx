@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import RMSservice from '@modules/services';
 import { Await, useLoaderData } from '@remix-run/react';
 import { defer, LoaderFunctionArgs } from '@remix-run/node';
 import { ListLayout } from '@layouts/list-layout';

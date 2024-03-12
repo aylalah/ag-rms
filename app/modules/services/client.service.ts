@@ -6,8 +6,8 @@ import { MainClass } from './main.service';
 import { Prisma } from '@prisma/client';
 
 interface AllArgs extends Prisma.ClientFindManyArgs {
-  limit: number;
-  page: number;
+  limit?: number;
+  page?: number;
 }
 
 export class ClientClass extends MainClass {
@@ -28,7 +28,17 @@ export class ClientClass extends MainClass {
       const hasNextPage = setPage < totalPages;
       const hasPrevPage = setPage > 1;
 
-      return { clients: { page: setPage, limit: take, totalPages, totalDocs, hasNextPage, hasPrevPage, docs } };
+      return {
+        clients: {
+          page: setPage,
+          limit: take,
+          totalPages,
+          totalDocs,
+          hasNextPage,
+          hasPrevPage,
+          docs,
+        },
+      };
     } catch (error: any) {
       return { error: error.message };
     }

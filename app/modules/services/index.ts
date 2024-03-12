@@ -17,6 +17,4 @@ class RMSClass extends MainClass {
   readonly questionnaires = new QuestionnaireClass(this.token);
 }
 
-const RMSservice = (token?: string) => new RMSClass(token);
-
-export default RMSservice;
+export const RMSservice = (token?: string) => new RMSClass(token);
