@@ -57,14 +57,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     };
   });
 
-  data[0].Response = {
-    value:
-      'https://agustoportals.sfo3.digitaloceanspaces.com/Codesordinate%20Studio%20Brand%20Guideline-1710253671145.pdf',
-    type: 'file',
-  };
-
-  console.log(data);
-
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });
 };

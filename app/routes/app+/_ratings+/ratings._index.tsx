@@ -23,7 +23,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       const { ratings, error } = res || {};
       const { docs, ...meta } = ratings || {};
       const thead = ['ratingClass', 'ratingYear', 'issueDate', 'expiryDate'];
-
       const tbody = docs?.map((rating) => ({
         ...rating,
         createdAt: dayjs(rating.createdAt).format('MMMM DD, YYYY'),
@@ -39,8 +38,6 @@ export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
   const [meta, setMeta] = useState<any>({});
 
-  toast.promise(queryData, { pending: 'Loading ratings . . . ' });
-
   const onSearch = () => {};
 
   const onNext = () => {};
@@ -54,6 +51,10 @@ export default function Ratings() {
       setMeta(res?.meta);
     });
   }, [queryData]);
+
+  useEffect(() => {
+    toast.promise(queryData, { pending: 'Loading ratings . . . ' }, { toastId: 'ratings' });
+  }, []);
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden ">

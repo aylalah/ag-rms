@@ -3,6 +3,7 @@ import { Await, useLoaderData } from '@remix-run/react';
 import { defer, LoaderFunctionArgs } from '@remix-run/node';
 import { ListLayout } from '@layouts/list-layout';
 import { Suspense } from 'react';
+import { toast } from 'react-toastify';
 import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -29,6 +30,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Industries() {
   const { queryData } = useLoaderData<typeof loader>();
+  toast.promise(queryData, { pending: 'Loading industries . . . ' }, { toastId: 'industries' });
+
   return (
     <div className="flex-1 h-full overflow-hidden">
       <Suspense fallback={<></>}>

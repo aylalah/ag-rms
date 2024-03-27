@@ -63,6 +63,9 @@ export const uploadFileHandler = async (request: Request) => {
     const fileName: any = formData.get('fileName');
     const type = file?.type;
     const name = `${fileName?.replace(/\s/g, '-')}.${type?.split('/')[1]}`;
+
+    console.log({ file, name });
+    return {};
     const upload = await uploadStreamToSpaces(file, name);
 
     if (upload?.$metadata?.httpStatusCode === 200) return { storedUrl: upload?.Location };

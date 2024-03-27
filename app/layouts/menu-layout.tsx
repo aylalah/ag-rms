@@ -13,6 +13,7 @@ type IRouteGroup = IRoute[];
 
 export default function MenuLayout({ children, links }: { children: React.ReactNode; links: IRouteGroup }) {
   const { user } = useAppStore.user((state) => state);
+
   return (
     <div className="flex flex-1 h-screen pl-0 bg-primary">
       {/*       <div className="bg-primary  app-menu  map flex w-[15em] flex-col p-4 py-6 ">
@@ -50,27 +51,25 @@ export default function MenuLayout({ children, links }: { children: React.ReactN
       <div className="flex flex-col flex-1 h-full gap-8 overflow-hidden rounded-lg bg-base-200">
         <header className="flex h-[80px] w-full  border-b bg-primary map">
           <div className="container flex items-center justify-between w-full ">
-            <div className="flex items-center">
-              {/* <a href="/" className="text-2xl font-bold">
-                <img src="/images/logoDark.png" alt="" className="h-[40%]" />
-              </a>
- */}
-              <div className="flex items-center gap-4 ">
-                <ul className="flex items-center gap-8 app-menu">
-                  {links.map((el, i) => (
-                    <li key={i}>
-                      <NavLink
-                        to={el.to}
-                        key={i}
-                        className="flex items-center gap-2 py-4 text-white capitalize opacity-50 text"
-                      >
-                        {Icons[el?.icon as keyof typeof Icons](12)}
-                        {el.name}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <a href="/" className="text-xl font-bold">
+              <img src="/images/logoDark.png" alt="" className="h-[20px]" />
+            </a>
+
+            <div className="flex items-center gap-4 ">
+              <ul className="flex items-center gap-10 app-menu">
+                {links.map((el, i) => (
+                  <li key={i}>
+                    <NavLink
+                      to={el.to}
+                      key={i}
+                      className="flex items-center gap-2 py-4 text-sm text-white capitalize opacity-50"
+                    >
+                      {/* {Icons[el?.icon as keyof typeof Icons](12)} */}
+                      {el.name}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div>
