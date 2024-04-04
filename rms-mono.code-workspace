@@ -8,7 +8,5 @@
     { "name": "services", "path": "./app/modules/services" },
     { "name": "routes", "path": "./app/routes" },
   ],
-  "settings": {
-    "cSpell.words": ["Farmly"],
-  },
+  "settings": {},
 }
