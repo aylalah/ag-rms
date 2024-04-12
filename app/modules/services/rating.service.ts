@@ -6,6 +6,7 @@ import { DefaultArgs } from '@prisma/client/runtime/library';
 import { MainClass } from './main.service';
 import { Prisma } from '@prisma/client';
 import { RatingSchema, RatingStatusSchema } from '@helpers/zodPrisma';
+import axios from 'axios';
 
 interface AllArgs extends Prisma.RatingFindManyArgs {
   limit: number;
@@ -52,7 +53,7 @@ export class RatingClass extends MainClass {
     }
   }
 
-  async create(input: { data: Prisma.RatingCreateInput }) {
+  async create(input: { data: any }) {
     try {
       const { data } = input;
       await this.hasAccess(['admin', 'hod']);
@@ -121,18 +122,19 @@ export class RatingClass extends MainClass {
   async formObject({ apiToken, token }: { apiToken?: string; token?: string }) {
     try {
       const user = await appDecryptData(token);
-      const unitMembers = await AgustoServicesSdk.employee.getAll({
-        token: apiToken,
-        filters: { where: { unit: user?.unit } },
+      const endPoint = process.env.AGUSTO_SERVICES_URL;
+      const { data } = await axios.get(`${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`, {
+        headers: { Authorization: `Bearer ${apiToken}` },
       });
 
-      const data = convertZodSchema(RatingSchema);
+      const unitMembers = data?.data;
+      const objData = convertZodSchema(RatingSchema);
       const ratingStatus = RatingStatusSchema;
       const methodology = await dbQuery.methodology.findMany({ select: { id: true, name: true } });
       const questionnaire = await dbQuery.questionnaire.findMany({ select: { id: true, name: true } });
       const ratingClass = await dbQuery.ratingClass.findMany({ select: { id: true, name: true } });
 
-      const dataList = data
+      const dataList = objData
         .filter((el) => el?.field !== 'role')
         .map((el) => {
           //last 10 years
@@ -151,26 +153,35 @@ export class RatingClass extends MainClass {
 
           if (el.field === 'supervisor') {
             el.type = 'object';
-            el.list = unitMembers?.data?.docs?.map((el) => ({
-              id: `${el?.firstName} ${el?.lastName}`,
-              name: `${el?.firstName} ${el?.lastName}`,
-            }));
+            el.list = unitMembers
+              ?.map((el) => ({
+                employee_id: el?.employee_id,
+                id: `${el?.firstname} ${el?.lastname}`,
+                name: `${el?.firstname} ${el?.lastname}`,
+              }))
+              .filter((el) => el?.employee_id === user?.employee_id);
           }
 
           if (el.field === 'primaryAnalyst') {
             el.type = 'object';
-            el.list = unitMembers?.data?.docs?.map((el) => ({
-              id: `${el?.firstName} ${el?.lastName}`,
-              name: `${el?.firstName} ${el?.lastName}`,
-            }));
+            el.list = unitMembers
+              ?.map((el) => ({
+                employee_id: el?.employee_id,
+                id: `${el?.firstname} ${el?.lastname}`,
+                name: `${el?.firstname} ${el?.lastname}`,
+              }))
+              .filter((el) => el?.employee_id !== user?.employee_id);
           }
 
           if (el.field === 'secondaryAnalyst') {
             el.type = 'object';
-            el.list = unitMembers?.data?.docs?.map((el) => ({
-              id: `${el?.firstName} ${el?.lastName}`,
-              name: `${el?.firstName} ${el?.lastName}`,
-            }));
+            el.list = unitMembers
+              ?.map((el) => ({
+                employee_id: el?.employee_id,
+                id: `${el?.firstname} ${el?.lastname}`,
+                name: `${el?.firstname} ${el?.lastname}`,
+              }))
+              .filter((el) => el?.employee_id !== user?.employee_id);
           }
 
           if (el.field === 'methodology') {

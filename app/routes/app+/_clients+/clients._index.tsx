@@ -45,29 +45,28 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Clients() {
   const { queryData } = useLoaderData<typeof loader>();
+  const { setQueryData, storeQueryData } = useClientStore((state) => state);
 
   useEffect(() => {
     toast.promise(queryData, { pending: 'Loading clients . . . ' }, { toastId: 'clients' });
+    queryData.then((res) => setQueryData(res));
   }, []);
 
   return (
     <div className="flex-1 h-full overflow-hidden">
-      <Suspense fallback={<></>}>
-        <Await resolve={queryData}>
-          {({ thead, tbody, searchTitle, meta }) => (
-            <ListLayout
-              tableSize="table-fixed"
-              createLink="/app/clients/create"
-              editLink="/app/clients/"
-              tbody={tbody}
-              thead={thead}
-              meta={meta as any}
-              title="Clients"
-              searchTitle={searchTitle}
-            />
-          )}
-        </Await>
-      </Suspense>
+      {storeQueryData && (
+        <ListLayout
+          tableSize="table-fixed"
+          createLink="/app/clients/create"
+          editLink="/app/clients/"
+          tbody={storeQueryData?.tbody}
+          thead={storeQueryData?.thead}
+          meta={storeQueryData?.meta as any}
+          title="Clients"
+          searchTitle={storeQueryData?.searchTitle}
+          onPrint={() => window.print()}
+        />
+      )}
     </div>
   );
 }

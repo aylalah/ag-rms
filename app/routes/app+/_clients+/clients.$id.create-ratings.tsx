@@ -43,7 +43,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       res.data as {
         Header: string;
         Question: string;
-        SubQuestion: string;
+        SubQuestion: any;
         Response: { value: string; type: string }[];
       }[]
   );
@@ -53,7 +53,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return {
       ...rest,
       Response: null,
-      SubQuestion: typeof SubQuestion !== 'object' ? [] : SubQuestion?.map((el) => ({ Question: el, Response: null })),
+      SubQuestion:
+        typeof SubQuestion !== 'object' ? [] : SubQuestion?.map((el: any) => ({ Question: el, Response: null })),
     };
   });
 

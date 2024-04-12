@@ -11,7 +11,7 @@ export const splitCamelCase = (str: string) => {
     .join(' ');
 };
 
-export const Title = ({ title }: any) => <p className="text-[2.3rem] font-bold capitalize">{title}</p>;
+export const Title = ({ title }: any) => <p className="text-[2rem] font-bold capitalize">{title}</p>;
 
 export const ControlJsonTextArea = ({ el, value, isRequired }: any) => {
   const JsonRef = useRef<HTMLTextAreaElement>(null);

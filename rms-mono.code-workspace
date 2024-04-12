@@ -8,5 +8,7 @@
     { "name": "services", "path": "./app/modules/services" },
     { "name": "routes", "path": "./app/routes" },
   ],
-  "settings": {},
+  "settings": {
+    "cSpell.words": ["firstname", "lastname"],
+  },
 }

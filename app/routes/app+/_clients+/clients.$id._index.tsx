@@ -37,9 +37,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   if (method === 'POST') {
     const { id, ...rest } = body || {};
-    console.log(rest);
     const { createContact, error } = await RMSservice(token).contacts.create({ data: rest });
     return { message: createContact, error };
+  }
+
+  if (method === 'DELETE') {
+    const { id } = body || {};
+    const { deleteContact, error } = await RMSservice(token).contacts.delete({ id });
+    return { message: deleteContact, error };
   }
 
   return {};
@@ -64,7 +69,9 @@ export default function ClientEdit() {
     setSelectedContact({} as any);
   };
 
-  const onDeleteForm = async (id: string) => {};
+  const onDeleteForm = async (id: string) => {
+    Fetcher.submit({ id }, { method: 'delete' });
+  };
 
   const onEditForm = (el: Contact) => {
     setSelectedContact(el);
@@ -105,9 +112,9 @@ export default function ClientEdit() {
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border rounded bg-primary border-accent text-base-100">
         <div>
-          <p className="text-xl">{client?.companyName} </p>
+          <p className="font-semibold">{client?.companyName} </p>
           <div className="flex items-center gap-4">
-            <p className="text-sm opacity-80">{client?.industryModel?.name}</p>
+            <p className="text-xs opacity-80">{client?.industryModel?.name}</p>
             <NavLink to={`edit`} className="font-bold text-secondary">
               Edit
             </NavLink>
@@ -211,7 +218,7 @@ export default function ClientEdit() {
 
 const Card = ({ title, subTitle }: { title: string; subTitle?: string }) => (
   <div className="flex flex-col p-4 border rounded border-accent bg-base-100">
-    <p className="text-sm capitalize opacity-50">{title}</p>
-    <p className="text-base ">{subTitle}</p>
+    <p className="text-xs capitalize opacity-50">{title}</p>
+    <p className="">{subTitle}</p>
   </div>
 );

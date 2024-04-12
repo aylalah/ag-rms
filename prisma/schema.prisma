@@ -13,34 +13,8 @@ generator zod {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
-}
-
-model Methodology {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  url         String
-  ratingModel Rating[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Questionnaire {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  url         String
-  ratingModel Rating[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Industry {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  clientModel Client[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 enum RatingStatus {
@@ -50,20 +24,46 @@ enum RatingStatus {
   cancelled
 }
 
+model Methodology {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  url         String
+  ratingModel Rating[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Questionnaire {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  url         String
+  ratingModel Rating[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Industry {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  clientModel Client[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Rating {
-  id                 String        @id @default(cuid())
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
   ratingTitle        String        @default("Issuer Rating")
   ratingScore        Int?
-  ratingClass        String?
+  ratingClass        String?       @db.ObjectId
   ratingClassModel   RatingClass?  @relation(fields: [ratingClass], references: [id])
   ratingYear         Int
   supervisor         String
   primaryAnalyst     String?
   secondaryAnalyst   String?
-  client             String
+  client             String        @db.ObjectId
   clientModel        Client        @relation(fields: [client], references: [id])
-  methodology        String
-  questionnaire      String
+  methodology        String        @db.ObjectId
+  questionnaire      String        @db.ObjectId
   methodologyModel   Methodology   @relation(fields: [methodology], references: [id])
   questionnaireModel Questionnaire @relation(fields: [questionnaire], references: [id])
   responses          Json?
@@ -75,7 +75,7 @@ model Rating {
 }
 
 model RatingClass {
-  id          String   @id @default(cuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
   ratingModel Rating[]
   createdAt   DateTime @default(now())
@@ -83,14 +83,14 @@ model RatingClass {
 }
 
 model Client {
-  id                  String    @id @default(cuid())
-  industry            String
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  industry            String    @db.ObjectId
   industryModel       Industry  @relation(fields: [industry], references: [id])
   username            String    @unique
   password            String
   companyName         String
   companyEmail        String    @unique
-  logo                String?   @db.Text
+  logo                String?
   companyPhoneNumbers String?
   numberAndStreet     String?
   building            String?
@@ -109,26 +109,26 @@ model Client {
 }
 
 model Contact {
-  id           String   @id @default(cuid())
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   fullName     String
   email        String
   position     String?
   phoneNumbers String?
-  client       String
-  address      String?  @db.Text
+  client       String   @db.ObjectId
+  address      String?
   clientModel  Client   @relation(fields: [client], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
 model Log {
-  id        String   @id @default(cuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   user      String
   action    String
   table     String
-  message   String   @db.Text
-  prevDocs  String   @db.Text
-  newDocs   String   @db.Text
+  message   String
+  prevDocs  String
+  newDocs   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

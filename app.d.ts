@@ -11,8 +11,8 @@ type Slug =
 type User = {
   id: string;
   role: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   corporateEmail: string;
   departmentRole: string;
   image: string;

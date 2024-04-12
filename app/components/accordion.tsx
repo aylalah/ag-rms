@@ -51,7 +51,7 @@ export default function Accordion({
       >
         <div className="flex items-center gap-2 ">
           <i className="mr-2 ri-arrow-right-line" />
-          <h3 className="text-base font-bold">{title}</h3>
+          <h3 className="font-bold">{title}</h3>
         </div>
 
         <div className="flex items-center gap-2">
@@ -98,14 +98,14 @@ const AccordionCard = ({
 }) => (
   <div className="flex flex-col gap-2">
     <h3 className={` ${isMain ? 'font-bold capitalize' : 'font-normal'}`}>
-      {isMain ? index + 1 : alphabet[index]}) {el?.Question}
+      [{isMain ? index + 1 : alphabet[index]}] {el?.Question}
     </h3>
 
     <div className="flex gap-2">
       <div
         contentEditable={!readOnly}
         defaultValue={el?.Response?.value}
-        className={`${el?.Response?.type === 'file' && 'opacity-50'} w-full p-2 bg-base-100 flex items-center h-[4em]`}
+        className={`${el?.Response?.type === 'file' && 'opacity-50'} w-full p-2 ${readOnly ? 'bg-base-200 cursor-not-allowed' : 'bg-base-100'} flex items-center h-[4em]`}
       >
         {el?.Response?.value}
       </div>

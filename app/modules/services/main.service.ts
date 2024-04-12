@@ -16,7 +16,6 @@ export class MainClass {
 
   protected async hasAccess(role: string[] | 'all') {
     await this.getUser();
-
     if (!this.user?.id) throw new Error('You are not authorized to perform this action');
 
     if (role === 'all') return true;

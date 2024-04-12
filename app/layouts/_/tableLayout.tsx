@@ -1,5 +1,6 @@
 import { Icons } from '@components';
 import { NavLink, useNavigate } from '@remix-run/react';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 
 const splitCamelCase = (str: string) => {
@@ -86,15 +87,15 @@ export const TableLayout = ({
   };
 
   return (
-    <div className="h-[100%] w-full flex gap-6  flex-col overflow-y-hidden relative ">
+    <div className="h-[100%] w-full flex gap-3  flex-col overflow-y-hidden relative">
       {showHeader && (
         <aside className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <p className="text-[2.2rem] font-bold capitalize">{title}</p>
+            <p className="text-[1.5rem] font-bold capitalize">{title}</p>
             {createLink && (
               <NavLink
                 to={createLink}
-                className="w-20 p-2 text-xs font-bold text-center rounded-lg shadow text-primary bg-secondary"
+                className="w-16 p-1 text-[11px] font-bold text-center text-white rounded-lg shadow bg-secondary"
               >
                 CREATE
               </NavLink>
@@ -104,7 +105,7 @@ export const TableLayout = ({
           <div className="flex items-center justify-end flex-1 gap-2">
             {onPrint && (
               <button
-                className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-white bg-primary"
+                className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-white bg-secondary"
                 onClick={onPrint}
               >
                 <i className="text-sm text-white ri-printer-line"></i>
@@ -120,7 +121,7 @@ export const TableLayout = ({
             <input
               name="search"
               placeholder={searchTitle}
-              className="w-full p-3 outline-none bg-surface "
+              className="w-full p-3 text-sm outline-none bg-surface"
               onChange={onSearch}
             />
           </div>
@@ -131,7 +132,7 @@ export const TableLayout = ({
 
       <aside className="flex-1 h-full overflow-auto whitespace-nowrap">
         {tbody?.length > 0 && (
-          <table className={`${tableSize} w-full  bg-surface text-[0.95rem]`}>
+          <table className={`${tableSize} w-full  bg-surface text-[0.88rem]`}>
             <thead>
               <tr className="sticky border-t-[2px] border-b-[2px] rounded bg-primary text-base-100 border-line">
                 <th className="w-[4em]">#</th>
@@ -169,7 +170,7 @@ export const TableLayout = ({
 
             <tbody className="">
               {tbody?.map((el, i) => (
-                <tr key={i} className="duration-200 border-b even:bg-[#fff1] border-line ">
+                <tr key={el?.id} className="duration-200 border-b even:bg-[#fff1] border-line ">
                   <td className="text-center">{meta?.page * meta?.limit + i + 1 - meta?.limit}</td>
                   {thead?.map((key, i) => (
                     <td key={i} className="p-3 overflow-hidden text-left min-w-[20%] ">
@@ -226,7 +227,7 @@ export const TableLayout = ({
           </button>
         </div>
 
-        <div className="flex items-center justify-end gap-4">
+        <div className="flex items-center justify-end gap-4 text-sm">
           {meta?.page * meta?.limit + 1 - meta?.limit} -{' '}
           {meta?.totalDocs < meta?.page * meta?.limit ? meta?.totalDocs : meta?.page * meta?.limit} of{' '}
           {meta?.totalDocs || 0}

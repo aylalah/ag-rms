@@ -6,8 +6,8 @@ import { useFetcher } from '@remix-run/react';
 /* const email = 'adeolaboluogun@agusto.com';
 const password = 'adeola250398'; */
 
-const email = 'chijiokeudokporo@agusto.com';
-const password = 'chijioke61182';
+const email = 'bamidelejoel@agusto.com';
+const password = 'agusto130476';
 
 export default function LoginForm() {
   const Fetcher = useFetcher({ key: 'login' });

@@ -2,6 +2,7 @@ import { AgustoServicesSdk } from '@helpers/config';
 import { appEncryptData } from '@helpers/validation';
 import { dbQuery } from '@helpers/prisma';
 import { MainClass } from '@modules/services/main.service';
+import axios from 'axios';
 
 export class AuthClass extends MainClass {
   private async EncryptData(data: any) {
@@ -11,19 +12,26 @@ export class AuthClass extends MainClass {
   public async login(input: { email: string; password: string }) {
     console.log(input.email, input.password);
     try {
-      const { email } = input;
+      const { email, password } = input;
       const isAgustoMail = email.includes('@agusto.com');
 
       if (isAgustoMail) {
-        const { user, token, error } = await AgustoServicesSdk.auth.Login({ email, password: input.password });
+        const endPoint = process.env.AGUSTO_SERVICES_URL;
+        const { data } = await axios.post(`${endPoint}/auth/login`, { corporate_email: email, password });
+        const { token, user, error } = data || {};
 
-        if (error) throw new Error(error);
-        const Me = (await AgustoServicesSdk.auth.Me({ token })) as any;
+        if (data?.status === 400) throw new Error(data?.message);
 
-        if (Me.error) throw new Error(Me.error);
+        const Me = await axios.get(`${endPoint}/users/getStaffByempId/${user?.employee_id.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        const userJWT = await this.EncryptData({ ...user, unit: Me?.data?.unit });
-        return { user: Me.data as User, apiToken: token, token: userJWT };
+        const userJWT = await this.EncryptData({
+          ...user,
+          unit: Me?.data?.data?.unit,
+          role: Me?.data?.data?.isAdmin ? 'admin' : 'user',
+        });
+        return { user: Me?.data?.data as User, apiToken: token, token: userJWT };
       }
 
       const user = await dbQuery.client.findFirst({

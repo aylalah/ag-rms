@@ -83,11 +83,11 @@ export default function Rating() {
   }, [FetcherData]);
 
   return (
-    <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
-      <header className="flex items-center justify-between">
+    <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden" style={{ overflow: 'hidden' }}>
+      <header className="flex h-[50px] items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">{ratingQuery?.rating?.clientModel?.companyName}</h1>
-          <p className="font-normal opacity-70">{ratingQuery?.rating?.ratingTitle}</p>
+          <h1 className="text-lg font-bold">{ratingQuery?.rating?.clientModel?.companyName}</h1>
+          <p className="text-sm font-normal opacity-70">{ratingQuery?.rating?.ratingTitle}</p>
           {Fetcher?.data?.storedUrl && (
             <a href={Fetcher?.data?.storedUrl} target="_blank">
               Download
@@ -98,18 +98,24 @@ export default function Rating() {
         {ratingQuery?.rating?.status && (
           <div>
             <div className="dropdown dropdown-end">
-              <button className="btn btn-secondary">Upload Report</button>
-              <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
-                <li>
-                  <button onClick={() => onUpload('draft-report')}>Draft Report</button>
+              <button className="btn btn-outline btn-secondary btn-sm">
+                <i className="ri-upload-cloud-line" />
+                Upload Report
+                <i className="ri-arrow-down-s-fill" />
+              </button>
+              <ul className="p-2 shadow menu dropdown-content z-[1] bg-secondary w-52">
+                <li className="text-white">
+                  <button onClick={() => onUpload('draft-report')}>
+                    <i className="ri-file-pdf-line" />
+                    Draft Report
+                  </button>
                 </li>
 
-                <li>
-                  <button onClick={() => onUpload('committee-agreement')}>Committee Agreement</button>
-                </li>
-
-                <li>
-                  <button onClick={() => onUpload('final-report')}>Final Report</button>
+                <li className="text-white">
+                  <button onClick={() => onUpload('final-report')}>
+                    <i className="ri-file-pdf-line" />
+                    Final Report
+                  </button>
                 </li>
               </ul>
             </div>
@@ -117,8 +123,86 @@ export default function Rating() {
         )}
       </header>
 
-      <div className="flex flex-1 h-full gap-4 ">
-        <div className="flex-1 h-[90%] pb-10 overflow-auto bg-base-200 text-sm">
+      <aside className="flex items-start justify-between gap-4 overflow-hidden">
+        <div className="flex-1 h-full pb-10 overflow-auto text-sm bg-base-200">
+          {Object.keys(ratingQuery?.responses).map((response, i) => (
+            <Accordion key={i} title={response} data={ratingQuery?.responses[response]} defaultChecked={i === 0} />
+          ))}
+        </div>
+
+        <div className="w-[20em] flex flex-col gap-2 ">
+          <div className="p-4 border rounded bg-base-100 border-accent">
+            <div className="flex items-center justify-between flex-1 py-3 border-b">
+              <h2 className="text-xs font-bold uppercase">Summary</h2>
+              <span className={`${ratingQuery?.rating?.status} capitalize text-xs`}>{ratingQuery?.rating?.status}</span>
+            </div>
+
+            <RatingsSummaryCard title="Rating Class" subTitle={ratingQuery?.rating?.ratingClassModel?.name || '-'} />
+
+            <RatingsSummaryCard
+              title="Issue Date"
+              subTitle={
+                !ratingQuery?.rating?.issueDate ? '-' : dayjs(ratingQuery?.rating?.issueDate).format('MMMM DD, YYYY')
+              }
+            />
+
+            <RatingsSummaryCard
+              title="Expiry Date"
+              subTitle={
+                !ratingQuery?.rating?.expiryDate ? '-' : dayjs(ratingQuery?.rating?.expiryDate).format('MMMM DD, YYYY')
+              }
+            />
+          </div>
+
+          <div className="p-4 border rounded bg-base-100 border-accent">
+            <div className="flex-1 py-3 border-b">
+              <h2 className="text-xs font-bold uppercase">Resources</h2>
+            </div>
+
+            <ul className="py-4">
+              <li>
+                <a href={`${ratingQuery?.methodologyModel?.id}`} className="text-sm link-secondary">
+                  Methodology
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <dialog className="modal" ref={UploadRef}>
+          <Fetcher.Form method="post" encType="multipart/form-data">
+            <fieldset disabled={isSubmitting} className="flex flex-col flex-1 gap-6 p-8 rounded-lg shadow bg-base-100">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <h1 className="text-xl font-bold">Select File</h1>
+                  <p className="text-xs opacity-70">Select the file you want to upload</p>
+                </div>
+
+                <i
+                  role="button"
+                  onClick={() => UploadRef.current?.close()}
+                  className="text-2xl cursor-pointer ri-close-circle-fill text-secondary hover:scale-105"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 ">
+                <input type="hidden" name="fileName" defaultValue={`${fileName}`} />
+                <input name="file" type="file" className="file-input-primary file-input input-bordered " required />
+
+                <button className="gap-2 text-base btn btn-secondary">
+                  Upload
+                  {isSubmitting && (
+                    <div className="h-4 w-4 rounded-full animate-spin border-l-[#fff5] border-[3px] border-#fff"></div>
+                  )}
+                </button>
+              </div>
+            </fieldset>
+          </Fetcher.Form>
+        </dialog>
+      </aside>
+
+      {/* <div className="flex h-full gap-4 overflow-hidden ">
+        <div className="flex-1 h-[20%] pb-10 overflow-auto bg-base-200 text-sm">
           {Object.keys(ratingQuery?.responses).map((response, i) => (
             <Accordion key={i} title={response} data={ratingQuery?.responses[response]} defaultChecked={i === 0} />
           ))}
@@ -193,7 +277,7 @@ export default function Rating() {
             </div>
           </fieldset>
         </Fetcher.Form>
-      </dialog>
+      </dialog> */}
     </div>
   );
 }

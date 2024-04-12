@@ -44,11 +44,11 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
   return (
     <div className="h-[100%]">
       <Fetcher.Form method={method} className="flex h-full">
-        <fieldset disabled={isSubmitting} className="grid grid-cols-3 flex-1 overflow-hidden h-[100%] gap-2">
-          <div className="flex flex-col flex-1 h-[100%] col-span-2 gap-4 overflow-auto ">
+        <fieldset disabled={isSubmitting} className="grid grid-cols-4 flex-1 overflow-hidden h-[100%] gap-2">
+          <div className="flex flex-col flex-1 h-[100%] col-span-3 gap-4 overflow-auto ">
             <Title title={`${title} ${props?.slug}`} />
 
-            <div className="flex flex-col col-span-2 gap-4 pt-6 pr-[4em] pb-10">
+            <div className="grid flex-col col-span-2 grid-cols-2 gap-4 pt-6 pr-[4em] pb-10">
               {formObject?.map((el, i: number) => {
                 const field = el?.field;
                 const defaultValue = el.value;
@@ -121,7 +121,7 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
             </div>
           </div>
 
-          <div className="relative flex flex-col gap-4 overflow-hidden border rounded bg-surface border-line">
+          <div className="relative flex flex-col gap-4 overflow-hidden border rounded bg-base-100 border-line">
             <div className="flex flex-col w-full gap-4 p-8 mx-auto overflow-hidden bg-base-100">
               <div className="pt-4">
                 <p className="text-sm font-semibold opacity-60">

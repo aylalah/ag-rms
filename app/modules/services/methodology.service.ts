@@ -50,7 +50,7 @@ export class MethodologyClass extends MainClass {
   async create(input: { data: Prisma.MethodologyCreateInput }) {
     try {
       const { data } = input;
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(['admin']);
       const result = await dbQuery.methodology.create({ data });
 
       this.LogAction({
@@ -68,7 +68,7 @@ export class MethodologyClass extends MainClass {
 
   async update(input: { id: string; data: Prisma.MethodologyUpdateInput }) {
     try {
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(['admin']);
       const { id, data } = input;
 
       const prevDocs = await dbQuery.methodology.findUnique({ where: { id } });
@@ -90,7 +90,7 @@ export class MethodologyClass extends MainClass {
   async delete(input: { id: string }) {
     try {
       const { id } = input;
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(['admin']);
       const result = await dbQuery.methodology.delete({ where: { id } });
       this.LogAction({
         table: 'methodology',

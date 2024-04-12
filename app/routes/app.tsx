@@ -5,6 +5,7 @@ import { Icons } from '@components';
 import { json, LinksFunction, LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { useEffect } from 'react';
+import dayjs from 'dayjs';
 
 interface IRoute {
   name: string;
@@ -34,24 +35,26 @@ const MenuLinks = [
     icon: 'Ratings',
     group: 'menu',
   },
+];
+
+const SettingsLinks = [
   {
     name: 'industries',
     to: '/app/industries',
-    icon: 'Industries',
+    icon: 'ri-building-2-line',
     group: 'menu',
   },
-
   {
     name: 'methodologies',
     to: '/app/methodologies',
-    icon: 'Methodology',
+    icon: 'ri-pie-chart-2-line',
     group: 'admin',
   },
 
   {
     name: 'questionnaires',
     to: '/app/questionnaires',
-    icon: 'Questionnaire',
+    icon: 'ri-pie-chart-2-line',
     group: 'admin',
   },
 ];
@@ -81,8 +84,19 @@ export default function App() {
   useEffect(() => setUser(user as User), [user]);
 
   return (
-    <MenuLayout links={MenuLinks}>
-      <Outlet />
+    <MenuLayout links={MenuLinks} settings={SettingsLinks}>
+      <div className="flex-1 overflow-hidden">
+        <Outlet />
+      </div>
+
+      <footer className="flex items-center justify-between py-4 text-xs font-bold ">
+        <div className="opacity-40"> &copy; Copyright Agusto & Co.{dayjs().format('YYYY')}. </div>
+
+        <div className="flex items-center justify-start gap-4 text-xs opacity-40">
+          <a href="#">Term of service</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </footer>
     </MenuLayout>
   );
 }

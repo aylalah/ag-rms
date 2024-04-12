@@ -20,8 +20,13 @@ div.Toastify__toast-body div {
   @apply px-6 mx-auto lg:px-0 lg:max-w-[95%] w-full;
 }
 
-.app-menu .active {
-  @apply bg-primary text-base-100 opacity-100;
+a {
+  @apply transition-all;
+}
+
+.app-menu .active,
+.app-menu a:hover {
+  @apply bg-primary text-base-100 opacity-100 transition-all;
 }
 
 .map {
