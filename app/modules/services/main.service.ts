@@ -29,7 +29,7 @@ export class MainClass {
 
     const message = action === 'login' ? `User ${action}` : `${table} table was ${action}d`;
     await dbQuery.log.create({
-      data: { user, table, action, message, prevDocs: previousDocs, newDocs: newerDocs },
+      data: { user: JSON.stringify(this.user), table, action, message, prevDocs: previousDocs, newDocs: newerDocs },
     });
 
     return 'Logged';

@@ -57,6 +57,20 @@ const SettingsLinks = [
     icon: 'ri-pie-chart-2-line',
     group: 'admin',
   },
+
+  {
+    name: 'logs',
+    to: '/app/questionnaires',
+    icon: 'ri-list-check-2',
+    group: 'admin',
+  },
+
+  {
+    name: 'logout',
+    to: '/auth/logout',
+    icon: 'ri-logout-box-line',
+    group: 'admin',
+  },
 ];
 
 export const groupedClientRoutes = MenuLinks.map((route) => {

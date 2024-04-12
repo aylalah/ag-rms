@@ -52,7 +52,7 @@ export class ContactClass extends MainClass {
   async create(input: { data: Prisma.ContactCreateInput }) {
     try {
       const { data } = input;
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess('all');
       const result = await dbQuery.contact.create({ data });
 
       this.LogAction({
@@ -70,7 +70,7 @@ export class ContactClass extends MainClass {
 
   async update(input: { id: string; data: Prisma.ContactUpdateInput }) {
     try {
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess('all');
       const { id, data } = input;
 
       const prevDocs = await dbQuery.contact.findUnique({ where: { id } });
@@ -92,7 +92,7 @@ export class ContactClass extends MainClass {
   async delete(input: { id: string }) {
     try {
       const { id } = input;
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess('all');
       const result = await dbQuery.contact.delete({ where: { id } });
       this.LogAction({
         table: 'contact',
