@@ -1,16 +1,16 @@
 import { convertZodSchema } from '@helpers/utils';
 import { dbQuery } from '@helpers/prisma';
 import { DefaultArgs } from '@prisma/client/runtime/library';
-import { IndustrySchema } from '@helpers/zodPrisma';
-import { MainClass } from './main.service';
+import { MainClass } from '../services/main.service';
+import { MethodologySchema } from '@helpers/zodPrisma';
 import { Prisma } from '@prisma/client';
 
-interface AllArgs extends Prisma.IndustryFindManyArgs {
+interface AllArgs extends Prisma.MethodologyFindManyArgs {
   limit: number;
   page: number;
 }
 
-export class IndustryClass extends MainClass {
+export class MethodologyClass extends MainClass {
   async all(args: AllArgs) {
     try {
       await this.hasAccess('all');
@@ -19,8 +19,8 @@ export class IndustryClass extends MainClass {
       const take = limit || 10;
       const skip = (setPage - 1) * take || 0;
       const industries = await dbQuery.$transaction([
-        dbQuery.industry.findMany({ where, orderBy, take, skip, include }),
-        dbQuery.industry.count({ where }),
+        dbQuery.methodology.findMany({ where, orderBy, take, skip, include: { ...include } }),
+        dbQuery.methodology.count({ where }),
       ]);
 
       const [docs, totalDocs] = industries;
@@ -28,60 +28,60 @@ export class IndustryClass extends MainClass {
       const hasNextPage = setPage < totalPages;
       const hasPrevPage = setPage > 1;
 
-      return { industries: { page: setPage, limit: take, totalPages, totalDocs, hasNextPage, hasPrevPage, docs } };
+      return { methodologies: { page: setPage, limit: take, totalPages, totalDocs, hasNextPage, hasPrevPage, docs } };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async one(input: { id: string; include?: Prisma.IndustryInclude<DefaultArgs> | null | undefined }) {
+  async one(input: { id: string; include?: Prisma.MethodologyInclude<DefaultArgs> | null | undefined }) {
     try {
       await this.hasAccess('all');
 
       const { id, include } = input;
-      const industry = await dbQuery.industry.findUnique({ where: { id }, include });
+      const methodology = await dbQuery.methodology.findUnique({ where: { id }, include });
 
-      return { industry };
+      return { methodology };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async create(input: { data: Prisma.IndustryCreateInput }) {
+  async create(input: { data: Prisma.MethodologyCreateInput }) {
     try {
       const { data } = input;
-      await this.hasAccess(['admin', 'hod']);
-      const industry = await dbQuery.industry.create({ data });
+      await this.hasAccess(['admin']);
+      const result = await dbQuery.methodology.create({ data });
 
       this.LogAction({
-        table: 'industry',
+        table: 'methodology',
         action: 'create',
         prevDocs: '',
-        newDocs: JSON.stringify(industry),
+        newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { createIndustry: 'Industry successfully created', industry };
+      return { createMethodology: 'Methodology successfully created' };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async update(input: { id: string; data: Prisma.IndustryUpdateInput }) {
+  async update(input: { id: string; data: Prisma.MethodologyUpdateInput }) {
     try {
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(['admin']);
       const { id, data } = input;
 
-      const prevDocs = await dbQuery.industry.findUnique({ where: { id } });
-      const result = await dbQuery.industry.update({ where: { id }, data });
+      const prevDocs = await dbQuery.methodology.findUnique({ where: { id } });
+      const result = await dbQuery.methodology.update({ where: { id }, data });
 
       this.LogAction({
-        table: 'industry',
+        table: 'methodology',
         action: 'update',
         prevDocs: JSON.stringify(prevDocs),
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { updateIndustry: 'Industry successfully updated' };
+      return { updateMethodology: 'Methodology successfully updated' };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -90,16 +90,16 @@ export class IndustryClass extends MainClass {
   async delete(input: { id: string }) {
     try {
       const { id } = input;
-      await this.hasAccess(['admin', 'hod']);
-      const result = await dbQuery.industry.delete({ where: { id } });
+      await this.hasAccess(['admin']);
+      const result = await dbQuery.methodology.delete({ where: { id } });
       this.LogAction({
-        table: 'industry',
+        table: 'methodology',
         action: 'delete',
         prevDocs: '',
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { deleteIndustry: 'Industry successfully deleted' };
+      return { deleteMethodology: 'Methodology successfully deleted' };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -107,8 +107,10 @@ export class IndustryClass extends MainClass {
 
   async formObject() {
     try {
-      const formObject = convertZodSchema(IndustrySchema);
-      return { formObject };
+      const data = convertZodSchema(MethodologySchema);
+      const industry = await dbQuery.industry.findMany({ select: { id: true, name: true } });
+      const dataList = data.filter((el) => el?.field !== 'ratingModel');
+      return { formObject: dataList };
     } catch (error: unknown) {
       return { error: 'Something went wrong' };
     }

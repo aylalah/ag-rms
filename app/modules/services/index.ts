@@ -1,10 +1,10 @@
-import { AuthClass } from './auth.service';
-import { ClientClass } from './client.service';
-import { ContactClass } from '@modules/services/contact.service';
-import { IndustryClass } from './industry.service';
+import { AuthClass } from '../auth/auth.service';
+import { ClientClass } from '../client/client.service';
+import { ContactClass } from '@modules/contact/contact.service';
+import { IndustryClass } from '../industry/industry.service';
 import { MainClass } from './main.service';
-import { MethodologyClass } from './methodology.service';
-import { QuestionnaireClass } from './questionnaire.service';
+import { MethodologyClass } from '../methodology/methodology.service';
+import { QuestionnaireClass } from '../questionnaire/questionnaire.service';
 import { RatingClass } from '@modules/services/rating.service';
 
 class RMSClass extends MainClass {

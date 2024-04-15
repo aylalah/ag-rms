@@ -1,16 +1,16 @@
+import { ContactSchema } from '@helpers/zodPrisma';
 import { convertZodSchema } from '@helpers/utils';
 import { dbQuery } from '@helpers/prisma';
 import { DefaultArgs } from '@prisma/client/runtime/library';
-import { MainClass } from './main.service';
+import { MainClass } from '../services/main.service';
 import { Prisma } from '@prisma/client';
-import { QuestionnaireSchema } from '@helpers/zodPrisma';
 
-interface AllArgs extends Prisma.QuestionnaireFindManyArgs {
+interface AllArgs extends Prisma.ContactFindManyArgs {
   limit: number;
   page: number;
 }
 
-export class QuestionnaireClass extends MainClass {
+export class ContactClass extends MainClass {
   async all(args: AllArgs) {
     try {
       await this.hasAccess('all');
@@ -19,8 +19,8 @@ export class QuestionnaireClass extends MainClass {
       const take = limit || 10;
       const skip = (setPage - 1) * take || 0;
       const industries = await dbQuery.$transaction([
-        dbQuery.questionnaire.findMany({ where, orderBy, take, skip, include: { ...include } }),
-        dbQuery.questionnaire.count({ where }),
+        dbQuery.contact.findMany({ where, orderBy, take, skip }),
+        dbQuery.contact.count({ where }),
       ]);
 
       const [docs, totalDocs] = industries;
@@ -28,60 +28,62 @@ export class QuestionnaireClass extends MainClass {
       const hasNextPage = setPage < totalPages;
       const hasPrevPage = setPage > 1;
 
-      return { questionnaires: { page: setPage, limit: take, totalPages, totalDocs, hasNextPage, hasPrevPage, docs } };
+      return { contacts: { page: setPage, limit: take, totalPages, totalDocs, hasNextPage, hasPrevPage, docs } };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async one(input: { id: string; include?: Prisma.QuestionnaireInclude<DefaultArgs> | null | undefined }) {
+  async one(input: { id: string; include?: Prisma.ContactInclude<DefaultArgs> | null | undefined }) {
     try {
       await this.hasAccess('all');
 
       const { id, include } = input;
-      const questionnaire = await dbQuery.questionnaire.findUnique({ where: { id }, include });
+      const contact = await dbQuery.contact.findUnique({
+        where: { id },
+      });
 
-      return { questionnaire };
+      return { contact };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async create(input: { data: Prisma.QuestionnaireCreateInput }) {
+  async create(input: { data: Prisma.ContactCreateInput }) {
     try {
       const { data } = input;
-      await this.hasAccess(['admin']);
-      const result = await dbQuery.questionnaire.create({ data });
+      await this.hasAccess('all');
+      const result = await dbQuery.contact.create({ data });
 
       this.LogAction({
-        table: 'questionnaire',
+        table: 'contact',
         action: 'create',
         prevDocs: '',
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { createQuestionnaire: 'Questionnaire successfully created' };
+      return { createContact: 'Contact successfully created' };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async update(input: { id: string; data: Prisma.QuestionnaireUpdateInput }) {
+  async update(input: { id: string; data: Prisma.ContactUpdateInput }) {
     try {
-      await this.hasAccess(['admin']);
+      await this.hasAccess('all');
       const { id, data } = input;
 
-      const prevDocs = await dbQuery.questionnaire.findUnique({ where: { id } });
-      const result = await dbQuery.questionnaire.update({ where: { id }, data });
+      const prevDocs = await dbQuery.contact.findUnique({ where: { id } });
+      const result = await dbQuery.contact.update({ where: { id }, data });
 
       this.LogAction({
-        table: 'questionnaire',
+        table: 'contact',
         action: 'update',
         prevDocs: JSON.stringify(prevDocs),
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { updateQuestionnaire: 'Questionnaire successfully updated' };
+      return { updateContact: 'Contact successfully updated' };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -90,16 +92,16 @@ export class QuestionnaireClass extends MainClass {
   async delete(input: { id: string }) {
     try {
       const { id } = input;
-      await this.hasAccess(['admin', 'hod']);
-      const result = await dbQuery.questionnaire.delete({ where: { id } });
+      await this.hasAccess('all');
+      const result = await dbQuery.contact.delete({ where: { id } });
       this.LogAction({
-        table: 'questionnaire',
+        table: 'contact',
         action: 'delete',
         prevDocs: '',
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { deleteQuestionnaire: 'Questionnaire successfully deleted' };
+      return { deleteContact: 'Contact successfully deleted' };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -107,9 +109,18 @@ export class QuestionnaireClass extends MainClass {
 
   async formObject() {
     try {
-      const data = convertZodSchema(QuestionnaireSchema);
+      const data = convertZodSchema(ContactSchema);
       const industry = await dbQuery.industry.findMany({ select: { id: true, name: true } });
-      const dataList = data.filter((el) => el?.field !== 'ratingModel');
+      const dataList = data
+        .filter((el) => el?.field !== 'role')
+        .map((el) => {
+          if (el.field === 'industry') {
+            el.type = 'object';
+            el.list = industry.map((el) => ({ id: el.id, name: el.name }));
+          }
+          return el;
+        });
+
       return { formObject: dataList };
     } catch (error: unknown) {
       return { error: 'Something went wrong' };

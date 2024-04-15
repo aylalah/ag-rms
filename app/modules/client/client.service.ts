@@ -1,16 +1,16 @@
-import { ContactSchema } from '@helpers/zodPrisma';
+import { ClientSchema } from '@helpers/zodPrisma';
 import { convertZodSchema } from '@helpers/utils';
 import { dbQuery } from '@helpers/prisma';
 import { DefaultArgs } from '@prisma/client/runtime/library';
-import { MainClass } from './main.service';
+import { MainClass } from '../services/main.service';
 import { Prisma } from '@prisma/client';
 
-interface AllArgs extends Prisma.ContactFindManyArgs {
-  limit: number;
-  page: number;
+interface AllArgs extends Prisma.ClientFindManyArgs {
+  limit?: number;
+  page?: number;
 }
 
-export class ContactClass extends MainClass {
+export class ClientClass extends MainClass {
   async all(args: AllArgs) {
     try {
       await this.hasAccess('all');
@@ -19,8 +19,8 @@ export class ContactClass extends MainClass {
       const take = limit || 10;
       const skip = (setPage - 1) * take || 0;
       const industries = await dbQuery.$transaction([
-        dbQuery.contact.findMany({ where, orderBy, take, skip }),
-        dbQuery.contact.count({ where }),
+        dbQuery.client.findMany({ where, orderBy, take, skip, include: { ...include, industryModel: true } }),
+        dbQuery.client.count({ where }),
       ]);
 
       const [docs, totalDocs] = industries;
@@ -28,62 +28,73 @@ export class ContactClass extends MainClass {
       const hasNextPage = setPage < totalPages;
       const hasPrevPage = setPage > 1;
 
-      return { contacts: { page: setPage, limit: take, totalPages, totalDocs, hasNextPage, hasPrevPage, docs } };
+      return {
+        clients: {
+          page: setPage,
+          limit: take,
+          totalPages,
+          totalDocs,
+          hasNextPage,
+          hasPrevPage,
+          docs,
+        },
+      };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async one(input: { id: string; include?: Prisma.ContactInclude<DefaultArgs> | null | undefined }) {
+  async one(input: { id: string; include?: Prisma.ClientInclude<DefaultArgs> | null | undefined }) {
     try {
       await this.hasAccess('all');
 
       const { id, include } = input;
-      const contact = await dbQuery.contact.findUnique({
+      const client = await dbQuery.client.findUnique({
         where: { id },
+        include: { industryModel: true, contactModel: true, ...include },
       });
 
-      return { contact };
+      return { client };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async create(input: { data: Prisma.ContactCreateInput }) {
+  async create(input: { data: Prisma.ClientCreateInput }) {
     try {
       const { data } = input;
-      await this.hasAccess('all');
-      const result = await dbQuery.contact.create({ data });
+      await this.hasAccess(['admin', 'hod']);
+      const result = await dbQuery.client.create({ data });
 
       this.LogAction({
-        table: 'contact',
+        table: 'client',
         action: 'create',
         prevDocs: '',
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { createContact: 'Contact successfully created' };
+      return { createClient: 'Client successfully created' };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async update(input: { id: string; data: Prisma.ContactUpdateInput }) {
+  async update(input: { id: string; data: Prisma.ClientUpdateInput }) {
     try {
-      await this.hasAccess('all');
+      await this.hasAccess(['admin', 'hod']);
       const { id, data } = input;
 
-      const prevDocs = await dbQuery.contact.findUnique({ where: { id } });
-      const result = await dbQuery.contact.update({ where: { id }, data });
+      const prevDocs = await dbQuery.client.findUnique({ where: { id } });
+      const result = await dbQuery.client.update({ where: { id }, data });
 
       this.LogAction({
-        table: 'contact',
+        table: 'client',
         action: 'update',
         prevDocs: JSON.stringify(prevDocs),
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { updateContact: 'Contact successfully updated' };
+      return { updateClient: 'Client successfully updated' };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -92,16 +103,16 @@ export class ContactClass extends MainClass {
   async delete(input: { id: string }) {
     try {
       const { id } = input;
-      await this.hasAccess('all');
-      const result = await dbQuery.contact.delete({ where: { id } });
+      await this.hasAccess(['admin', 'hod']);
+      const result = await dbQuery.client.delete({ where: { id } });
       this.LogAction({
-        table: 'contact',
+        table: 'client',
         action: 'delete',
         prevDocs: '',
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { deleteContact: 'Contact successfully deleted' };
+      return { deleteClient: 'Client successfully deleted' };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -109,7 +120,7 @@ export class ContactClass extends MainClass {
 
   async formObject() {
     try {
-      const data = convertZodSchema(ContactSchema);
+      const data = convertZodSchema(ClientSchema);
       const industry = await dbQuery.industry.findMany({ select: { id: true, name: true } });
       const dataList = data
         .filter((el) => el?.field !== 'role')

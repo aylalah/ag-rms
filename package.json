@@ -11,7 +11,6 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@agustodev/agusto-services-sdk": "^0.0.6",
     "@aws-sdk/client-s3": "^3.554.0",
     "@aws-sdk/lib-storage": "^3.554.0",
     "@prisma/client": "^5.12.1",
@@ -25,6 +24,7 @@
     "aws-sdk": "^2.1598.0",
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.2",
     "crypto-js": "^4.2.0",
     "daisyui": "latest",
     "dayjs": "^1.11.10",
@@ -34,10 +34,12 @@
     "multer-s3": "^3.0.1",
     "numeral": "^2.0.6",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-toastify": "^10.0.5",
     "remix-flat-routes": "^0.6.4",
     "unimport": "^3.7.1",
+    "vitest": "^1.5.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
