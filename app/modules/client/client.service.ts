@@ -8,6 +8,8 @@ import { Prisma } from '@prisma/client';
 interface AllArgs extends Prisma.ClientFindManyArgs {
   limit?: number;
   page?: number;
+  where?: Prisma.ClientWhereInput;
+  orderBy?: Prisma.Enumerable<Prisma.ClientOrderByWithRelationInput>;
 }
 
 export class ClientClass extends MainClass {

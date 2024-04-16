@@ -3,7 +3,13 @@ import MenuLayout from '@layouts/menu-layout';
 import useAppStore from '@stores';
 import { appCookie, validateCookie } from '@helpers/cookies';
 import { Icons } from '@components';
-import { json, LinksFunction, LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node';
+import {
+  json,
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+  redirect
+  } from '@remix-run/node';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { useEffect } from 'react';
 
@@ -17,54 +23,21 @@ interface IRoute {
 const sortOrder = ['menu', 'admin'];
 
 const MenuLinks = [
-  {
+  /*  {
     name: 'dashboard',
-    to: '/app/dashboard',
+    to: '/client/dashboard',
     icon: 'Dashboard',
     group: 'menu',
-  },
-  {
-    name: 'clients',
-    to: '/app/clients',
-    icon: 'Clients',
-    group: 'menu',
-  },
+  }, */
   {
     name: 'ratings',
-    to: '/app/ratings',
+    to: '/client/ratings',
     icon: 'Ratings',
     group: 'menu',
   },
 ];
 
 const SettingsLinks = [
-  {
-    name: 'industries',
-    to: '/app/industries',
-    icon: 'ri-building-2-line',
-    group: 'menu',
-  },
-  {
-    name: 'methodologies',
-    to: '/app/methodologies',
-    icon: 'ri-pie-chart-2-line',
-    group: 'admin',
-  },
-
-  {
-    name: 'questionnaires',
-    to: '/app/questionnaires',
-    icon: 'ri-pie-chart-2-line',
-    group: 'admin',
-  },
-
-  {
-    name: 'logs',
-    to: '/app/questionnaires',
-    icon: 'ri-list-check-2',
-    group: 'admin',
-  },
-
   {
     name: 'logout',
     to: '/auth/logout',
@@ -87,15 +60,15 @@ export const groupedClientRoutes = MenuLinks.map((route) => {
   }, {});
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { user, token } = await validateCookie(request);
-  if (!user) return redirect('/', { headers: { 'Set-Cookie': await appCookie.serialize('', { maxAge: 0 }) } });
-  return json({ user });
+  const { token, client } = await validateCookie(request);
+  if (!client) return redirect('/', { headers: { 'Set-Cookie': await appCookie.serialize('', { maxAge: 0 }) } });
+  return json({ client });
 };
 
 export default function App() {
-  const { user } = useLoaderData<typeof loader>();
-  const { setUser } = useAppStore.user((state) => state);
-  useEffect(() => setUser(user as User), [user]);
+  const { client } = useLoaderData<typeof loader>();
+  const { setClient } = useAppStore.user((state) => state);
+  useEffect(() => setClient(client as any), [client]);
 
   return (
     <MenuLayout links={MenuLinks} settings={SettingsLinks}>

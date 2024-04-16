@@ -1,6 +1,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import RatingsSummaryCard from '@ui/cards/rating-summary-card';
+import useAppStore from '@stores';
 import { Accordion, Avatar } from '@components';
 import { Duplex } from 'stream';
 import { NavLink, useFetcher, useLoaderData } from '@remix-run/react';
@@ -56,14 +57,26 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { storedUrl, error } = await uploadFileHandler(request);
-  return json({ storedUrl, error });
+  const method = request.method;
+
+  if (method === 'POST') {
+    const { storedUrl, error } = await uploadFileHandler(request);
+    return json({ storedUrl, error });
+  }
+
+  if (method === 'PATCH') {
+    const fd = await request.formData();
+    const body = Object.fromEntries(fd.entries()) as any;
+    console.log(body);
+    return {};
+  }
 }
 
 export default function Rating() {
-  const Fetcher = useFetcher();
+  const Fetcher = useFetcher({ key: 'upload' });
   const FetcherData = Fetcher.data as { storedUrl: string; error: string };
   const UploadRef = useRef<HTMLDialogElement>(null);
+  const DataRef = useRef<HTMLFormElement>(null);
   const { ratingQuery } = useLoaderData<typeof loader>();
   const [fileName, setFileName] = useState<string | null>(null);
   const isSubmitting = Fetcher.state === 'submitting';
@@ -94,49 +107,55 @@ export default function Rating() {
             </a>
           )}
         </div>
-
-        {ratingQuery?.rating?.status && (
-          <div>
-            <div className="dropdown dropdown-end">
-              <button className="btn btn-outline btn-secondary btn-sm">
-                <i className="ri-upload-cloud-line" />
-                Upload Report
-                <i className="ri-arrow-down-s-fill" />
-              </button>
-              <ul className="p-2 shadow menu dropdown-content z-[1] bg-secondary w-52">
-                <li className="text-white">
-                  <button onClick={() => onUpload('draft-report')}>
-                    <i className="ri-file-pdf-line" />
-                    Draft Report
-                  </button>
-                </li>
-
-                <li className="text-white">
-                  <button onClick={() => onUpload('final-report')}>
-                    <i className="ri-file-pdf-line" />
-                    Final Report
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </div>
-        )}
       </header>
 
-      <aside className="flex items-start justify-between gap-4 overflow-hidden">
-        <div className="flex-1 h-full pb-10 overflow-auto text-sm bg-base-200">
-          {Object.keys(ratingQuery?.responses).map((response, i) => (
-            <Accordion
-              accountType="user"
-              key={i}
-              title={response}
-              data={ratingQuery?.responses[response]}
-              defaultChecked={i === 0}
-            />
-          ))}
+      <Fetcher.Form method="patch" className="flex items-start justify-between gap-4 overflow-hidden">
+        {/* Accordion Pane */}
+        <div className="flex-col flex-1 h-full">
+          <fieldset className="flex-col flex-1 h-full gap-2 pb-2 overflow-auto text-sm bg-base-200">
+            {Object.keys(ratingQuery?.responses).map((response, i) => (
+              <Accordion
+                accountType="client"
+                key={i}
+                title={response}
+                data={ratingQuery?.responses[response]}
+                defaultChecked={i === 0}
+              />
+            ))}
+          </fieldset>
         </div>
 
+        {/* Summary Pane */}
         <div className="w-[20em] flex flex-col gap-2 ">
+          <div className="flex items-center justify-between gap-4">
+            <button className="btn btn-secondary">Save & Continue Later</button>
+
+            {ratingQuery?.rating?.status && (
+              <div className="w-full dropdown dropdown-end">
+                <button className="btn btn-outline btn-secondary">
+                  <i className="ri-upload-cloud-line" />
+                  Upload
+                  <i className="ri-arrow-down-s-fill" />
+                </button>
+                <ul className="p-2 shadow menu dropdown-content z-[1] bg-secondary w-52">
+                  <li className="text-white">
+                    <button onClick={() => onUpload('draft-report')}>
+                      <i className="ri-file-pdf-line" />
+                      Draft Report
+                    </button>
+                  </li>
+
+                  <li className="text-white">
+                    <button onClick={() => onUpload('final-report')}>
+                      <i className="ri-file-pdf-line" />
+                      Final Report
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+
           <div className="p-4 border rounded bg-base-100 border-accent">
             <div className="flex items-center justify-between flex-1 py-3 border-b">
               <h2 className="text-xs font-bold uppercase">Summary</h2>
@@ -175,6 +194,7 @@ export default function Rating() {
           </div>
         </div>
 
+        {/* Upload Dialog */}
         <dialog className="modal" ref={UploadRef}>
           <Fetcher.Form method="post" encType="multipart/form-data">
             <fieldset disabled={isSubmitting} className="flex flex-col flex-1 gap-6 p-8 rounded-lg shadow bg-base-100">
@@ -205,7 +225,7 @@ export default function Rating() {
             </fieldset>
           </Fetcher.Form>
         </dialog>
-      </aside>
+      </Fetcher.Form>
 
       {/* <div className="flex h-full gap-4 overflow-hidden ">
         <div className="flex-1 h-[20%] pb-10 overflow-auto bg-base-200 text-sm">

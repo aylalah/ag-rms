@@ -131,7 +131,7 @@ export default function ClientEdit() {
         <div className="flex flex-col flex-1 h-full gap-3">
           <div className="grid flex-1 grid-cols-3 gap-2">
             <Card title="Industry" subTitle={client?.industryModel?.name} />
-            <Card title="Company Email" subTitle={client?.companyEmail} />
+            <Card title="Email" subTitle={client?.email} />
             <Card title="Company Phone Numbers" subTitle={client?.companyPhoneNumbers || '-'} />
             <Card title="NumberAnd  Street" subTitle={client?.numberAndStreet || '-'} />
             <Card title="building" subTitle={client?.building || '-'} />

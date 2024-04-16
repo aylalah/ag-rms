@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { AgustoServicesSdk } from '@helpers/config';
 import { appDecryptData } from '@helpers/validation';
 import { convertZodSchema } from '@helpers/utils';
@@ -6,11 +7,13 @@ import { DefaultArgs } from '@prisma/client/runtime/library';
 import { MainClass } from './main.service';
 import { Prisma } from '@prisma/client';
 import { RatingSchema, RatingStatusSchema } from '@helpers/zodPrisma';
-import axios from 'axios';
 
 interface AllArgs extends Prisma.RatingFindManyArgs {
   limit: number;
   page: number;
+  include?: Prisma.RatingInclude<DefaultArgs>;
+  where?: Prisma.RatingWhereInput;
+  orderBy?: Prisma.Enumerable<Prisma.RatingOrderByWithRelationInput>;
 }
 
 export class RatingClass extends MainClass {

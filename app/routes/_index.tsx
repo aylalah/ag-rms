@@ -15,11 +15,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const fd = await request.formData();
     const body = loginSchema.parse(Object.fromEntries(fd));
-    const { token, user, error, apiToken } = await RMSservice().auth.login(body);
+    const { token, user, error, apiToken, client, message } = await RMSservice().auth.login(body);
 
-    if (token) {
+    if (message) {
+      return redirectDocument(`/auth/email-confirmation?email=${body.email}`, {
+        headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
+      });
+    }
+
+    if (token && user) {
       return redirectDocument('/app/dashboard', {
         headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
+      });
+    }
+
+    if (client && token) {
+      return redirectDocument('/client/dashboard', {
+        headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, client })) },
       });
     }
 
@@ -47,3 +59,5 @@ export default function Index() {
     </div>
   );
 }
+
+//https://dev.localhost/auth/magic-link?token=p5kb7lfyq6sns7ztywlkko'

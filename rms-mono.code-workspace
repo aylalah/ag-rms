@@ -5,7 +5,7 @@
     { "name": "app", "path": "./app" },
     { "name": "components", "path": "./app/components" },
     { "name": "ui", "path": "./app/ui" },
-    { "name": "services", "path": "./app/modules/services" },
+    { "name": "modules", "path": "./app/modules" },
     { "name": "routes", "path": "./app/routes" },
   ],
   "settings": {

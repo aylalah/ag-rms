@@ -6,9 +6,11 @@ export default function Accordion({
   title,
   defaultChecked = false,
   data,
+  accountType,
 }: {
   title?: string;
   defaultChecked?: boolean;
+  accountType?: 'user' | 'client';
   data: any;
 }) {
   let totalQuestions = data.length;
@@ -63,7 +65,7 @@ export default function Accordion({
         <div className="pt-4">
           {data.map((item: any, i: number) => (
             <div key={i} className="flex flex-col justify-between w-full gap-2 p-3 py-2 border-t border-gray-300">
-              <AccordionCard key={i} index={i} el={item} isMain />
+              <AccordionCard key={i} index={i} el={item} isMain readOnly={accountType === 'user'} />
               <span>
                 {item?.SubQuestion?.length > 0 && (
                   <div className="grid grid-cols-2 gap-4">
@@ -102,13 +104,12 @@ const AccordionCard = ({
     </h3>
 
     <div className="flex gap-2">
-      <div
-        contentEditable={!readOnly}
+      <textarea
+        name={el?.Question}
+        disabled={readOnly}
         defaultValue={el?.Response?.value}
-        className={`${el?.Response?.type === 'file' && 'opacity-50'} w-full p-2 ${readOnly ? 'bg-base-200 cursor-not-allowed' : 'bg-base-100'} flex items-center h-[4em]`}
-      >
-        {el?.Response?.value}
-      </div>
+        className={`${el?.Response?.type === 'file' && 'opacity-50'} w-full p-2 resize-none ${readOnly ? 'bg-base-200 cursor-not-allowed' : 'bg-base-100'} flex items-center h-[4em]`}
+      />
 
       <div className="relative flex items-center justify-center gap-1 px-4 overflow-hidden border rounded bg-base-100 ">
         {/* <i className="ri-upload-2-line" /> */}

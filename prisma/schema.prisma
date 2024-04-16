@@ -89,7 +89,7 @@ model Client {
   username            String    @unique
   password            String
   companyName         String
-  companyEmail        String    @unique
+  email        String    @unique
   logo                String?
   companyPhoneNumbers String?
   numberAndStreet     String?
@@ -103,6 +103,7 @@ model Client {
   contactModel        Contact[]
   ratingModel         Rating[]
   createdBy           String?
+  magicToken  String?
   isDeleted           Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
