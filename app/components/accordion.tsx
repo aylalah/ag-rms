@@ -69,7 +69,9 @@ export default function Accordion({
               <span>
                 {item?.SubQuestion?.length > 0 && (
                   <div className="grid grid-cols-2 gap-4">
-                    {item?.SubQuestion?.map((el: any, ii: number) => <AccordionCard key={ii} index={ii} el={el} />)}
+                    {item?.SubQuestion?.map((el: any, ii: number) => (
+                      <AccordionCard key={ii} index={ii} el={el} isMain readOnly={accountType === 'user'} />
+                    ))}
                   </div>
                 )}
               </span>

@@ -43,20 +43,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       res.data as {
         Header: string;
         Question: string;
-        SubQuestion: any;
         Response: { value: string; type: string }[];
       }[]
   );
 
-  data.responses = questions.map((question) => {
-    const { SubQuestion, ...rest } = question || {};
-    return {
-      ...rest,
-      Response: null,
-      SubQuestion:
-        typeof SubQuestion !== 'object' ? [] : SubQuestion?.map((el: any) => ({ Question: el, Response: null })),
-    };
-  });
+  data.responses = questions.map((question) => question);
 
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });

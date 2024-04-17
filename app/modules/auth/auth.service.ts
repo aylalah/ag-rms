@@ -40,27 +40,25 @@ export class AuthClass extends MainClass {
       if (!user) throw new Error('User not found');
       const { password: userPassword, ...rest } = user;
 
-      const magicToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      const magicLink = `${rootUrl}/auth/magic-link?token=${magicToken}`;
-
+      //six digit token
+      const magicToken = Math.floor(100000 + Math.random() * 900000).toString();
       await dbQuery.client.update({ where: { id: user.id }, data: { magicToken } });
 
-      console.log({ magicLink });
       //send magic link to user email
       sendEmailService({
         From: '',
         To: email,
-        Subject: 'Agusto Rating App - Login Link',
+        Subject: 'Agusto Rating System Login Token',
         HtmlBody: `
-        <h1>Agusto Rating Mgt System - Login Link</h1>
+        <h2>Agusto Rating Mgt System - Login Token</h2>
         <p>Hello ${email},</p>
-        <p>Please click on the link below to login to your account</p>
-        <a href="${magicLink}">Click here to login</a>
+        <p>Please see your six digit token below</p>
+        <h2>${magicToken}</h2>
 
         <p>Thank you</p>
         <p>Agusto & Co.</p>`,
 
-        TextBody: `Hello ${email},\nPlease click on the link below to login to your account\n${magicLink}`,
+        TextBody: `Hello ${email}, Please see your six digit token below ${magicToken}`,
       });
 
       return { message: 'Login link sent to your email', user: rest, apiToken: null, client: null };
@@ -69,13 +67,14 @@ export class AuthClass extends MainClass {
     }
   }
 
-  public async magicLinkLogin(token: string) {
+  public async magicLinkLogin(input: { email: string; token: string }) {
     try {
+      const { email, token } = input;
       const user = await dbQuery.client.findFirst({
-        where: { magicToken: token },
+        where: { magicToken: token, email },
       });
 
-      if (!user) throw new Error('User not found');
+      if (!user) throw new Error('Wrong token or email. Please use the correct token sent to your email');
       //await dbQuery.client.update({ where: { id: user.id }, data: { magicToken: null } });
 
       const { password, ...rest } = user;

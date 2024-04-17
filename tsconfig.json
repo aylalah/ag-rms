@@ -1,5 +1,5 @@
 {
-  "include": ["env.d.ts", "**/*.ts", "**/*.tsx", "prisma/seed.js"],
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx", "prisma/seed.js", "app/routes/client+/ratings.$id copy"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,

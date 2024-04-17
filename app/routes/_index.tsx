@@ -18,7 +18,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const { token, user, error, apiToken, client, message } = await RMSservice().auth.login(body);
 
     if (message) {
-      return redirectDocument(`/auth/email-confirmation?email=${body.email}`, {
+      return redirectDocument(`/auth/client-validation?email=${body.email}`, {
         headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
       });
     }
@@ -50,8 +50,21 @@ export default function Index() {
   }, [fetcherData]);
 
   return (
-    <div className="flex h-screen bg-primary">
-      <div className="flex-1 bg-primary"></div>
+    <div className="flex h-screen bg-primary map">
+      <div className="flex flex-col justify-center gap-6 flex-1 p-[10em] text-white relative">
+        <h1 className="text-6xl font-bold leading-[1.1em]">
+          Agusto Rating
+          <br />
+          Management System
+        </h1>
+
+        <p className="text-lg leading-[1.6em] opacity-50">
+          Strengthen your creditworthiness with the Agusto Rating Management System. Our streamlined platform simplifies
+          data collection, ensuring a transparent and efficient rating process for informed decision-making.
+        </p>
+
+        <p className="absolute text-base opacity-60 bottom-10">&copy; {new Date().getFullYear()}. Agusto & Co. Ltd</p>
+      </div>
 
       <div className="flex items-center justify-center w-full lg:w-[35em] p-6">
         <LoginForm />
@@ -60,4 +73,4 @@ export default function Index() {
   );
 }
 
-//https://dev.localhost/auth/magic-link?token=p5kb7lfyq6sns7ztywlkko'
+//https://dev.localhost/auth/magic-link?token=an6aq73luk4k7g04j0tx7a
