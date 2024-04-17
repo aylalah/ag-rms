@@ -13,11 +13,10 @@ export class AuthClass extends MainClass {
       const { email, password } = input;
       const isAgustoMail = email.includes('@agusto.com');
       const endPoint = process.env.AGUSTO_SERVICES_URL;
-      const rootUrl = process.env.ROOT_URL;
 
       if (isAgustoMail) {
         const { data } = await axios.post(`${endPoint}/auth/login`, { corporate_email: email, password });
-        const { token, user, error } = data || {};
+        const { token, user } = data || {};
 
         if (data?.status === 400) throw new Error(data?.message);
 

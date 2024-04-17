@@ -20,7 +20,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const fd = await request.formData();
   const data = Object.fromEntries(fd.entries()) as any;
-  const { token, user } = await validateCookie(request);
+  const { token } = await validateCookie(request);
   const id = params.id as string;
 
   if (!data?.issueDate) delete data.issueDate;
@@ -35,7 +35,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   const questionnaireData = await RMSservice(token).questionnaires.one({ id: data.questionnaire });
   const questionnairesUrl = questionnaireData?.questionnaire?.url;
-
   if (!questionnairesUrl) return json({ error: 'Questionnaire not found' });
 
   const questions = await axios.get(questionnairesUrl).then(
@@ -43,11 +42,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       res.data as {
         Header: string;
         Question: string;
-        Response: { value: string; type: string }[];
+        Response: { value: string; type: string };
       }[]
   );
 
-  data.responses = questions.map((question) => question);
+  data.responses = questions.map((question) => ({ ...question, Response: { text: null, file: null } }));
 
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });

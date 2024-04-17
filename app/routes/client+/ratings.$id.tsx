@@ -8,8 +8,8 @@ import QuestionnaireCard from '@ui/cards/questionnaire';
 interface IResponse {
   Header: string;
   Response?: {
-    file: string;
-    text: string;
+    file: string | null;
+    text: string | null;
   };
   Question: string;
 }
@@ -63,7 +63,6 @@ export default function Rating() {
   const Fetcher = useFetcher({ key: 'upload' });
   const FetcherData = Fetcher.data as { storedUrl: string; error: string };
   const UploadRef = useRef<HTMLDialogElement>(null);
-  const DataRef = useRef<HTMLFormElement>(null);
   const { ratingQuery } = useLoaderData<typeof loader>();
   const [fileName, setFileName] = useState<string | null>(null);
   const isSubmitting = Fetcher.state === 'submitting';
@@ -82,6 +81,23 @@ export default function Rating() {
 
   const onSubmit = async () => {};
 
+  const onBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+
+    if (value === '' || value === null) return;
+    const QuestionHeader = activeQuestions[0].Header;
+    const question = name;
+    const textResponse = value;
+
+    const newResponses = questions[QuestionHeader as keyof typeof questions].map((response) => {
+      if (response.Question === question) {
+        response.Response = { text: textResponse, file: null };
+      }
+      return response;
+    });
+    setQuestions({ ...questions, [QuestionHeader]: newResponses });
+  };
+
   useEffect(() => {
     const firstHeader = Object.keys(questions || {})[0];
     const firstQuestions = questions[firstHeader as keyof typeof questions];
@@ -98,7 +114,7 @@ export default function Rating() {
   }, [FetcherData]);
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 h-full">
       <QuestionnaireCard
         isReadOnly={false}
         questions={questions}
@@ -106,6 +122,7 @@ export default function Rating() {
         onChangeQuestion={onChangeQuestion}
         onUploadFile={onUploadFile}
         onSubmit={onSubmit}
+        onBlur={onBlur}
       />
 
       <dialog className="modal" ref={UploadRef}>
