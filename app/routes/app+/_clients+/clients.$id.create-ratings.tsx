@@ -6,7 +6,7 @@ import { Suspense, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { validateCookie } from '@helpers/cookies';
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { apiToken, token } = await validateCookie(request);
   const formObjectQuery = RMSservice(apiToken)
     .ratings.formObject({ apiToken, token })
@@ -16,6 +16,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     });
   return defer({ rating: null, formObjectQuery });
 };
+
+interface IResponse {
+  Header: string;
+  Response?: {
+    file: string | null;
+    text: string | null;
+  };
+  Question: string;
+}
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const fd = await request.formData();
@@ -37,16 +46,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const questionnairesUrl = questionnaireData?.questionnaire?.url;
   if (!questionnairesUrl) return json({ error: 'Questionnaire not found' });
 
-  const questions = await axios.get(questionnairesUrl).then(
-    (res) =>
-      res.data as {
-        Header: string;
-        Question: string;
-        Response: { value: string; type: string };
-      }[]
-  );
+  const questions = await axios.get(questionnairesUrl).then((res) => res.data as IResponse[]);
 
-  data.responses = questions.map((question) => ({ ...question, Response: { text: null, file: null } }));
+  //group responses by Header into IResponse
+  const groupedResponses = questions
+    .map((question) => ({ ...question, Response: { text: null, file: null }, id: randomString(16) }))
+    .reduce((acc: any, response: any) => {
+      const { Header } = response || {};
+      if (!acc[Header as keyof typeof acc]) acc[Header] = [];
+
+      acc[Header as keyof typeof acc].push(response);
+      return acc;
+    }, {}) as { [key: string]: IResponse[] };
+
+  data.responses = JSON.stringify(groupedResponses);
 
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });

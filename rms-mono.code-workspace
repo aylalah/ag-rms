@@ -9,6 +9,6 @@
     { "name": "routes", "path": "./app/routes" },
   ],
   "settings": {
-    "cSpell.words": ["firstname", "lastname"],
+    "cSpell.words": ["agustoportals", "firstname", "lastname"],
   },
 }

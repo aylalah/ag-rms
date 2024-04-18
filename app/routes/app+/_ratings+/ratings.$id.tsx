@@ -4,14 +4,9 @@ import { validateCookie } from '@helpers/cookies';
 import { json, LoaderFunctionArgs } from '@remix-run/node';
 import QuestionnaireCard from '@ui/cards/questionnaire';
 
-interface IResponse {
-  Header: string;
-  Response?: {
-    file: string | null;
-    text: string | null;
-  };
-  Question: string;
-}
+type Questions = {
+  [key: string]: IResponse[];
+};
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
@@ -23,17 +18,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     .then((res) => {
       const { rating, error } = res || {};
       const { responses, ...rest } = rating || {};
-      const allResponses = responses as any as IResponse[];
 
-      //group responses by Header into IResponse
-      const groupedResponses = allResponses.reduce((acc: any, response: any) => {
-        const { Header } = response || {};
-        if (!acc[Header as keyof typeof acc]) acc[Header] = [];
-        acc[Header as keyof typeof acc].push(response);
-        return acc;
-      }, {}) as { [key: string]: IResponse[] };
-
-      return { rating: rest, error, responses: groupedResponses };
+      return { rating: rest, error, responses: responses as any as Questions };
     });
 
   return json({ ratingQuery });
@@ -41,7 +27,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function Rating() {
   const { ratingQuery } = useLoaderData<typeof loader>();
-  const [questions] = useState<(typeof ratingQuery)['responses']>(ratingQuery?.responses);
+  const [questions] = useState<Questions>(ratingQuery?.responses ? JSON.parse(ratingQuery?.responses as any) : {});
   const [activeQuestions, setActiveQuestions] = useState<IResponse[]>([]);
 
   const onChangeQuestion = (question: string) => {
@@ -56,7 +42,17 @@ export default function Rating() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 h-full">
+    <div className="flex flex-col flex-1 h-full gap-2">
+      <div className="flex items-center justify-between ">
+        <h3>
+          <span className="font-bold uppercase">{ratingQuery?.rating?.clientModel?.companyName}</span>
+          {'  - '}
+          {ratingQuery?.rating?.ratingTitle}
+        </h3>
+
+        <button className="px-2 text-sm btn btn-secondary btn-sm">Confirm Questionnaire</button>
+      </div>
+
       <QuestionnaireCard
         isReadOnly={true}
         questions={questions}

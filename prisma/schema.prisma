@@ -66,7 +66,7 @@ model Rating {
   questionnaire      String        @db.ObjectId
   methodologyModel   Methodology   @relation(fields: [methodology], references: [id])
   questionnaireModel Questionnaire @relation(fields: [questionnaire], references: [id])
-  responses          Json?
+  responses          String
   status             RatingStatus? @default(pending)
   issueDate          DateTime?
   expiryDate         DateTime?
@@ -89,7 +89,7 @@ model Client {
   username            String    @unique
   password            String
   companyName         String
-  email        String    @unique
+  email               String    @unique
   logo                String?
   companyPhoneNumbers String?
   numberAndStreet     String?
@@ -103,7 +103,7 @@ model Client {
   contactModel        Contact[]
   ratingModel         Rating[]
   createdBy           String?
-  magicToken  String?
+  magicToken          String?
   isDeleted           Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt

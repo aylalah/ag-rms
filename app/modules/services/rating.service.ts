@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { AgustoServicesSdk } from '@helpers/config';
 import { appDecryptData } from '@helpers/validation';
 import { convertZodSchema } from '@helpers/utils';
 import { dbQuery } from '@helpers/prisma';
@@ -85,7 +84,7 @@ export class RatingClass extends MainClass {
 
   async update(input: { id: string; data: Prisma.RatingUpdateInput }) {
     try {
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(['admin', 'client', 'hod']);
       const { id, data } = input;
 
       const prevDocs = await dbQuery.rating.findUnique({ where: { id } });
@@ -157,34 +156,34 @@ export class RatingClass extends MainClass {
           if (el.field === 'supervisor') {
             el.type = 'object';
             el.list = unitMembers
-              ?.map((el) => ({
+              ?.map((el: any) => ({
                 employee_id: el?.employee_id,
                 id: `${el?.firstname} ${el?.lastname}`,
                 name: `${el?.firstname} ${el?.lastname}`,
               }))
-              .filter((el) => el?.employee_id === user?.employee_id);
+              .filter((el: any) => el?.employee_id === user?.employee_id);
           }
 
           if (el.field === 'primaryAnalyst') {
             el.type = 'object';
             el.list = unitMembers
-              ?.map((el) => ({
+              ?.map((el: any) => ({
                 employee_id: el?.employee_id,
                 id: `${el?.firstname} ${el?.lastname}`,
                 name: `${el?.firstname} ${el?.lastname}`,
               }))
-              .filter((el) => el?.employee_id !== user?.employee_id);
+              .filter((el: any) => el?.employee_id !== user?.employee_id);
           }
 
           if (el.field === 'secondaryAnalyst') {
             el.type = 'object';
             el.list = unitMembers
-              ?.map((el) => ({
+              ?.map((el: any) => ({
                 employee_id: el?.employee_id,
                 id: `${el?.firstname} ${el?.lastname}`,
                 name: `${el?.firstname} ${el?.lastname}`,
               }))
-              .filter((el) => el?.employee_id !== user?.employee_id);
+              .filter((el: any) => el?.employee_id !== user?.employee_id);
           }
 
           if (el.field === 'methodology') {

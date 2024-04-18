@@ -22,6 +22,8 @@ export const action = async ({ request }: LoaderFunctionArgs) => {
   return json({ error });
 };
 
+const token = 985174;
+
 export default function EmailConfirmation() {
   const Fetcher = useFetcher();
   const FetcherData = Fetcher?.data as { error: string };
@@ -54,6 +56,7 @@ export default function EmailConfirmation() {
                 className="w-full text-xl font-semibold text-center input input-bordered"
               />
               <input
+                defaultValue={`${token}`}
                 type="number"
                 name="token"
                 className="w-full text-xl font-semibold text-center input input-bordered"

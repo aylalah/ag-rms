@@ -5,14 +5,9 @@ import { validateCookie } from '@helpers/cookies';
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from '@remix-run/node';
 import QuestionnaireCard from '@ui/cards/questionnaire';
 
-interface IResponse {
-  Header: string;
-  Response?: {
-    file: string | null;
-    text: string | null;
-  };
-  Question: string;
-}
+type Questions = {
+  [key: string]: IResponse[];
+};
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
@@ -24,49 +19,42 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     .then((res) => {
       const { rating, error } = res || {};
       const { responses, ...rest } = rating || {};
-      const allResponses = responses as any as IResponse[];
-
-      //group responses by Header into IResponse
-      const groupedResponses = allResponses.reduce((acc: any, response: any) => {
-        const { Header } = response || {};
-        if (!acc[Header as keyof typeof acc]) acc[Header] = [];
-
-        acc[Header as keyof typeof acc].push(response);
-        return acc;
-      }, {}) as { [key: string]: IResponse[] };
-
-      return { rating: rest, error, responses: groupedResponses };
+      return { rating: rest, error, responses: responses as any as Questions };
     });
-
-  console.log(ratingQuery?.responses);
 
   return json({ ratingQuery });
 };
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const method = request.method;
+  const id = params.id as string;
+  const { token } = await validateCookie(request);
 
   if (method === 'POST') {
-    const { storedUrl, error } = await uploadFileHandler(request);
+    const { storedUrl, error } = await uploadFileHandler(request, id as string);
+
+    console.log({ storedUrl, error });
     return json({ storedUrl, error });
   }
 
   if (method === 'PATCH') {
     const fd = await request.formData();
-    const body = Object.fromEntries(fd.entries()) as any;
-    console.log(body);
-    return {};
+    const data = Object.fromEntries(fd.entries()) as any;
+    const { updateRating, error } = await RMSservice(token).ratings.update({ id, data });
+    return json({ message: updateRating, error });
   }
 }
 
 export default function Rating() {
   const Fetcher = useFetcher({ key: 'upload' });
-  const FetcherData = Fetcher.data as { storedUrl: string; error: string };
+  const FetcherData = Fetcher.data as { storedUrl: string; message: string; error: string };
   const UploadRef = useRef<HTMLDialogElement>(null);
   const { ratingQuery } = useLoaderData<typeof loader>();
   const [fileName, setFileName] = useState<string | null>(null);
   const isSubmitting = Fetcher.state === 'submitting';
-  const [questions, setQuestions] = useState<(typeof ratingQuery)['responses']>(ratingQuery?.responses);
+  const [questions, setQuestions] = useState<Questions>(
+    ratingQuery?.responses ? JSON.parse(ratingQuery?.responses as any) : {}
+  );
   const [activeQuestions, setActiveQuestions] = useState<IResponse[]>([]);
 
   const onUploadFile = async (name: string) => {
@@ -79,7 +67,9 @@ export default function Rating() {
     setActiveQuestions(questionQuestions);
   };
 
-  const onSubmit = async () => {};
+  const onSubmit = async () => {
+    Fetcher.submit({ responses: JSON.stringify(questions) }, { method: 'PATCH' });
+  };
 
   const onBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -90,9 +80,7 @@ export default function Rating() {
     const textResponse = value;
 
     const newResponses = questions[QuestionHeader as keyof typeof questions].map((response) => {
-      if (response.Question === question) {
-        response.Response = { text: textResponse, file: null };
-      }
+      if (response.Question === question && response?.Response) response.Response.text = textResponse;
       return response;
     });
     setQuestions({ ...questions, [QuestionHeader]: newResponses });
@@ -106,17 +94,38 @@ export default function Rating() {
 
   useEffect(() => {
     if (FetcherData?.storedUrl) {
-      toast.success('File uploaded successfully');
+      toast.success('File uploaded successfully', { toastId: 'upload-file' });
+      const questionId = fileName;
+      const fileResponse = FetcherData?.storedUrl;
+
+      const newResponses = questions[activeQuestions[0].Header as keyof typeof questions].map((response) => {
+        if (response.id === questionId && response?.Response) response.Response.file = fileResponse;
+        return response;
+      });
+      setQuestions({ ...questions, [activeQuestions[0].Header]: newResponses });
+
       UploadRef.current?.close();
     }
 
-    if (FetcherData?.error) toast.error(FetcherData?.error);
+    if (FetcherData?.message) toast.success(FetcherData?.message, { toastId: 'update-rating' });
+    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: 'update-rating' });
   }, [FetcherData]);
 
   return (
-    <div className="flex flex-col flex-1 h-full">
+    <div className="flex flex-col flex-1 h-full gap-2">
+      <div className="flex items-center justify-between ">
+        <h3>
+          Rating Title : <span className="text-xl font-bold">{ratingQuery?.rating?.ratingTitle}</span>
+        </h3>
+        <button disabled={isSubmitting} onClick={onSubmit} className="btn btn-secondary btn-sm w-28">
+          {isSubmitting && <span className="loading loading-xs loading-base-100" />}
+          Save
+        </button>
+      </div>
+
       <QuestionnaireCard
         isReadOnly={false}
+        isSubmitting={isSubmitting}
         questions={questions}
         activeQuestions={activeQuestions}
         onChangeQuestion={onChangeQuestion}

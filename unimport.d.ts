@@ -196,15 +196,11 @@ declare global {
   const IndustryWhereInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IndustryWhereInputSchema']
   const IndustryWhereUniqueInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IndustryWhereUniqueInputSchema']
   const IndustryWithRelationsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IndustryWithRelationsSchema']
-  const InputJsonValueSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['InputJsonValueSchema']
   const IntFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IntFieldUpdateOperationsInputSchema']
   const IntFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IntFilterSchema']
   const IntNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IntNullableFilterSchema']
   const IntNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IntNullableWithAggregatesFilterSchema']
   const IntWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IntWithAggregatesFilterSchema']
-  const JsonNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['JsonNullableFilterSchema']
-  const JsonNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['JsonNullableWithAggregatesFilterSchema']
-  const JsonValueSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['JsonValueSchema']
   const LogAggregateArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['LogAggregateArgsSchema']
   const LogArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['LogArgsSchema']
   const LogCountOrderByAggregateInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['LogCountOrderByAggregateInputSchema']
@@ -304,7 +300,6 @@ declare global {
   const NestedIntNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedIntNullableFilterSchema']
   const NestedIntNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedIntNullableWithAggregatesFilterSchema']
   const NestedIntWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedIntWithAggregatesFilterSchema']
-  const NestedJsonNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedJsonNullableFilterSchema']
   const NestedStringFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedStringFilterSchema']
   const NestedStringNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedStringNullableFilterSchema']
   const NestedStringNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedStringNullableWithAggregatesFilterSchema']
@@ -312,7 +307,6 @@ declare global {
   const NullableDateTimeFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableDateTimeFieldUpdateOperationsInputSchema']
   const NullableEnumRatingStatusFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableEnumRatingStatusFieldUpdateOperationsInputSchema']
   const NullableIntFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableIntFieldUpdateOperationsInputSchema']
-  const NullableJsonValue: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableJsonValue']
   const NullableStringFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableStringFieldUpdateOperationsInputSchema']
   const QueryModeSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['QueryModeSchema']
   const QuestionnaireAggregateArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['QuestionnaireAggregateArgsSchema']
@@ -536,11 +530,11 @@ declare global {
   const generalStore: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/stores/general.store')['default']
   const hashPassword: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/validation')['hashPassword']
   const passwordPolicy: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/validation')['passwordPolicy']
+  const randomString: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/utils')['randomString']
   const sendEmailService: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/email')['sendEmailService']
   const settingsCookie: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/cookies')['settingsCookie']
   const splitCamelCase: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/utils')['splitCamelCase']
   const stores: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/stores/index')['default']
-  const transformJsonNull: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['transformJsonNull']
   const uploadFileHandler: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/upload-file')['uploadFileHandler']
   const uploadStreamToSpaces: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/upload-file')['uploadStreamToSpaces']
   const useClientStore: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/stores/client.store')['useClientStore']
@@ -554,6 +548,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { NullableJsonInput, JsonValueType, NullableJsonValueType, InputJsonValueType, RatingStatusType, Methodology, MethodologyOptionalDefaults, MethodologyRelations, MethodologyWithRelations, MethodologyOptionalDefaultsRelations, MethodologyOptionalDefaultsWithRelations, Questionnaire, QuestionnaireOptionalDefaults, QuestionnaireRelations, QuestionnaireWithRelations, QuestionnaireOptionalDefaultsRelations, QuestionnaireOptionalDefaultsWithRelations, Industry, IndustryOptionalDefaults, IndustryRelations, IndustryWithRelations, IndustryOptionalDefaultsRelations, IndustryOptionalDefaultsWithRelations, Rating, RatingOptionalDefaults, RatingRelations, RatingWithRelations, RatingOptionalDefaultsRelations, RatingOptionalDefaultsWithRelations, RatingClassOptionalDefaults, RatingClassRelations, RatingClassWithRelations, RatingClassOptionalDefaultsRelations, RatingClassOptionalDefaultsWithRelations, Client, ClientOptionalDefaults, ClientRelations, ClientWithRelations, ClientOptionalDefaultsRelations, ClientOptionalDefaultsWithRelations, Contact, ContactOptionalDefaults, ContactRelations, ContactWithRelations, ContactOptionalDefaultsRelations, ContactOptionalDefaultsWithRelations, Log, LogOptionalDefaults } from '/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index'
+  export type { RatingStatusType, Methodology, MethodologyOptionalDefaults, MethodologyRelations, MethodologyWithRelations, MethodologyOptionalDefaultsRelations, MethodologyOptionalDefaultsWithRelations, Questionnaire, QuestionnaireOptionalDefaults, QuestionnaireRelations, QuestionnaireWithRelations, QuestionnaireOptionalDefaultsRelations, QuestionnaireOptionalDefaultsWithRelations, Industry, IndustryOptionalDefaults, IndustryRelations, IndustryWithRelations, IndustryOptionalDefaultsRelations, IndustryOptionalDefaultsWithRelations, Rating, RatingOptionalDefaults, RatingRelations, RatingWithRelations, RatingOptionalDefaultsRelations, RatingOptionalDefaultsWithRelations, RatingClassOptionalDefaults, RatingClassRelations, RatingClassWithRelations, RatingClassOptionalDefaultsRelations, RatingClassOptionalDefaultsWithRelations, Client, ClientOptionalDefaults, ClientRelations, ClientWithRelations, ClientOptionalDefaultsRelations, ClientOptionalDefaultsWithRelations, Contact, ContactOptionalDefaults, ContactRelations, ContactWithRelations, ContactOptionalDefaultsRelations, ContactOptionalDefaultsWithRelations, Log, LogOptionalDefaults } from '/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index'
   import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')
 }
