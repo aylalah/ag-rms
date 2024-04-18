@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface IResponse {
   Header: string;
@@ -20,6 +20,18 @@ type QuestionnaireCardProps = {
 };
 
 export default function QuestionnaireCard({ ...props }: QuestionnaireCardProps) {
+  const [totalQuestions, setTotalQuestions] = useState<number>(0);
+  const [totalAnswers, setTotalAnswers] = useState<number>(0);
+  const [percentage, setPercentage] = useState<number>(0);
+
+  useEffect(() => {
+    const totalQuestions = props?.activeQuestions?.length || 0;
+    const totalAnswers = props?.activeQuestions?.filter((el) => el?.Response?.text).length || 0;
+    setTotalQuestions(totalQuestions);
+    setTotalAnswers(totalAnswers);
+    setPercentage(Math.round((totalAnswers / totalQuestions) * 100));
+  }, [props?.activeQuestions]);
+
   return (
     <div className="flex flex-1 h-full gap-2 overflow-hidden">
       <div className="w-[20em] bg-base-100">
@@ -39,7 +51,13 @@ export default function QuestionnaireCard({ ...props }: QuestionnaireCardProps) 
 
       <div className="flex flex-col flex-1 h-full gap-2 overflow-hidden border-b bg-base-100 border-accent">
         <div className="flex justify-between w-full p-4 text-white bg-primary before:content['hello_world']">
-          <h2>{props?.activeQuestions?.[0]?.Header}</h2>
+          <h2>
+            {props?.activeQuestions?.[0]?.Header} <span className="text-sm opacity-60">({percentage}% Completed)</span>
+          </h2>
+
+          <p>
+            {totalAnswers} of {totalQuestions}
+          </p>
         </div>
 
         <div className="flex-1 overflow-auto">
@@ -81,22 +99,25 @@ const QuestionCard = ({ isMain = false, readOnly = true, index, el, onUploadFile
         defaultValue={el?.Response?.text ? el?.Response?.text : ''}
         name={el?.Question}
         disabled={readOnly}
-        className={`w-full p-2 resize-none border ${readOnly ? 'bg-base-200 cursor-not-allowed' : 'bg-base-100'} flex items-center h-[4em]`}
+        className={`w-full  p-2 resize-none border ${readOnly ? 'bg-base-200 cursor-not-allowed' : 'bg-base-100'} flex items-center h-[4em]`}
       />
 
-      <div className="relative flex items-center justify-center w-32 gap-1 overflow-hidden rounded border-accent bg-base-100">
-        {!readOnly && onUploadFile && (
-          <div
-            className="flex items-center justify-center w-full h-full gap-1 text-white cursor-pointer text-secondary bg-secondary"
-            onClick={() => onUploadFile(el?.Question)}
-          >
-            <i className="ri-upload-cloud-2-fill"></i>
-            Upload
-          </div>
-        )}
+      {!readOnly && onUploadFile && (
+        <button
+          className="flex items-center justify-center h-full gap-1 text-white cursor-pointer w-28 btn text-secondary bg-secondary"
+          onClick={() => onUploadFile(el?.Question)}
+        >
+          <i className="ri-upload-cloud-2-fill"></i>
+          Upload
+        </button>
+      )}
 
-        {readOnly && el?.Response?.file && <button>View</button>}
-      </div>
+      {readOnly && el?.Response?.file && (
+        <button className="w-32 btn btn-secondary">
+          <i className="ri-download-cloud-2-fill"></i>
+          Download
+        </button>
+      )}
     </div>
   </div>
 );
