@@ -5,21 +5,24 @@ type RatingProps = {
   rating: any;
   Fetcher?: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
+  isReadOnly?: boolean;
 };
 
-export default function RatingLayout({ rating, reports, Fetcher }: RatingProps) {
+export default function RatingLayout({ rating, reports, isReadOnly, Fetcher }: RatingProps) {
   return (
     <div className="flex flex-col flex-1 h-full gap-6">
-      <div className="flex items-center justify-between pt-6">
-        <div>
+      <div className="flex items-end justify-between pt-6">
+        <div className="flex flex-col items-start">
           <h1 className="text-2xl font-bold">
-            {rating?.ratingTitle} {' - '}
-            <span className="text-sm">{rating?.ratingYear}</span>
+            {rating?.ratingYear} - {rating?.ratingTitle}
           </h1>
+          <span className={`px-4 py-1 text-xs text-white capitalize rounded-full ${rating?.status}`}>
+            {rating?.status}
+          </span>
         </div>
 
         <Link to="questionnaire" className="text-sm btn btn-secondary btn-sm">
-          View Questionnaire
+          {rating?.status === 'pending' && !isReadOnly ? 'Fill ' : 'View '} Questionnaire
         </Link>
       </div>
 
@@ -58,14 +61,16 @@ export default function RatingLayout({ rating, reports, Fetcher }: RatingProps) 
                   subSubTitle="info@agusto.com | 01-2707222-3"
                 />
 
-                <SummaryCard title="Rating Class" subTitle={rating?.ratingClassModel?.name || '-'} />
-                <SummaryCard
-                  title="Address"
-                  subTitle="  UBA House (5th Floor)
+                <div className="col-span-2 ">
+                  <SummaryCard
+                    title="Address"
+                    subTitle="  UBA House (5th Floor)
                 57 Marina, Lagos-Island
                 Lagos, Nigeria"
-                  subSubTitle="info@agusto.com | 01-2707222-3"
-                />
+                    subSubTitle="info@agusto.com | 01-2707222-3"
+                  />
+                </div>
+                {/* <SummaryCard title="Rating Class" subTitle={rating?.ratingClassModel?.name || '-'} /> */}
               </div>
             </div>
           </div>
@@ -79,7 +84,7 @@ export default function RatingLayout({ rating, reports, Fetcher }: RatingProps) 
             <ul>
               <Tr name="Report Name" version="Version" isHeader />
               {reports?.map((report, i) => (
-                <Tr key={i} index={i + 1} name={report?.name + i} version={report?.version} link={report?.link} />
+                <Tr key={i} index={i + 1} name={report?.name} version={report?.version} link={report?.link} />
               ))}
             </ul>
           </div>
@@ -131,7 +136,7 @@ const Tr = ({
         to={`${link}`}
         target="_blank"
         referrerPolicy="no-referrer"
-        className="py-3 text-center p-x2 text-secondary link"
+        className={`py-3 text-center p-x2  ${!isHeader && 'link text-secondary'}`}
       >
         {version}
       </Link>

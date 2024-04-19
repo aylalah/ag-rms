@@ -171,7 +171,7 @@ export const TableLayout = ({
 
             <tbody className="">
               {tbody?.map((el, i) => (
-                <tr key={el?.id} className="duration-200 border-b even:bg-[#fff1] border-line ">
+                <tr key={el?.id} className="duration-200 border-b even:bg-[#fff1] border-line hover:bg-gray-100">
                   <td className="text-center">{meta?.page * meta?.limit + i + 1 - meta?.limit}</td>
                   {thead?.map((key, i) => (
                     <td key={i} className="p-3 overflow-hidden text-left min-w-[20%] ">
@@ -184,7 +184,9 @@ export const TableLayout = ({
                             {el[key] || '-'}
                           </Link>
                         ) : (
-                          <span className="">{el[key]}</span>
+                          <Link to={`${el['href']}`} className="hover:bg-gray-100">
+                            <span className="">{el[key]}</span>
+                          </Link>
                         )
                       ) : (
                         <span className={`${el[key]} capitalize`}>{el[key] || '-'}</span>

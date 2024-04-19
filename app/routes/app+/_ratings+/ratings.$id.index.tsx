@@ -14,8 +14,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     { name: 'Final Report', version: '1.0', link: '' },
   ];
 
-  console.log(rest);
-
   return json({ rating, reports, error });
 };
 
@@ -27,5 +25,5 @@ export default function Rating() {
   const { rating, reports, error } = useLoaderData<typeof loader>();
   const Fetcher = useFetcher({ key: 'upload' });
 
-  return <RatingLayout rating={rating} Fetcher={Fetcher} reports={reports} />;
+  return <RatingLayout rating={rating} Fetcher={Fetcher} reports={reports} isReadOnly={true} />;
 }

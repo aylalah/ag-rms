@@ -96,15 +96,19 @@ export default function App() {
   const { pathname } = useLocation();
   const { user } = useLoaderData<typeof loader>();
   const { setUser } = useAppStore.user((state) => state);
-  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+  const [breadcrumb, setBreadcrumb] = useState<{ name: string; path: string }[]>([]);
 
   useEffect(() => setUser(user as User), [user]);
 
   useEffect(() => {
     const crumbs = pathname.split('/').filter(Boolean);
-    const breadcrumb = crumbs.slice(1, crumbs.length).map((el) => el?.charAt(0).toUpperCase() + el?.slice(1));
-
-    console.log(crumbs);
+    const crumbsSlice = crumbs.slice(0, crumbs.length - 1);
+    const breadcrumb = crumbs
+      .map((el) => ({
+        name: el,
+        path: `${crumbsSlice.slice(1, crumbs.indexOf(el) + 1).join('/')}`,
+      }))
+      .filter((el) => el.name !== 'app');
 
     setBreadcrumb(breadcrumb);
   }, [pathname]);
@@ -117,7 +121,7 @@ export default function App() {
             <Link to="/app/dashboard">Home</Link>
           </li>
           {breadcrumb.map((el, i) => (
-            <li key={i}>{i === breadcrumb.length - 1 ? el : <Link to={`/app/${el}`}>{el}</Link>}</li>
+            <li key={i}>{i === breadcrumb.length - 1 ? el?.name : <Link to={`${el.path}`}>{el.name}</Link>}</li>
           ))}
         </ul>
       </div>

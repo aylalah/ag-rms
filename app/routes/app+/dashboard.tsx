@@ -4,18 +4,42 @@ import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title
 import { defer, LoaderFunctionArgs } from '@remix-run/node';
 import { ListLayout } from '@layouts/list-layout';
 import { Suspense, useEffect, useState } from 'react';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-ChartJS.defaults.font.size = 13;
+ChartJS.register(CategoryScale, LinearScale, BarElement, ChartDataLabels, Title, Tooltip, Legend);
+ChartJS.defaults.font.size = 12;
 ChartJS.defaults.font.family = 'Rethink Sans';
 const options = {
   indexAxis: 'y' as const,
+  maintainAspectRatio: false,
   responsive: true,
+
   plugins: {
     legend: { display: false },
     title: {
       display: true,
       text: 'Distribution by Industry',
+    },
+    datalabels: {
+      anchor: 'end' as any,
+      padding: 5,
+      borderRadius: 5,
+      backgroundColor: '#002d53',
+      color: '#efefef',
+      font: {
+        size: 12,
+      },
+    },
+  },
+  scales: {
+    y: {
+      grid: { display: false },
+      display: true,
+    },
+    x: {
+      padding: 40,
+      display: false,
+      grid: { display: false },
     },
   },
 };
@@ -25,7 +49,7 @@ const data = {
   datasets: [
     {
       label: 'My First Dataset',
-      data: [65, 59, 80, 81, 56, 55, 78],
+      data: [6, 5, 9.1, 9, 5, 5, 7],
       backgroundColor: 'rgb(255, 99, 132)',
     },
   ],
@@ -44,7 +68,27 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .clients.all({ limit: 5, page: 1, orderBy: { createdAt: 'desc' } })
     .then((res) => {
       const { docs, ...meta } = res?.clients || {};
-      return { count: res?.clients?.totalDocs, data: docs, meta };
+      return {
+        count: res?.clients?.totalDocs,
+        meta,
+        data: docs?.map((doc) => ({ ...doc, href: `/app/clients/${doc.id}` })),
+      };
+    });
+
+  //total client
+  const Ratings = RMSservice(token)
+    .ratings.all({ limit: 5, page: 1, include: { clientModel: true }, orderBy: { createdAt: 'desc' } })
+    .then((res) => {
+      const { docs, ...meta } = res?.ratings || {};
+      return {
+        count: res?.ratings?.totalDocs,
+        meta,
+        data: docs?.map((doc) => ({
+          ...doc,
+          companyName: doc?.clientModel?.companyName,
+          href: `/app/ratings/${doc.id}`,
+        })),
+      };
     });
 
   //total completed ratings
@@ -64,12 +108,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       };
     });
 
-  return defer({ Industry, Client, CompletedRatings, PendingRatings });
+  return defer({ Industry, Client, Ratings, CompletedRatings, PendingRatings });
 };
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { Industry, Client, CompletedRatings, PendingRatings } = useLoaderData<typeof loader>();
+  const { Industry, Client, Ratings, CompletedRatings, PendingRatings } = useLoaderData<typeof loader>();
   const [dashboardCounts, setDashboardCounts] = useState<{
     clients?: number;
     industries?: number;
@@ -86,7 +130,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
-      <div className="grid w-full gap-4 lg:grid-cols-2">
+      <div className="grid flex-1 w-full gap-4 lg:grid-cols-2">
         <div className="grid gap-4 lg:grid-cols-2 ">
           <BoxChart title="Clients" subTitle={dashboardCounts?.clients || 0} bgColor="#fabc05" />
           <BoxChart title="Industries" subTitle={dashboardCounts?.industries || 0} bgColor="#d3c9bc" />
@@ -102,7 +146,7 @@ export default function Dashboard() {
       <div className="grid flex-1 w-full gap-4 lg:grid-cols-2">
         <HalfBoxChart title="Recently Added Ratings" actionButton="See ALL" action={() => navigate('/app/ratings')}>
           <Suspense fallback={<></>}>
-            <Await resolve={PendingRatings}>
+            <Await resolve={Ratings}>
               {(res) => (
                 <ListLayout
                   title="Recently Added Ratings"

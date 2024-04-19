@@ -36,3 +36,7 @@ a {
 .pending {
   @apply bg-info text-sm text-base-100 p-2 rounded;
 }
+
+.concluded {
+  @apply bg-success text-sm text-base-100 p-2 rounded;
+}

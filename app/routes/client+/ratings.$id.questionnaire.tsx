@@ -17,9 +17,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       id,
     })
     .then((res) => {
-      const { rating, error } = res || {};
-      const { responses, ...rest } = rating || {};
-      return { rating: rest, error, responses: responses as any as Questions };
+      const { rating, error } = res;
+      return { rating, error, responses: rating?.responses as any as Questions };
     });
 
   return json({ ratingQuery });
@@ -149,14 +148,17 @@ export default function RatingQuestionnaire() {
         <h3>
           Rating Title : <span className="text-xl font-bold">{ratingQuery?.rating?.ratingTitle}</span>
         </h3>
-        <button disabled={isSubmitting} onClick={onSubmit} className="btn btn-secondary btn-sm w-28">
-          {isSubmitting && <span className="loading loading-xs loading-base-100" />}
-          Save
-        </button>
+
+        {ratingQuery?.rating?.status === 'pending' && (
+          <button disabled={isSubmitting} onClick={onSubmit} className="btn btn-secondary btn-sm w-28">
+            {isSubmitting && <span className="loading loading-xs loading-base-100" />}
+            Save
+          </button>
+        )}
       </div>
 
       <QuestionnaireCard
-        isReadOnly={false}
+        isReadOnly={ratingQuery?.rating?.status === 'pending' ? false : true}
         isSubmitting={isSubmitting}
         questions={questions}
         activeQuestions={activeQuestions}
