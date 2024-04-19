@@ -1,6 +1,6 @@
 import useAppStore from '@stores';
 import { Avatar, Icons } from '@components';
-import { NavLink, useLoaderData } from '@remix-run/react';
+import { NavLink } from '@remix-run/react';
 
 interface IRoute {
   name: string;
@@ -24,7 +24,7 @@ export default function MenuLayout({
 
   return (
     <div className="flex flex-1 h-screen pl-0 bg-primary">
-      <div className="flex flex-col flex-1 h-full gap-6 overflow-hidden rounded-lg bg-base-200">
+      <div className="flex flex-col flex-1 h-full gap-2 overflow-hidden rounded-lg bg-base-200">
         <header className="flex h-[80px] w-full  border-b bg-primary map">
           <div className="container flex items-center justify-between w-full ">
             <div className="flex items-center gap-10">

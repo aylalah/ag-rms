@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { NavLink } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { RatingWithRelations } from '@helpers/zodPrisma';
 
 export default function RatingsCard({ el }: { el: RatingWithRelations }) {
@@ -23,9 +23,9 @@ export default function RatingsCard({ el }: { el: RatingWithRelations }) {
       <div className="flex items-center justify-between w-full pt-3 text-xs border-t">
         <p>Rating Year: {el?.ratingYear}</p>
 
-        <NavLink to={`${el?.id}`} className="text-xs font-bold uppercase text-secondary hover:underline">
+        <Link to={`${el?.id}`} className="text-xs font-bold uppercase text-secondary hover:underline">
           View Details
-        </NavLink>
+        </Link>
       </div>
     </div>
   );

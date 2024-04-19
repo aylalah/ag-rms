@@ -527,6 +527,8 @@ declare global {
   const checkPasswordExpired: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/validation')['checkPasswordExpired']
   const convertZodSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/utils')['convertZodSchema']
   const dbQuery: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/prisma')['dbQuery']
+  const deleteFileFromSpaces: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/upload-file')['deleteFileFromSpaces']
+  const deleteFileHandler: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/upload-file')['deleteFileHandler']
   const generalStore: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/stores/general.store')['default']
   const hashPassword: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/validation')['hashPassword']
   const passwordPolicy: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/validation')['passwordPolicy']

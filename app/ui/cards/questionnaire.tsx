@@ -1,4 +1,4 @@
-import { NavLink } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import React, { useEffect, useState } from 'react';
 
 type QuestionnaireCardProps = {
@@ -8,6 +8,7 @@ type QuestionnaireCardProps = {
   activeQuestions: IResponse[];
   onChangeQuestion: (question: string) => void;
   onUploadFile?: (arg: string) => void;
+  onDeleteFile?: (arg: string) => void;
   onSubmit?: () => void;
   onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
 };
@@ -73,6 +74,7 @@ export default function QuestionnaireCard({ ...props }: QuestionnaireCardProps) 
               el={el}
               readOnly={props?.isReadOnly}
               onUploadFile={props.onUploadFile}
+              onDeleteFile={props.onDeleteFile}
               isSubmitting={props?.isSubmitting}
             />
           ))}
@@ -88,6 +90,7 @@ type QuestionCardProps = {
   readOnly?: boolean;
   index: number;
   el: IResponse;
+  onDeleteFile?: (arg: string) => void;
   onUploadFile?: (arg: string) => void;
   onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   isSubmitting?: boolean;
@@ -102,7 +105,6 @@ const QuestionCard = ({ isMain = false, readOnly = true, ...props }: QuestionCar
     <div className="flex items-center gap-2">
       <textarea
         tabIndex={props?.tabIndex}
-        contentEditable={!readOnly}
         onBlur={props?.onBlur}
         defaultValue={props?.el?.Response?.text ? props?.el?.Response?.text : ''}
         name={props?.el?.Question}
@@ -126,6 +128,7 @@ const QuestionCard = ({ isMain = false, readOnly = true, ...props }: QuestionCar
           <button
             disabled={props?.isSubmitting}
             className="flex items-center justify-center gap-1 text-xs cursor-pointer btn btn-outlined"
+            onClick={() => props?.onDeleteFile && props?.onDeleteFile(props?.el?.id)}
           >
             <i className="ri-close-fill"></i>
             Remove File
@@ -133,20 +136,27 @@ const QuestionCard = ({ isMain = false, readOnly = true, ...props }: QuestionCar
         ))}
 
       {readOnly && props?.el?.Response?.file && (
-        <NavLink
+        <Link
           to={props?.el?.Response?.file}
           target="_blank"
           referrerPolicy="no-referrer"
-          className="flex items-center text-xs btn btn-secondary"
+          className="flex items-center text-sm btn btn-secondary"
         >
           <i className="ri-download-cloud-2-fill"></i>
           Download File
-        </NavLink>
+        </Link>
       )}
     </div>
 
     {props?.el?.Response?.file && !readOnly && (
-      <p className="text-xs text-blue-500 link">file : {props?.el?.Response?.file}</p>
+      <Link
+        to={props?.el?.Response?.file}
+        target="_blank"
+        referrerPolicy="no-referrer"
+        className="text-xs text-blue-500 link"
+      >
+        {props?.el?.Response?.file}
+      </Link>
     )}
   </div>
 );

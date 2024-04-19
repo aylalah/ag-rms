@@ -4,8 +4,8 @@ import useAppStore from '@stores';
 import { appCookie, validateCookie } from '@helpers/cookies';
 import { Icons } from '@components';
 import { json, LinksFunction, LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
-import { useEffect } from 'react';
+import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
+import { useEffect, useState } from 'react';
 
 interface IRoute {
   name: string;
@@ -93,12 +93,35 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
+  const { pathname } = useLocation();
   const { user } = useLoaderData<typeof loader>();
   const { setUser } = useAppStore.user((state) => state);
+  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+
   useEffect(() => setUser(user as User), [user]);
+
+  useEffect(() => {
+    const crumbs = pathname.split('/').filter(Boolean);
+    const breadcrumb = crumbs.slice(1, crumbs.length).map((el) => el?.charAt(0).toUpperCase() + el?.slice(1));
+
+    console.log(crumbs);
+
+    setBreadcrumb(breadcrumb);
+  }, [pathname]);
 
   return (
     <MenuLayout links={MenuLinks} settings={SettingsLinks}>
+      <div className="mb-4 text-xs breadcrumbs">
+        <ul>
+          <li>
+            <Link to="/app/dashboard">Home</Link>
+          </li>
+          {breadcrumb.map((el, i) => (
+            <li key={i}>{i === breadcrumb.length - 1 ? el : <Link to={`/app/${el}`}>{el}</Link>}</li>
+          ))}
+        </ul>
+      </div>
+
       <div className="flex-1 overflow-hidden">
         <Outlet />
       </div>

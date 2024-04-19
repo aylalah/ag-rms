@@ -1,10 +1,8 @@
-import dayjs from 'dayjs';
 import RatingsCard from '@ui/cards/ratings-card';
-import { Await, NavLink, useLoaderData } from '@remix-run/react';
-import { defer, LoaderFunctionArgs } from '@remix-run/node';
-import { Suspense, useEffect, useState } from 'react';
+import { useLoaderData } from '@remix-run/react';
+import { LoaderFunctionArgs } from '@remix-run/node';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { validateCookie } from '@helpers/cookies';
 
 export const loader = async (ctx: LoaderFunctionArgs) => {
   return RatingLoader(ctx);

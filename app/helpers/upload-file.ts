@@ -1,4 +1,4 @@
-import { S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import {
   unstable_composeUploadHandlers,
@@ -41,6 +41,20 @@ export const uploadStreamToSpaces = (file: any, fileName: string) => {
   }).done();
 };
 
+export const deleteFileFromSpaces = async (fileName: string) => {
+  const params = {
+    Bucket: 'agustoportals',
+    Key: `rating-mgt-portal/uploads/${fileName}`,
+  };
+
+  try {
+    await s3.send(new DeleteObjectCommand(params));
+    return { message: 'File deleted' };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
 const uploadHandler = unstable_composeUploadHandlers(
   unstable_createFileUploadHandler({
     maxPartSize: 5_000_000,
@@ -63,4 +77,12 @@ export const uploadFileHandler = async (request: Request, id: string) => {
   } catch (error: any) {
     return { error: error.message };
   }
+};
+
+export const deleteFileHandler = async (request: Request, id: string) => {
+  const formData = await request.formData();
+  const fileName = formData.get('fileName') as string;
+  const name = `${id}/${fileName}`.toLowerCase();
+  const { message, error } = await deleteFileFromSpaces(name);
+  return { message, error };
 };

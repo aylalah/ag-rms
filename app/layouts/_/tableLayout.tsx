@@ -1,6 +1,5 @@
-import dayjs from 'dayjs';
 import { Icons } from '@components';
-import { NavLink, useNavigate } from '@remix-run/react';
+import { Link, useNavigate } from '@remix-run/react';
 import { useState } from 'react';
 
 const splitCamelCase = (str: string) => {
@@ -95,12 +94,12 @@ export const TableLayout = ({
           <div className="flex items-center gap-4">
             <p className="text-[1.5rem] font-bold capitalize">{title}</p>
             {createLink && (
-              <NavLink
+              <Link
                 to={createLink}
                 className="w-16 p-1 text-[11px] font-bold text-center text-white rounded-lg shadow bg-secondary"
               >
                 CREATE
-              </NavLink>
+              </Link>
             )}
           </div>
 
@@ -178,12 +177,12 @@ export const TableLayout = ({
                     <td key={i} className="p-3 overflow-hidden text-left min-w-[20%] ">
                       {i === 0 ? (
                         editLink ? (
-                          <NavLink
+                          <Link
                             to={`${editLink}${el['id']}`}
                             className={`${el[key]} underline transform cursor-pointer hover:scale-[99.7%] transition-all ease-in-out`}
                           >
                             {el[key] || '-'}
-                          </NavLink>
+                          </Link>
                         ) : (
                           <span className="">{el[key]}</span>
                         )

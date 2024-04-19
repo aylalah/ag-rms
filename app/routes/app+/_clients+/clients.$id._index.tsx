@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { ActionFunctionArgs, defer, LoaderFunctionArgs, redirectDocument } from '@remix-run/node';
 import { Button } from '@components';
 import { Client, ClientWithRelations, Contact } from '@helpers/zodPrisma';
-import { NavLink, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
+import { Link, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { validateCookie } from '@helpers/cookies';
@@ -115,16 +115,16 @@ export default function ClientEdit() {
           <p className="font-semibold">{client?.companyName} </p>
           <div className="flex items-center gap-4">
             <p className="text-xs opacity-80">{client?.industryModel?.name}</p>
-            <NavLink to={`edit`} className="font-bold text-secondary">
+            <Link to={`edit`} className="font-bold text-secondary">
               Edit
-            </NavLink>
+            </Link>
           </div>
         </div>
 
-        <NavLink to="create-ratings" className="tracking-wide btn btn-sm btn-secondary">
+        <Link to="create-ratings" className="tracking-wide btn btn-sm btn-secondary">
           <i className="ri-add-fill" />
           New Rating
-        </NavLink>
+        </Link>
       </div>
 
       <div className="flex flex-1 h-full gap-3">
@@ -147,9 +147,9 @@ export default function ClientEdit() {
           <div className="flex-1 h-full overflow-hidden border bg-primary border-accent">
             <div className="flex items-center justify-between">
               <p className="flex flex-col p-4 text-base text-base-100">Rating History</p>
-              <NavLink to="/app/ratings" className="p-4 text-xs hover:underline text-base-100">
+              <Link to="/app/ratings" className="p-4 text-xs hover:underline text-base-100">
                 View All
-              </NavLink>
+              </Link>
             </div>
 
             <div className="h-[100%] bg-base-100 p-4 overflow-auto">

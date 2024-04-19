@@ -3,15 +3,9 @@ import MenuLayout from '@layouts/menu-layout';
 import useAppStore from '@stores';
 import { appCookie, validateCookie } from '@helpers/cookies';
 import { Icons } from '@components';
-import {
-  json,
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-  redirect
-  } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
-import { useEffect } from 'react';
+import { json, LinksFunction, LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node';
+import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
+import { useEffect, useState } from 'react';
 
 interface IRoute {
   name: string;
@@ -60,18 +54,37 @@ export const groupedClientRoutes = MenuLinks.map((route) => {
   }, {});
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { token, client } = await validateCookie(request);
+  const { client } = await validateCookie(request);
   if (!client) return redirect('/', { headers: { 'Set-Cookie': await appCookie.serialize('', { maxAge: 0 }) } });
   return json({ client });
 };
 
 export default function App() {
+  const { pathname } = useLocation();
   const { client } = useLoaderData<typeof loader>();
   const { setClient } = useAppStore.user((state) => state);
+  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+
   useEffect(() => setClient(client as any), [client]);
+  useEffect(() => {
+    const crumbs = pathname.split('/').filter(Boolean);
+    const breadcrumb = crumbs.slice(2, crumbs.length).map((el) => el?.charAt(0).toUpperCase() + el?.slice(1));
+    setBreadcrumb(breadcrumb);
+  }, [pathname]);
 
   return (
     <MenuLayout links={MenuLinks} settings={SettingsLinks}>
+      <div className="mb-4 text-xs breadcrumbs">
+        <ul>
+          <li>
+            <Link to="/client/ratings">Home</Link>
+          </li>
+          {breadcrumb.map((el, i) => (
+            <li key={i}>{i === breadcrumb.length - 1 ? el : <Link to={`/client/ratings/${el}`}>{el}</Link>}</li>
+          ))}
+        </ul>
+      </div>
+
       <div className="flex-1 overflow-hidden">
         <Outlet />
       </div>
