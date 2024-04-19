@@ -59,6 +59,7 @@ export const ControlInput = ({ ...props }: React.HTMLProps<HTMLInputElement>) =>
   return (
     <input
       {...props}
+      role="presentation"
       name={props?.placeholder}
       readOnly={props?.placeholder === 'createdBy'}
       placeholder={splitCamelCase(`${props?.placeholder}`)}

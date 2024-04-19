@@ -26,15 +26,15 @@ export default function RatingLayout({ rating, reports, isReadOnly, Fetcher }: R
         </Link>
       </div>
 
-      <div className="flex gap-10">
+      <div className="flex gap-6">
         <div className="flex-1">
           <div className="flex flex-col flex-1 gap-6">
             <div className="flex flex-col gap-2">
               <h2 className="p-4 text-xs font-bold text-white uppercase bg-primary">Summary</h2>
 
               <div className="grid grid-cols-2 gap-4">
-                <SummaryCard title="Rating Score" isLarge subTitle={rating?.ratingScore || '-'} />
                 <SummaryCard title="Rating Class" isLarge subTitle={rating?.ratingClassModel?.name || '-'} />
+                <SummaryCard title="Rating Year" isLarge subTitle={rating?.ratingYear || '-'} />
                 <SummaryCard
                   title="Issue Date"
                   subTitle={!rating?.issueDate ? '-' : dayjs(rating?.issueDate).format('MMMM DD, YYYY')}
