@@ -2,8 +2,7 @@ import dayjs from 'dayjs';
 import MenuLayout from '@layouts/menu-layout';
 import useAppStore from '@stores';
 import { appCookie, validateCookie } from '@helpers/cookies';
-import { Icons } from '@components';
-import { json, LinksFunction, LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node';
+import { json, LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 

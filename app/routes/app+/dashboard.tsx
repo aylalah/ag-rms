@@ -15,7 +15,7 @@ const options = {
     legend: { display: false },
     title: {
       display: true,
-      text: 'Industry Distribution',
+      text: 'Distribution by Industry',
     },
   },
 };
@@ -86,17 +86,13 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
-      <div className="grid gap-4 lg:grid-cols-4 ">
-        <BoxChart title="Clients" subTitle={dashboardCounts?.clients || 0} bgColor="#fabc05" />
-        <BoxChart title="Industries" subTitle={dashboardCounts?.industries || 0} bgColor="#d3c9bc" />
-        <BoxChart title="Pending Ratings" subTitle={dashboardCounts?.pendingRatings || 0} bgColor="#878c7a" />
-        <BoxChart title="Completed Ratings" subTitle={dashboardCounts?.completedRatings || 0} bgColor="#fbda84" />
-      </div>
-
       <div className="grid w-full gap-4 lg:grid-cols-2">
-        <LongBoxChart>
-          <Bar options={options} data={data} />
-        </LongBoxChart>
+        <div className="grid gap-4 lg:grid-cols-2 ">
+          <BoxChart title="Clients" subTitle={dashboardCounts?.clients || 0} bgColor="#fabc05" />
+          <BoxChart title="Industries" subTitle={dashboardCounts?.industries || 0} bgColor="#d3c9bc" />
+          <BoxChart title="Pending Ratings" subTitle={dashboardCounts?.pendingRatings || 0} bgColor="#878c7a" />
+          <BoxChart title="Completed Ratings" subTitle={dashboardCounts?.completedRatings || 0} bgColor="#fbda84" />
+        </div>
 
         <LongBoxChart>
           <Bar options={options} data={data} />
@@ -168,13 +164,14 @@ const LongBoxChart = ({ ...props }: BoxChartProps) => (
 );
 
 const HalfBoxChart = ({ ...props }: BoxChartProps) => (
-  <div className="flex flex-col flex-1 p-4 p-6 overflow-hidden rounded shadow bg-base-100">
+  <div className="flex flex-col flex-1 gap-4 p-4 p-6 overflow-hidden rounded shadow bg-base-100">
     <div className="flex items-center justify-between">
       <h3 className="text-sm font-semibold opacity-80">{props?.title}</h3>
       <button onClick={props?.action} className="btn-xs btn btn-outline btn-secondary">
         {props?.actionButton}
       </button>
     </div>
+
     <div className="flex-1">{props?.children}</div>
   </div>
 );

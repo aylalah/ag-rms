@@ -133,7 +133,7 @@ export const TableLayout = ({
 
       <aside className="flex-1 h-full overflow-auto whitespace-nowrap">
         {tbody?.length > 0 && (
-          <table className={`${tableSize} w-full  bg-surface text-[0.88rem]`}>
+          <table className={`${tableSize} w-full  bg-surface text-[0.85rem]`}>
             <thead>
               <tr className="sticky border-t-[2px] border-b-[2px] rounded bg-primary text-base-100 border-line">
                 <th className="w-[4em]">#</th>
@@ -199,8 +199,8 @@ export const TableLayout = ({
 
         {tbody?.length < 1 && (
           <div className="flex flex-col items-center justify-center flex-1 h-full">
-            <h3 className="text-xl font-bold opacity-40">No Data Found</h3>
-            <h3 className="text-base tracking-wide opacity-40 ">List of {title?.toLowerCase()} will be shown here</h3>
+            <h3 className="font-bold opacity-40">No Data Found</h3>
+            <h3 className="text-sm tracking-wide opacity-40 ">List of {title?.toLowerCase()} will be shown here</h3>
           </div>
         )}
       </aside>
