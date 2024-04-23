@@ -3,6 +3,7 @@
 
 * {
   font-family: 'Rethink Sans', sans-serif;
+  transition: all 0.3s;
 }
 
 html,
@@ -10,6 +11,7 @@ body {
   font-family: 'Rethink Sans', sans-serif;
   /*   font-size: 14px; */
   @apply bg-base-100 text-base-content overflow-hidden;
+  transition: all 0.3s;
 }
 
 div.Toastify__toast-body div {
