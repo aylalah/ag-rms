@@ -30,7 +30,7 @@ export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
 
-export const RatingStatusSchema = z.enum(['pending','active','concluded','cancelled']);
+export const RatingStatusSchema = z.enum(['ongoing','concluded','cancelled']);
 
 export type RatingStatusType = `${z.infer<typeof RatingStatusSchema>}`
 

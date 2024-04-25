@@ -68,7 +68,7 @@ export default function Ratings() {
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden ">
       <aside className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <p className="text-[2rem] font-bold capitalize">Ratings (in progress)</p>
+          <p className="text-[2rem] font-bold capitalize">Ongoing Ratings</p>
         </div>
         <div className="flex items-center justify-end flex-1 gap-2"></div>
       </aside>
@@ -88,7 +88,9 @@ export default function Ratings() {
 
       <aside className="flex-1 h-full py-4 overflow-auto ">
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {storeQueryData?.tbody?.map((el: any) => <RatingsCard key={el.id} el={el as any} />)}
+          {storeQueryData?.tbody?.map((el: any) => (
+            <RatingsCard key={el.id} el={el as any} />
+          ))}
         </div>
       </aside>
 

@@ -50,7 +50,7 @@ const data = {
     {
       label: 'My First Dataset',
       data: [6, 5, 9.1, 9, 5, 5, 7],
-      backgroundColor: 'rgb(255, 99, 132)',
+      backgroundColor: '#CE5A61',
     },
   ],
 };
@@ -132,10 +132,10 @@ export default function Dashboard() {
     <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
       <div className="grid flex-1 w-full gap-4 lg:grid-cols-2">
         <div className="grid gap-4 lg:grid-cols-2 ">
-          <BoxChart title="Clients" subTitle={dashboardCounts?.clients || 0} bgColor="#fabc05" />
-          <BoxChart title="Industries" subTitle={dashboardCounts?.industries || 0} bgColor="#d3c9bc" />
-          <BoxChart title="Pending Ratings" subTitle={dashboardCounts?.pendingRatings || 0} bgColor="#878c7a" />
-          <BoxChart title="Completed Ratings" subTitle={dashboardCounts?.completedRatings || 0} bgColor="#fbda84" />
+          <BoxChart title="Clients" subTitle={dashboardCounts?.clients || 0} bgColor="box1" />
+          <BoxChart title="Industries" subTitle={dashboardCounts?.industries || 0} bgColor="box2" />
+          <BoxChart title="Pending Ratings" subTitle={dashboardCounts?.pendingRatings || 0} bgColor="box3" />
+          <BoxChart title="Completed Ratings" subTitle={dashboardCounts?.completedRatings || 0} bgColor="box4" />
         </div>
 
         <LongBoxChart>
@@ -194,12 +194,9 @@ interface BoxChartProps {
 }
 
 const BoxChart = ({ ...props }: BoxChartProps) => (
-  <div
-    className="flex flex-col items-center justify-center h-full p-6 rounded bg-base-100"
-    style={{ backgroundColor: props?.bgColor }}
-  >
-    <h3 className="text-5xl font-bold text-primary opacity-80">{props?.subTitle}</h3>
-    <h3 className="font-normal opacity-80 text-primary">{props?.title}</h3>
+  <div className={`flex ${props?.bgColor} flex-col items-center justify-center h-full p-6 rounded text-white`}>
+    <h3 className="text-5xl font-bold opacity-80">{props?.subTitle}</h3>
+    <h3 className="font-normal opacity-80">{props?.title}</h3>
   </div>
 );
 

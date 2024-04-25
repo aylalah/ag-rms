@@ -8,12 +8,14 @@ import { validateCookie } from '@helpers/cookies';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { apiToken, token } = await validateCookie(request);
+
   const formObjectQuery = RMSservice(apiToken)
     .ratings.formObject({ apiToken, token })
     .then((data) => {
       const { formObject, error } = data;
       return { formObject, error };
     });
+
   return defer({ rating: null, formObjectQuery });
 };
 
@@ -46,20 +48,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const questionnairesUrl = questionnaireData?.questionnaire?.url;
   if (!questionnairesUrl) return json({ error: 'Questionnaire not found' });
 
-  const questions = await axios.get(questionnairesUrl).then((res) => res.data as IResponse[]);
-
-  //group responses by Header into IResponse
-  const groupedResponses = questions
-    .map((question) => ({ ...question, Response: { text: null, file: null }, id: randomString(16) }))
-    .reduce((acc: any, response: any) => {
-      const { Header } = response || {};
-      if (!acc[Header as keyof typeof acc]) acc[Header] = [];
-
-      acc[Header as keyof typeof acc].push(response);
-      return acc;
-    }, {}) as { [key: string]: IResponse[] };
-
-  data.responses = JSON.stringify(groupedResponses);
+  data.responses = ``;
 
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });
@@ -82,15 +71,18 @@ export default function CreateRatings() {
   }, [FetcherData]);
 
   useEffect(() => {
-    toast.promise(
-      formObjectQuery,
-      { pending: 'Loading form data', error: 'Failed to load form object' },
-      { toastId: 'form-object' }
-    );
+    toast.promise(formObjectQuery, { pending: 'Loading form data' }, { toastId: 'form-object' });
+
+    formObjectQuery.then((data) => {
+      if (data?.error) toast.error(data?.error, { toastId: 'form-object-response' });
+      if (data?.error) {
+        setTimeout(() => window.history.back(), 3000);
+      }
+    });
   }, []);
 
   return (
-    <div className="h-full pb-10 overflow-hidden">
+    <div className="h-full overflow-hidden">
       <Suspense fallback={null}>
         <Await resolve={formObjectQuery}>
           {({ formObject }) => (

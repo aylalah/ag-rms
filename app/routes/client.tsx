@@ -73,7 +73,7 @@ export default function App() {
 
   return (
     <MenuLayout links={MenuLinks} settings={SettingsLinks}>
-      <div className="mb-4 text-xs breadcrumbs">
+      <div className="my-2 mt-3 text-sm capitalize breadcrumbs">
         <ul>
           <li>
             <Link to="/client/ratings">Home</Link>

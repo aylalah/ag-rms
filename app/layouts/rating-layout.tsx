@@ -6,31 +6,32 @@ type RatingProps = {
   Fetcher?: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
+  linkTo: string;
 };
 
-export default function RatingLayout({ rating, reports, isReadOnly, Fetcher }: RatingProps) {
+export default function RatingLayout({ rating, reports, isReadOnly, linkTo, Fetcher }: RatingProps) {
   return (
-    <div className="flex flex-col flex-1 h-full gap-6">
+    <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
         <div className="flex flex-col items-start">
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-3xl font-bold">
             {rating?.ratingYear} - {rating?.ratingTitle}
           </h1>
-          <span className={`px-4 py-1 text-xs text-white capitalize rounded-full ${rating?.status}`}>
+          <span className={`px-4 py-1 text text-white capitalize rounded-full ${rating?.status}`}>
             {rating?.status}
           </span>
         </div>
 
-        <Link to="questionnaire" className="text-sm btn btn-secondary btn-sm">
-          {rating?.status === 'pending' && !isReadOnly ? 'Fill ' : 'View '} Questionnaire
+        <Link to={linkTo} className="text-base btn btn-secondary">
+          {rating?.status === 'ongoing' && !isReadOnly ? 'Upload ' : 'View '} Files
         </Link>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         <div className="flex-1">
           <div className="flex flex-col flex-1 gap-6">
             <div className="flex flex-col gap-2">
-              <h2 className="p-4 text-xs font-bold text-white uppercase bg-primary">Summary</h2>
+              <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">Summary</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard title="Rating Class" isLarge subTitle={rating?.ratingClassModel?.name || '-'} />
@@ -47,7 +48,7 @@ export default function RatingLayout({ rating, reports, isReadOnly, Fetcher }: R
             </div>
 
             <div className="flex flex-col gap-2">
-              <h2 className="p-4 text-xs font-bold text-white uppercase bg-primary">Contact Information</h2>
+              <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">Contact Information</h2>
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
                   title="Primary Analyst"
@@ -76,9 +77,9 @@ export default function RatingLayout({ rating, reports, isReadOnly, Fetcher }: R
           </div>
         </div>
 
-        <div className="w-[25em] flex flex-col h-full">
+        <div className="lg:w-[25em] flex flex-col h-full">
           <div className="p-4 rounded bg-primary">
-            <h2 className="text-xs font-bold text-white uppercase ">Reports</h2>
+            <h2 className="text-sm font-bold text-white uppercase ">Reports</h2>
           </div>
           <div className="p-4 border rounded bg-base-100 border-accent min-h-[20vh]">
             <ul>
@@ -90,19 +91,32 @@ export default function RatingLayout({ rating, reports, isReadOnly, Fetcher }: R
           </div>
 
           <div className="p-4 mt-4 border rounded bg-primary border-accent">
-            <h2 className="text-xs font-bold text-white uppercase ">Resources</h2>
+            <h2 className="text-sm font-bold text-white uppercase ">Download Resources</h2>
           </div>
 
-          <div className="p-4 border rounded bg-base-100 border-accent">
-            <ul>
-              <li>
+          <div className="border rounded border-accent">
+            <ul className="grid grid-cols-2 gap-2">
+              <li className="p-4 bg-base-100">
                 <a
-                  href={`${rating?.methodologyModel?.id}`}
+                  href={`${rating?.methodologyModel?.url}`}
                   target="_blank"
                   referrerPolicy="no-referrer"
-                  className="text-sm link-secondary"
+                  className="flex items-center gap-2 text-sm link-secondary"
                 >
+                  <i className="ri-file-text-line" />
                   Methodology
+                </a>
+              </li>
+
+              <li className="p-4 bg-base-100">
+                <a
+                  href={`${rating?.questionnaireModel?.url}`}
+                  target="_blank"
+                  referrerPolicy="no-referrer"
+                  className="flex items-center gap-2 text-sm link-secondary"
+                >
+                  <i className="ri-file-text-line" />
+                  Questionnaire
                 </a>
               </li>
             </ul>
@@ -129,7 +143,9 @@ const Tr = ({
   const isEvenStyle = index && index % 2 === 0;
   return (
     <li
-      className={`grid items-center grid-cols-3 text-xs ${isHeader && 'font-bold uppercase bg-accent'} border-b border-accent ${isEvenStyle && 'bg-gray-100'}`}
+      className={`grid items-center grid-cols-3 text-sm ${
+        isHeader && 'font-bold uppercase bg-accent'
+      } border-b border-accent ${isEvenStyle && 'bg-gray-100'}`}
     >
       <div className="h-full col-span-2 px-2 py-3 border-r">{name}</div>
       <Link
@@ -156,8 +172,8 @@ const SummaryCard = ({
   isLarge?: boolean;
 }) => (
   <div className="flex flex-col gap-1 px-4 py-3 shadow bg-base-100">
-    <p className="text-xs font-bold capitalize opacity-60 ">{title}</p>
-    {subSubTitle && <h2 className="text-[14px] font-semibold opacity-90">{subSubTitle}</h2>}
+    <p className="text-sm font-bold capitalize opacity-60 ">{title}</p>
+    {subSubTitle && <h2 className="font-medium opacity-90">{subSubTitle}</h2>}
     <h2 className={` font-bold opacity-90 ${isLarge ? 'text-[20px]' : 'text-[14px]'}`}>{subTitle}</h2>
   </div>
 );

@@ -9,7 +9,7 @@
 html,
 body {
   font-family: 'Rethink Sans', sans-serif;
-  /*   font-size: 14px; */
+  font-size: 16px;
   @apply bg-base-100 text-base-content overflow-hidden;
   transition: all 0.3s;
 }
@@ -28,17 +28,42 @@ a {
 
 .app-menu .active,
 .app-menu a:hover {
-  @apply bg-primary text-base-100 opacity-100 transition-all;
+  @apply font-bold text-base-100 opacity-100 transition-all;
 }
 
 .map {
   background-image: url('https://agustoportals.sfo3.digitaloceanspaces.com/bg-videos/mapBg.png');
 }
 
-.pending {
+.ongoing {
   @apply bg-info text-sm text-base-100 p-2 rounded;
 }
 
 .concluded {
   @apply bg-success text-sm text-base-100 p-2 rounded;
+}
+
+.bg {
+  background: linear-gradient(90deg, #07354f 0%, #286396 100%);
+  background-blend-mode: multiply;
+}
+
+.box1 {
+  background: linear-gradient(270deg, #155084 0%, #3676ae 100%);
+  background-blend-mode: multiply;
+}
+
+.box2 {
+  background: linear-gradient(90deg, #a3d884 0%, #7ab05b 100%);
+  background-blend-mode: multiply;
+}
+
+.box3 {
+  background: linear-gradient(90deg, #ff7373 0%, #cd4141 100%);
+  background-blend-mode: multiply;
+}
+
+.box4 {
+  background: linear-gradient(90deg, #d8aa76 0%, #ab8253 100%);
+  background-blend-mode: multiply;
 }

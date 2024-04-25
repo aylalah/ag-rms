@@ -1,9 +1,7 @@
 import ContactCard from '@ui/cards/contact-card';
 import ContactForm from '@ui/forms/contact-form';
-import dayjs from 'dayjs';
-import { ActionFunctionArgs, defer, LoaderFunctionArgs, redirectDocument } from '@remix-run/node';
-import { Button } from '@components';
-import { Client, ClientWithRelations, Contact } from '@helpers/zodPrisma';
+import { ActionFunctionArgs, defer, LoaderFunctionArgs } from '@remix-run/node';
+import { ClientOptionalDefaultsWithRelations, ClientWithRelations, Contact } from '@helpers/zodPrisma';
 import { Link, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
@@ -14,7 +12,22 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params?.id as string;
 
   const ratingQuery = RMSservice(token)
-    .clients.one({ id, include: { ratingModel: true } })
+    .clients.one({
+      id,
+      include: {
+        ratingModel: {
+          select: {
+            primaryAnalyst: true,
+            secondaryAnalyst: true,
+            ratingScore: true,
+            ratingTitle: true,
+            ratingYear: true,
+            status: true,
+            ratingClassModel: true,
+          },
+        },
+      },
+    })
     .then((res) => {
       const { client, error } = res || {};
       return { client, error };
@@ -23,7 +36,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return defer({ ratingQuery });
 };
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const method = request.method;
   const fd = await request.formData();
   const { token } = await validateCookie(request);
@@ -52,7 +65,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function ClientEdit() {
   const { ratingQuery } = useLoaderData<typeof loader>();
-  const [client, setClient] = useState<ClientWithRelations | null>(null);
+  const [client, setClient] = useState<ClientOptionalDefaultsWithRelations | null>(null);
   const Fetcher = useFetcher();
   const navigate = useNavigate();
   const FetcherData = Fetcher.data as { message: string; error: string };
@@ -176,7 +189,7 @@ export default function ClientEdit() {
                       <td>{rating.primaryAnalyst || '-'}</td>
                       <td>{rating.secondaryAnalyst || '-'}</td>
                       <td>{rating.ratingScore || '-'}</td>
-                      <td>{rating.ratingClass || '-'}</td>
+                      <td>{rating.ratingClassModel?.name || '-'}</td>
                       <td className="p-3">{rating.ratingYear || '-'}</td>
                       <td>
                         <span className={`${rating.status} capitalize text-xs`}>{rating.status || '-'}</span>

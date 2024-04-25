@@ -30,12 +30,3 @@ type LogDBActionProps = {
   newDocs: string;
 };
 
-type IResponse = {
-  id: string;
-  Header: string;
-  Response?: {
-    file: string | null;
-    text: string | null;
-  };
-  Question: string;
-};

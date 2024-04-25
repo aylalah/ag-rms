@@ -89,6 +89,7 @@ export const groupedClientRoutes = MenuLinks.map((route) => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user, token } = await validateCookie(request);
   if (!user) return redirect('/', { headers: { 'Set-Cookie': await appCookie.serialize('', { maxAge: 0 }) } });
+
   return json({ user });
 };
 
@@ -115,7 +116,7 @@ export default function App() {
 
   return (
     <MenuLayout links={MenuLinks} settings={SettingsLinks}>
-      <div className="mb-4 text-xs breadcrumbs">
+      <div className="my-2 mt-3 text-sm capitalize breadcrumbs">
         <ul>
           <li>
             <Link to="/app/dashboard">Home</Link>
@@ -130,7 +131,7 @@ export default function App() {
         <Outlet />
       </div>
 
-      <footer className="flex items-center justify-between py-4 text-xs font-bold ">
+      <footer className="flex items-center justify-between py-4 text-xs font-bold">
         <div className="opacity-40"> &copy; Copyright Agusto & Co.{dayjs().format('YYYY')}. </div>
 
         <div className="flex items-center justify-start gap-4 text-xs opacity-40">

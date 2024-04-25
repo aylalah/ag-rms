@@ -6,8 +6,8 @@ import { useFetcher } from '@remix-run/react';
 /* const email = 'adeolaboluogun@agusto.com';
 const password = 'adeola250398'; */
 
-//const email = 'bamidelejoel@agusto.com';
-//const password = 'agusto130476';
+const email = 'bamidelejoel@agusto.com';
+const password = 'agusto130476';
 
 export default function LoginForm() {
   const Fetcher = useFetcher({ key: 'login' });
@@ -25,8 +25,8 @@ export default function LoginForm() {
         </div>
 
         <div className="flex flex-col flex-1 gap-1">
-          <TextInput name="email" type="email" placeholder="Enter you email address" />
-          <TextInput name="password" type="password" placeholder="Enter your password" />
+          <TextInput defaultValue={email} name="email" type="email" placeholder="Enter you email address" />
+          <TextInput defaultValue={password} name="password" type="password" placeholder="Enter your password" />
           <div className="flex items-center justify-end py-4">
             <a href="/auth/forgot-password" className="text-xs">
               Forgot Password?

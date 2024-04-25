@@ -24,7 +24,7 @@ export class RatingClass extends MainClass {
       const take = limit || 10;
       const skip = (setPage - 1) * take || 0;
       const industries = await dbQuery.$transaction([
-        dbQuery.rating.findMany({ where, orderBy, take, skip, include: { ...include } }),
+        dbQuery.rating.findMany({ where, orderBy, take, skip, include: { ratingClassModel: true, ...include } }),
         dbQuery.rating.count({ where }),
       ]);
 
@@ -46,7 +46,13 @@ export class RatingClass extends MainClass {
       const { id, include } = input;
       const rating = await dbQuery.rating.findUnique({
         where: { id },
-        include: { ratingClassModel: true, methodologyModel: true, questionnaireModel: true, clientModel: true },
+        include: {
+          ratingClassModel: true,
+          methodologyModel: true,
+          questionnaireModel: true,
+          clientModel: true,
+          ...include,
+        },
       });
 
       return { rating };
@@ -129,7 +135,11 @@ export class RatingClass extends MainClass {
         headers: { Authorization: `Bearer ${apiToken}` },
       });
 
-      const unitMembers = data?.data;
+      const unitMembers = data?.data || [];
+
+      if (!unitMembers?.length || unitMembers?.length < 1)
+        return { error: 'You are not a supervisor. Please contact your supervisor to create a rating' };
+
       const objData = convertZodSchema(RatingSchema);
       const ratingStatus = RatingStatusSchema;
       const methodology = await dbQuery.methodology.findMany({ select: { id: true, name: true } });
@@ -213,8 +223,8 @@ export class RatingClass extends MainClass {
       rest.push(status as any);
 
       return { formObject: rest };
-    } catch (error: unknown) {
-      return { error: 'Something went wrong' };
+    } catch (error: any) {
+      return { error: error?.message };
     }
   }
 }

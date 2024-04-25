@@ -41,10 +41,10 @@ export class AuthClass extends MainClass {
 
       //six digit token
       const magicToken = Math.floor(100000 + Math.random() * 900000).toString();
-      await dbQuery.client.update({ where: { id: user.id }, data: { magicToken } });
+      //await dbQuery.client.update({ where: { id: user.id }, data: { magicToken } });
 
       //send magic link to user email
-      sendEmailService({
+      /*   sendEmailService({
         From: '',
         To: email,
         Subject: 'Agusto Rating System Login Token',
@@ -58,7 +58,7 @@ export class AuthClass extends MainClass {
         <p>Agusto & Co.</p>`,
 
         TextBody: `Hello ${email}, Please see your six digit token below ${magicToken}`,
-      });
+      }); */
 
       return { message: 'Login link sent to your email', user: rest, apiToken: null, client: null };
     } catch (error: any) {

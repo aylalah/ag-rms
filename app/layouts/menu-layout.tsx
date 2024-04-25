@@ -1,5 +1,5 @@
 import useAppStore from '@stores';
-import { Avatar, Icons } from '@components';
+import { Icons } from '@components';
 import { NavLink } from '@remix-run/react';
 
 interface IRoute {
@@ -24,8 +24,8 @@ export default function MenuLayout({
 
   return (
     <div className="flex flex-1 h-screen pl-0 bg-primary">
-      <div className="flex flex-col flex-1 h-full gap-2 overflow-hidden rounded-lg bg-base-200">
-        <header className="flex h-[80px] w-full  border-b bg-primary map">
+      <div className="flex flex-col flex-1 h-full overflow-hidden rounded-lg bg-base-200">
+        <header className="flex h-[100px] w-full  border-b bg">
           <div className="container flex items-center justify-between w-full ">
             <div className="flex items-center gap-10">
               <a href="/" className="text-xl font-bold">
@@ -50,7 +50,7 @@ export default function MenuLayout({
               </div>
             </div>
 
-            <div>
+            <div className="flex items-center gap-4">
               <div className="dropdown dropdown-end">
                 <div
                   tabIndex={0}
@@ -77,11 +77,16 @@ export default function MenuLayout({
                   ))}
                 </ul>
               </div>
+
+              <div
+                className="flex w-10 h-10 bg-cover rounded-full bg-base-100"
+                style={{ backgroundImage: `url(${user?.image || client?.logo})` }}
+              ></div>
             </div>
           </div>
         </header>
 
-        <div className="container flex flex-col flex-1 h-full py-2 overflow-hidden">{children}</div>
+        <div className="container flex flex-col flex-1 h-full overflow-hidden">{children}</div>
       </div>
     </div>
   );

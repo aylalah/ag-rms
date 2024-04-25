@@ -22,7 +22,7 @@ export const action = async ({ request }: LoaderFunctionArgs) => {
   return json({ error });
 };
 
-const token = 611311;
+const token = 699490;
 
 export default function EmailConfirmation() {
   const Fetcher = useFetcher();

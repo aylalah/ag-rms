@@ -19,5 +19,5 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function Rating() {
   const { rating, reports, error } = useLoaderData<typeof loader>();
 
-  return <RatingLayout rating={rating as any} reports={reports} />;
+  return <RatingLayout linkTo="files-uploads" isReadOnly={false} rating={rating as any} reports={reports} />;
 }

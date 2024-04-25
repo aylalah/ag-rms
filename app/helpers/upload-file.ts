@@ -30,6 +30,7 @@ const s3 = new S3Client({
 });
 
 export const uploadStreamToSpaces = (file: any, fileName: string) => {
+  console.log('Uploading file to spaces', fileName);
   return new Upload({
     client: s3,
     params: {
