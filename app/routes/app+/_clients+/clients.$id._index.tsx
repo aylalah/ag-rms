@@ -17,6 +17,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       include: {
         ratingModel: {
           select: {
+            id: true,
             primaryAnalyst: true,
             secondaryAnalyst: true,
             ratingScore: true,
@@ -92,11 +93,13 @@ export default function ClientEdit() {
   };
 
   const goto = (rating: any) => {
-    navigate(`/app/ratings/${rating.id}`);
+    console.log(rating);
+    //navigate(`/app/ratings/${rating.id}`);
   };
 
   useEffect(() => {
     ratingQuery?.then((data) => {
+      console.log(data);
       if (!data?.client) return navigate('/app/clients', { replace: true });
       setClient(data?.client as any);
     });
@@ -122,7 +125,7 @@ export default function ClientEdit() {
   }, [FetcherData]);
 
   return (
-    <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
+    <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
       <div className="flex items-center justify-between px-4 py-3 border rounded bg-primary border-accent text-base-100">
         <div>
           <p className="font-semibold">{client?.companyName} </p>
@@ -157,15 +160,15 @@ export default function ClientEdit() {
             </div>
           </div>
 
-          <div className="flex-1 h-full overflow-hidden border bg-primary border-accent">
-            <div className="flex items-center justify-between">
+          <div className="flex-1 h-full border bg-bae-100 border-accent">
+            <div className="flex items-center justify-between bg-primary">
               <p className="flex flex-col p-4 text-base text-base-100">Rating History</p>
               <Link to="/app/ratings" className="p-4 text-xs hover:underline text-base-100">
                 View All
               </Link>
             </div>
 
-            <div className="h-[100%] bg-base-100 p-4 overflow-auto">
+            <div className="p-4 bg-base-100 ">
               <table className="w-full text-sm table-fixed">
                 <thead>
                   <tr className="text-left bg-base-200">
@@ -230,7 +233,7 @@ export default function ClientEdit() {
 }
 
 const Card = ({ title, subTitle }: { title: string; subTitle?: string }) => (
-  <div className="flex flex-col p-4 border rounded border-accent bg-base-100">
+  <div className="flex flex-col px-4 py-2 border rounded border-accent bg-base-100">
     <p className="text-xs capitalize opacity-50">{title}</p>
     <p className="">{subTitle}</p>
   </div>
