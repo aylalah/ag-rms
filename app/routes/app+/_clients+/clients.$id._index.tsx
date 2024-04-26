@@ -1,7 +1,7 @@
 import ContactCard from '@ui/cards/contact-card';
 import ContactForm from '@ui/forms/contact-form';
 import { ActionFunctionArgs, defer, LoaderFunctionArgs } from '@remix-run/node';
-import { ClientOptionalDefaultsWithRelations, ClientWithRelations, Contact } from '@helpers/zodPrisma';
+import { Contact } from '@helpers/zodPrisma';
 import { Link, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
@@ -93,13 +93,11 @@ export default function ClientEdit() {
   };
 
   const goto = (rating: any) => {
-    console.log(rating);
-    //navigate(`/app/ratings/${rating.id}`);
+    navigate(`/app/ratings/${rating.id}`);
   };
 
   useEffect(() => {
     ratingQuery?.then((data) => {
-      console.log(data);
       if (!data?.client) return navigate('/app/clients', { replace: true });
       setClient(data?.client as any);
     });
