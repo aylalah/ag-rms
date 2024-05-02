@@ -49,6 +49,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const formData = await unstable_parseMultipartFormData(request, uploadHandler)
       .then(async (res) => {
         const files = Object.fromEntries(res.entries());
+        if (Object.keys(files).length < 1) return json({});
+
         const saveFiles = await Promise.all(
           Object.entries(files).map(async ([key, file]) => {
             const fileData = file as { name: string; type: string; size: number };
@@ -75,6 +77,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   if (method === 'PATCH') {
     const fd = await request.formData();
     const data = Object.fromEntries(fd.entries()) as any;
+
     const { updateRating, error } = await RMSservice(token).ratings.update({ id, data });
     return json({ message: updateRating, error });
   }
@@ -119,7 +122,6 @@ export default function Dragger() {
 
   const sumSizes = () => {
     const size = fileList.reduce((acc, file) => acc + file.size, 0);
-
     return size / 1000000;
   };
 
@@ -127,7 +129,7 @@ export default function Dragger() {
     event.preventDefault();
   };
 
-  const dropHandler = (event: React.DragEvent<HTMLDivElement>) => {
+  const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
     try {
       event.preventDefault();
       let size = 0;
@@ -150,6 +152,8 @@ export default function Dragger() {
           date: new Date(),
         });
 
+        console.log('FILE-TYPE', fileType);
+
         if (allowFileTypes.includes(files[i].type)) {
           size += files[i].size;
           formData.append(key, files[i]);
@@ -158,6 +162,11 @@ export default function Dragger() {
 
       setTotalSize(size);
       setFileList([...fileList, ...payload]);
+
+      //console.log('FORM-DATA', formData.entries().next().done);
+      //check if formData is empty
+      if (formData.entries().next().done) return;
+
       Fetcher.submit(formData, { method: 'POST', encType: 'multipart/form-data' });
     } catch (error) {
       console.log(error);
@@ -188,10 +197,8 @@ export default function Dragger() {
   };
 
   useEffect(() => {
-    const saveQuery = FetcherData?.saveQuery;
-    console.log('FetcherData?.deletedMessage', FetcherData?.deletedMessage);
-
-    if (saveQuery) {
+    if (FetcherData?.saveQuery) {
+      const saveQuery = FetcherData?.saveQuery;
       const newFileList = fileList.map((file) => {
         const found = saveQuery.find((query) => query.id === file.id);
         if (found) return { ...file, status: found.status, url: found?.storedUrl || '', date: new Date() };
@@ -225,10 +232,11 @@ export default function Dragger() {
         className="border-dashed flex flex-col items-center justify-center h-[17em]  overflow-hidden transition-all border bg-[#07354f10] rounded-xl border-primary"
         ref={dragRef}
         id="drop_zone"
-        onDrop={dropHandler}
+        onDrop={onDrop}
         onDragOver={dragOverHandler}
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}
+        onDragEnd={onDragLeave}
         draggable={!isSubmitting}
       >
         <p className="text-sm">
