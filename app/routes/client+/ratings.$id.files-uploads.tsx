@@ -67,7 +67,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         return json({ saveQuery: saveFiles });
       })
       .catch((error) => {
-        console.log(error);
         return json({ error });
       });
 
@@ -152,8 +151,6 @@ export default function Dragger() {
           date: new Date(),
         });
 
-        console.log('FILE-TYPE', fileType);
-
         if (allowFileTypes.includes(files[i].type)) {
           size += files[i].size;
           formData.append(key, files[i]);
@@ -163,7 +160,6 @@ export default function Dragger() {
       setTotalSize(size);
       setFileList([...fileList, ...payload]);
 
-      //console.log('FORM-DATA', formData.entries().next().done);
       //check if formData is empty
       if (formData.entries().next().done) return;
 
@@ -215,7 +211,6 @@ export default function Dragger() {
     }
 
     if (FetcherData?.deletedMessage) {
-      console.log(FetcherData?.deletedMessage);
       const newFileList = fileList.filter((file) => file.url !== FetcherData?.url);
       setFileList(newFileList);
       onSubmit(newFileList);
