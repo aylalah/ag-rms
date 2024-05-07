@@ -65,7 +65,8 @@ model Rating {
   questionnaire      String        @db.ObjectId
   methodologyModel   Methodology   @relation(fields: [methodology], references: [id])
   questionnaireModel Questionnaire @relation(fields: [questionnaire], references: [id])
-  responses          String
+  questionnaireFiles String?
+  additionalFiles    String?
   status             RatingStatus? @default(ongoing)
   issueDate          DateTime?
   expiryDate         DateTime?

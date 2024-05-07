@@ -30,3 +30,12 @@ type LogDBActionProps = {
   newDocs: string;
 };
 
+type FileProp = {
+  id: string;
+  name: string;
+  size: number;
+  status: boolean;
+  shouldAllow: boolean;
+  url: string;
+  date: Date;
+};

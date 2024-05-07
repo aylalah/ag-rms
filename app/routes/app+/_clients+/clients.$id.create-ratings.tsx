@@ -48,8 +48,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const questionnairesUrl = questionnaireData?.questionnaire?.url;
   if (!questionnairesUrl) return json({ error: 'Questionnaire not found' });
 
-  data.responses = ``;
-
   const { createRating, error } = await RMSservice(token).ratings.create({ data });
   return json({ message: createRating, error });
 };

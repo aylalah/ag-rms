@@ -10,7 +10,7 @@ export const loader = async (ctx: LoaderFunctionArgs) => {
 
 export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
-  const { setQueryData, storeQueryData } = useRatingStore((state) => state);
+  const { setQueryData, setRatings, storeQueryData } = useRatingStore((state) => state);
   const [meta, setMeta] = useState<any>({});
 
   const onSearch = () => {};
@@ -24,6 +24,9 @@ export default function Ratings() {
   useEffect(() => {
     queryData.then((res) => {
       setMeta(res?.meta);
+      setRatings(
+        res?.tbody?.map((el) => ({ id: el?.id, ratingTitle: el?.ratingTitle, clientName: el.clientModel?.companyName }))
+      );
     });
   }, [queryData]);
 
@@ -57,7 +60,9 @@ export default function Ratings() {
 
       <aside className="flex-1 h-full py-4 overflow-auto ">
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {storeQueryData?.tbody?.map((el: any) => <RatingsCard key={el.id} el={el as any} />)}
+          {storeQueryData?.tbody?.map((el: any) => (
+            <RatingsCard key={el.id} el={el as any} />
+          ))}
         </div>
       </aside>
 

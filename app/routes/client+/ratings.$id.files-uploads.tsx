@@ -92,16 +92,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   return json({ error: 'Invalid request method' });
 };
 
-type File = {
-  id: string;
-  name: string;
-  size: number;
-  status: boolean;
-  shouldAllow: boolean;
-  url: string;
-  date: Date;
-};
-
 export default function Dragger() {
   const DiaRef = useRef<HTMLDialogElement>(null);
   const { rating } = useLoaderData<typeof loader>();
@@ -115,9 +105,9 @@ export default function Dragger() {
     saveQuery: { id: string; storedUrl: string | null; status: boolean; fileName: string }[];
   };
   const dragRef = useRef<HTMLDivElement>(null);
-  const [fileList, setFileList] = useState<File[]>(rating?.responses as any);
+  const [fileList, setFileList] = useState<FileProp[]>(rating?.responses as any);
   const [totalSize, setTotalSize] = useState(0);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<FileProp | null>(null);
 
   const sumSizes = () => {
     const size = fileList.reduce((acc, file) => acc + file.size, 0);
@@ -179,11 +169,13 @@ export default function Dragger() {
     dragRef.current?.style.setProperty('border', 'none');
   };
 
-  const onSubmit = (data: File[]) => {
-    Fetcher.submit({ responses: JSON.stringify(data) }, { method: 'PATCH' });
+  const onSubmit = (data: FileProp[]) => {
+    //remove should not allow
+    const newFileList = data.filter((file) => file.shouldAllow);
+    Fetcher.submit({ responses: JSON.stringify(newFileList) }, { method: 'PATCH' });
   };
 
-  const onDeleteStart = (file: File) => {
+  const onDeleteStart = (file: FileProp) => {
     setSelectedFile(file);
     DiaRef.current?.showModal();
   };

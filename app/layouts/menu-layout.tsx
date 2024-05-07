@@ -25,7 +25,7 @@ export default function MenuLayout({
   return (
     <div className="flex flex-1 h-screen pl-0 bg-primary">
       <div className="flex flex-col flex-1 h-full overflow-hidden rounded-lg bg-base-200">
-        <header className="flex h-[100px] w-full  border-b bg">
+        <header className="flex h-[80px] w-full  border-b bg">
           <div className="container flex items-center justify-between w-full ">
             <div className="flex items-center gap-10">
               <a href="/" className="text-xl font-bold">

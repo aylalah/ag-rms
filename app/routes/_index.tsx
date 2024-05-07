@@ -52,13 +52,13 @@ export default function Index() {
   return (
     <div className="flex h-screen bg-primary map">
       <div className="flex flex-col justify-center gap-6 flex-1 p-[10em] text-white relative">
-        <h1 className="text-6xl font-bold leading-[1.1em]">
+        <h1 className="text-7xl font-bold leading-[1.1em]">
           Agusto Rating
           <br />
           Management System
         </h1>
 
-        <p className="text-lg leading-[1.6em] opacity-50">
+        <p className="text-xl leading-[1.6em] opacity-70">
           Strengthen your creditworthiness with the Agusto Rating Management System. Our streamlined platform simplifies
           data collection, ensuring a transparent and efficient rating process for informed decision-making.
         </p>

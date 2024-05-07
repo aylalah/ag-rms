@@ -97,6 +97,7 @@ export default function App() {
   const { pathname } = useLocation();
   const { user } = useLoaderData<typeof loader>();
   const { setUser } = useAppStore.user((state) => state);
+  const { ratingsData } = useRatingStore((state) => state);
   const [breadcrumb, setBreadcrumb] = useState<{ name: string; path: string }[]>([]);
 
   useEffect(() => setUser(user as User), [user]);
@@ -104,15 +105,21 @@ export default function App() {
   useEffect(() => {
     const crumbs = pathname.split('/').filter(Boolean);
     const crumbsSlice = crumbs.slice(0, crumbs.length - 1);
+
+    console.log({ ratingsData });
+
     const breadcrumb = crumbs
-      .map((el) => ({
-        name: el,
-        path: `${crumbsSlice.slice(1, crumbs.indexOf(el) + 1).join('/')}`,
-      }))
+      .map((el) => {
+        const idToName = ratingsData.filter((ell) => ell.id === el)[0];
+        return {
+          name: idToName?.clientName || el,
+          path: `${crumbsSlice.slice(1, crumbs.indexOf(el) + 1).join('/')}`,
+        };
+      })
       .filter((el) => el.name !== 'app');
 
     setBreadcrumb(breadcrumb);
-  }, [pathname]);
+  }, [pathname, ratingsData]);
 
   return (
     <MenuLayout links={MenuLinks} settings={SettingsLinks}>
