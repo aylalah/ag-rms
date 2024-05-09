@@ -17,8 +17,8 @@ export default function LoginForm() {
   useEffect(() => setLoader(isSubmitting), [isSubmitting]);
 
   return (
-    <Fetcher.Form method="post">
-      <fieldset disabled={isSubmitting} className="flex flex-col w-[25em] gap-6 px-10 py-[5em]  bg-base-100">
+    <Fetcher.Form method="post" className="w-full">
+      <fieldset disabled={isSubmitting} className="flex flex-col rounded-lg w-full gap-6 px-10 py-[5em]  bg-base-100">
         <div className="flex flex-col">
           <p className="text-2xl font-bold">User Login</p>
           <p className="text-sm opacity-40">Please enter your email and password to login</p>
