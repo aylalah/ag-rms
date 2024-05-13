@@ -7,9 +7,17 @@ type RatingProps = {
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
   linkTo: string;
+  isClientOnly: boolean;
 };
 
-export default function RatingLayout({ rating, reports, isReadOnly, linkTo, Fetcher }: RatingProps) {
+export default function RatingLayout({
+  rating,
+  reports,
+  isReadOnly,
+  linkTo,
+  Fetcher,
+  isClientOnly = false,
+}: RatingProps) {
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
@@ -22,9 +30,37 @@ export default function RatingLayout({ rating, reports, isReadOnly, linkTo, Fetc
           </span>
         </div>
 
-        <Link to={linkTo} className="text-base btn btn-secondary">
-          {rating?.status === 'ongoing' && !isReadOnly ? 'Upload ' : 'View '} Files
-        </Link>
+        {isClientOnly ? (
+          <div className="dropdown dropdown-hover dropdown-end">
+            <Link tabIndex={0} to="#" className="text-base btn btn-secondary">
+              Upload Files
+              <i className="ri-arrow-down-s-line" />
+            </Link>
+
+            <ul
+              tabIndex={0}
+              className="rounded-lg p-4 text-sm shadow-lg dropdown-content bg-base-100 w-[18em] z-[10] mr-1"
+            >
+              <li className="hover:bg-secondary hover:text-base-100">
+                <Link to={`${linkTo}/questionnaire-docs`} className="flex items-center gap-2 py-4 hover:px-2">
+                  <i className="ri-file-text-line" />
+                  Questionnaire Documents
+                </Link>
+              </li>
+
+              <li className="hover:bg-secondary hover:text-base-100">
+                <Link to={`${linkTo}/additional-docs`} className="flex items-center gap-2 py-4 hover:px-2">
+                  <i className="ri-file-paper-line" />
+                  Additional Documents
+                </Link>
+              </li>
+            </ul>
+          </div>
+        ) : (
+          <Link to={linkTo} className="text-base btn btn-secondary">
+            View Files
+          </Link>
+        )}
       </div>
 
       <div className="flex flex-col gap-6 lg:flex-row">

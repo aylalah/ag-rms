@@ -106,8 +106,6 @@ export default function App() {
     const crumbs = pathname.split('/').filter(Boolean);
     const crumbsSlice = crumbs.slice(0, crumbs.length - 1);
 
-    console.log({ ratingsData });
-
     const breadcrumb = crumbs
       .map((el) => {
         const idToName = ratingsData.filter((ell) => ell.id === el)[0];
@@ -116,7 +114,8 @@ export default function App() {
           path: `${crumbsSlice.slice(1, crumbs.indexOf(el) + 1).join('/')}`,
         };
       })
-      .filter((el) => el.name !== 'app');
+      .filter((el) => el.name?.toLowerCase() !== 'app')
+      .filter((el) => el.name?.toLowerCase() !== 'files-uploads');
 
     setBreadcrumb(breadcrumb);
   }, [pathname, ratingsData]);

@@ -25,15 +25,20 @@ const allowFileTypes = [
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
   const id = params.id || 'testing';
+  const slug = params.slug as 'questionnaire-docs' | 'additional-docs';
   const { rating, error } = await RMSservice(token).ratings.one({ id });
-  if (rating?.responses) rating.responses = JSON.parse(rating?.responses) || [];
-  return json({ error, rating });
+  let docs = [] as FileProp[];
+
+  if (slug === 'questionnaire-docs' && rating?.questionnaireFiles) docs = JSON.parse(rating.questionnaireFiles);
+  if (slug === 'additional-docs' && rating?.additionalFiles) docs = JSON.parse(rating.additionalFiles);
+  return json({ error, rating, docs });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { token } = await validateCookie(request);
   const method = request.method;
   const id = params.id || 'testing';
+  const slug = params.slug as 'questionnaire-docs' | 'additional-docs';
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
@@ -63,12 +68,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             return { storedUrl: null, status: false, id: key };
           })
         );
-
         return json({ saveQuery: saveFiles });
       })
-      .catch((error) => {
-        return json({ error });
-      });
+      .catch((error) => json({ error }));
 
     return formData;
   }
@@ -76,6 +78,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   if (method === 'PATCH') {
     const fd = await request.formData();
     const data = Object.fromEntries(fd.entries()) as any;
+    if (slug === 'questionnaire-docs') data.questionnaireFiles = data.docs;
+    if (slug === 'additional-docs') data.additionalFiles = data.docs;
+    delete data.docs;
 
     const { updateRating, error } = await RMSservice(token).ratings.update({ id, data });
     return json({ message: updateRating, error });
@@ -94,7 +99,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function Dragger() {
   const DiaRef = useRef<HTMLDialogElement>(null);
-  const { rating } = useLoaderData<typeof loader>();
+  const { rating, docs } = useLoaderData<typeof loader>();
   const Fetcher = useFetcher();
   const isSubmitting = Fetcher.state === 'submitting';
   const FetcherData = Fetcher.data as {
@@ -105,12 +110,12 @@ export default function Dragger() {
     saveQuery: { id: string; storedUrl: string | null; status: boolean; fileName: string }[];
   };
   const dragRef = useRef<HTMLDivElement>(null);
-  const [fileList, setFileList] = useState<FileProp[]>(rating?.responses as any);
+  const [fileList, setFileList] = useState<FileProp[]>(docs as any);
   const [totalSize, setTotalSize] = useState(0);
   const [selectedFile, setSelectedFile] = useState<FileProp | null>(null);
 
   const sumSizes = () => {
-    const size = fileList.reduce((acc, file) => acc + file.size, 0);
+    const size = fileList?.reduce((acc, file) => acc + file.size, 0);
     return size / 1000000;
   };
 
@@ -172,7 +177,7 @@ export default function Dragger() {
   const onSubmit = (data: FileProp[]) => {
     //remove should not allow
     const newFileList = data.filter((file) => file.shouldAllow);
-    Fetcher.submit({ responses: JSON.stringify(newFileList) }, { method: 'PATCH' });
+    Fetcher.submit({ docs: JSON.stringify(newFileList) }, { method: 'PATCH' });
   };
 
   const onDeleteStart = (file: FileProp) => {

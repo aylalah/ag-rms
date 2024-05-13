@@ -62,12 +62,28 @@ export default function App() {
   const { pathname } = useLocation();
   const { client } = useLoaderData<typeof loader>();
   const { setClient } = useAppStore.user((state) => state);
-  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+  const [breadcrumb, setBreadcrumb] = useState<{ name: string; path: string }[]>([]);
+  const { ratingsData } = useRatingStore((state) => state);
 
   useEffect(() => setClient(client as any), [client]);
   useEffect(() => {
     const crumbs = pathname.split('/').filter(Boolean);
-    const breadcrumb = crumbs.slice(2, crumbs.length).map((el) => el?.charAt(0).toUpperCase() + el?.slice(1));
+    const crumbsSlice = crumbs.slice(2, crumbs.length);
+
+    const breadcrumb = crumbs
+      .map((el) => {
+        const idToName = ratingsData.filter((ell) => ell.id === el)[0];
+        return {
+          name: idToName?.clientName || el,
+          path: `/client/ratings/${el}`,
+        };
+      })
+      .filter((el) => el.name?.toLowerCase() !== 'client')
+      .filter((el) => el.name?.toLowerCase() !== 'ratings')
+      .filter((el) => el.name?.toLowerCase() !== 'files-uploads');
+
+    console.table(breadcrumb);
+
     setBreadcrumb(breadcrumb);
   }, [pathname]);
 
@@ -79,7 +95,7 @@ export default function App() {
             <Link to="/client/ratings">Home</Link>
           </li>
           {breadcrumb.map((el, i) => (
-            <li key={i}>{i === breadcrumb.length - 1 ? el : <Link to={`/client/ratings/${el}`}>{el}</Link>}</li>
+            <li key={i}>{i === breadcrumb.length - 1 ? el?.name : <Link to={`${el.path}`}>{el.name}</Link>}</li>
           ))}
         </ul>
       </div>
