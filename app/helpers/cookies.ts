@@ -33,7 +33,6 @@ export const validateAcceptedCookie = async (request: Request) => {
       if (data === 'true') return true;
     }
   }
-
   return false;
 };
 
