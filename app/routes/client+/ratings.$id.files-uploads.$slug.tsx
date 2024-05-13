@@ -242,7 +242,7 @@ export default function Dragger() {
         </div>
 
         <div className="relative w-44">
-          <button className="w-full text-sm shadow btn-sm btn btn-secondary">Select File(s)</button>
+          <button className="w-full text-sm shadow btn btn-secondary">Select File(s)</button>
           <input type="file" accept="application/pdf" className="absolute inset-0 opacity-0 cursor-pointer" />
         </div>
       </div>

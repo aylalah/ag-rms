@@ -82,8 +82,6 @@ export default function App() {
       .filter((el) => el.name?.toLowerCase() !== 'ratings')
       .filter((el) => el.name?.toLowerCase() !== 'files-uploads');
 
-    console.table(breadcrumb);
-
     setBreadcrumb(breadcrumb);
   }, [pathname]);
 

@@ -1,8 +1,9 @@
+import { Rating } from '@helpers/zodPrisma';
 import { FetcherWithComponents, Link } from '@remix-run/react';
 import dayjs from 'dayjs';
 
 type RatingProps = {
-  rating: any;
+  rating: Rating;
   Fetcher?: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
@@ -41,18 +42,38 @@ export default function RatingLayout({
               tabIndex={0}
               className="rounded-lg p-4 text-sm shadow-lg dropdown-content bg-base-100 w-[18em] z-[10] mr-1"
             >
-              <li className="hover:bg-secondary hover:text-base-100">
-                <Link to={`${linkTo}/questionnaire-docs`} className="flex items-center gap-2 py-4 hover:px-2">
-                  <i className="ri-file-text-line" />
-                  Questionnaire Documents
-                </Link>
+              <li>
+                {rating?.requireQuestionnaireFiles ? (
+                  <Link
+                    to={`${linkTo}/questionnaire-docs`}
+                    className="flex items-center gap-2 py-4 hover:bg-secondary hover:text-base-100 hover:px-2"
+                  >
+                    <i className="ri-file-text-line" />
+                    Questionnaire Documents
+                  </Link>
+                ) : (
+                  <span className="flex items-center gap-2 py-4 opacity-40">
+                    <i className="ri-file-text-line" />
+                    Questionnaire Documents
+                  </span>
+                )}
               </li>
 
-              <li className="hover:bg-secondary hover:text-base-100">
-                <Link to={`${linkTo}/additional-docs`} className="flex items-center gap-2 py-4 hover:px-2">
-                  <i className="ri-file-paper-line" />
-                  Additional Documents
-                </Link>
+              <li>
+                {rating?.requireAdditionalFiles ? (
+                  <Link
+                    to={`${linkTo}/additional-docs`}
+                    className="flex items-center gap-2 py-4 hover:bg-secondary hover:text-base-100 hover:px-2"
+                  >
+                    <i className="ri-file-paper-line" />
+                    Additional Documents
+                  </Link>
+                ) : (
+                  <span className="flex items-center gap-2 py-4 opacity-40">
+                    <i className="ri-file-text-line" />
+                    Additional Documents
+                  </span>
+                )}
               </li>
             </ul>
           </div>
