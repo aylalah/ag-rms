@@ -50,28 +50,30 @@ model Industry {
 }
 
 model Rating {
-  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
-  ratingTitle        String        @default("Issuer Rating")
-  ratingScore        Int?
-  ratingClass        String?       @db.ObjectId
-  ratingClassModel   RatingClass?  @relation(fields: [ratingClass], references: [id])
-  ratingYear         Int
-  supervisor         String
-  primaryAnalyst     String?
-  secondaryAnalyst   String?
-  client             String        @db.ObjectId
-  clientModel        Client        @relation(fields: [client], references: [id])
-  methodology        String        @db.ObjectId
-  questionnaire      String        @db.ObjectId
-  methodologyModel   Methodology   @relation(fields: [methodology], references: [id])
-  questionnaireModel Questionnaire @relation(fields: [questionnaire], references: [id])
-  questionnaireFiles String?
-  additionalFiles    String?
-  status             RatingStatus? @default(ongoing)
-  issueDate          DateTime?
-  expiryDate         DateTime?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  id                        String        @id @default(auto()) @map("_id") @db.ObjectId
+  ratingTitle               String        @default("Issuer Rating")
+  ratingScore               Int?
+  ratingClass               String?       @db.ObjectId
+  ratingClassModel          RatingClass?  @relation(fields: [ratingClass], references: [id])
+  ratingYear                Int
+  supervisor                String
+  primaryAnalyst            String?
+  secondaryAnalyst          String?
+  client                    String        @db.ObjectId
+  clientModel               Client        @relation(fields: [client], references: [id])
+  methodology               String        @db.ObjectId
+  questionnaire             String        @db.ObjectId
+  methodologyModel          Methodology   @relation(fields: [methodology], references: [id])
+  questionnaireModel        Questionnaire @relation(fields: [questionnaire], references: [id])
+  questionnaireFiles        String?
+  additionalFiles           String?
+  requireAdditionalFiles    Boolean       @default(false)
+  requireQuestionnaireFiles Boolean       @default(true)
+  status                    RatingStatus? @default(ongoing)
+  issueDate                 DateTime?
+  expiryDate                DateTime?
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
 }
 
 model RatingClass {

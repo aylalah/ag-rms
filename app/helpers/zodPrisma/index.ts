@@ -16,7 +16,7 @@ export const QuestionnaireScalarFieldEnumSchema = z.enum(['id','name','url','cre
 
 export const IndustryScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
-export const RatingScalarFieldEnumSchema = z.enum(['id','ratingTitle','ratingScore','ratingClass','ratingYear','supervisor','primaryAnalyst','secondaryAnalyst','client','methodology','questionnaire','questionnaireFiles','additionalFiles','status','issueDate','expiryDate','createdAt','updatedAt']);
+export const RatingScalarFieldEnumSchema = z.enum(['id','ratingTitle','ratingScore','ratingClass','ratingYear','supervisor','primaryAnalyst','secondaryAnalyst','client','methodology','questionnaire','questionnaireFiles','additionalFiles','requireAdditionalFiles','requireQuestionnaireFiles','status','issueDate','expiryDate','createdAt','updatedAt']);
 
 export const RatingClassScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
@@ -209,6 +209,8 @@ export const RatingSchema = z.object({
   questionnaire: z.string(),
   questionnaireFiles: z.string().nullable(),
   additionalFiles: z.string().nullable(),
+  requireAdditionalFiles: z.boolean(),
+  requireQuestionnaireFiles: z.boolean(),
   issueDate: z.coerce.date().nullable(),
   expiryDate: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
@@ -224,6 +226,8 @@ export const RatingOptionalDefaultsSchema = RatingSchema.merge(z.object({
   status: RatingStatusSchema.optional(),
   id: z.string().optional(),
   ratingTitle: z.string().optional(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 }))
@@ -599,6 +603,8 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
   questionnaire: z.boolean().optional(),
   questionnaireFiles: z.boolean().optional(),
   additionalFiles: z.boolean().optional(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.boolean().optional(),
   issueDate: z.boolean().optional(),
   expiryDate: z.boolean().optional(),
@@ -947,6 +953,8 @@ export const RatingWhereInputSchema: z.ZodType<Prisma.RatingWhereInput> = z.obje
   questionnaire: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   questionnaireFiles: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   additionalFiles: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -972,6 +980,8 @@ export const RatingOrderByWithRelationInputSchema: z.ZodType<Prisma.RatingOrderB
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   questionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   additionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireAdditionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -1003,6 +1013,8 @@ export const RatingWhereUniqueInputSchema: z.ZodType<Prisma.RatingWhereUniqueInp
   questionnaire: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   questionnaireFiles: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   additionalFiles: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1028,6 +1040,8 @@ export const RatingOrderByWithAggregationInputSchema: z.ZodType<Prisma.RatingOrd
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   questionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   additionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireAdditionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -1057,6 +1071,8 @@ export const RatingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Rating
   questionnaire: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   questionnaireFiles: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   additionalFiles: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableWithAggregatesFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1619,6 +1635,8 @@ export const RatingCreateInputSchema: z.ZodType<Prisma.RatingCreateInput> = z.ob
   secondaryAnalyst: z.string().optional().nullable(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -1644,6 +1662,8 @@ export const RatingUncheckedCreateInputSchema: z.ZodType<Prisma.RatingUncheckedC
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -1660,6 +1680,8 @@ export const RatingUpdateInputSchema: z.ZodType<Prisma.RatingUpdateInput> = z.ob
   secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -1684,6 +1706,8 @@ export const RatingUncheckedUpdateInputSchema: z.ZodType<Prisma.RatingUncheckedU
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -1705,6 +1729,8 @@ export const RatingCreateManyInputSchema: z.ZodType<Prisma.RatingCreateManyInput
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -1721,6 +1747,8 @@ export const RatingUpdateManyMutationInputSchema: z.ZodType<Prisma.RatingUpdateM
   secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -1741,6 +1769,8 @@ export const RatingUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RatingUnchec
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2313,6 +2343,11 @@ export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
   not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
 }).strict();
 
+export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const EnumRatingStatusNullableFilterSchema: z.ZodType<Prisma.EnumRatingStatusNullableFilter> = z.object({
   equals: z.lazy(() => RatingStatusSchema).optional().nullable(),
   in: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
@@ -2367,6 +2402,8 @@ export const RatingCountOrderByAggregateInputSchema: z.ZodType<Prisma.RatingCoun
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   questionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   additionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireAdditionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -2393,6 +2430,8 @@ export const RatingMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RatingMaxOrd
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   questionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   additionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireAdditionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -2414,6 +2453,8 @@ export const RatingMinOrderByAggregateInputSchema: z.ZodType<Prisma.RatingMinOrd
   questionnaire: z.lazy(() => SortOrderSchema).optional(),
   questionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   additionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireAdditionalFiles: z.lazy(() => SortOrderSchema).optional(),
+  requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -2478,6 +2519,14 @@ export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFi
   _max: z.lazy(() => NestedIntFilterSchema).optional()
 }).strict();
 
+export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
 export const EnumRatingStatusNullableWithAggregatesFilterSchema: z.ZodType<Prisma.EnumRatingStatusNullableWithAggregatesFilter> = z.object({
   equals: z.lazy(() => RatingStatusSchema).optional().nullable(),
   in: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
@@ -2523,11 +2572,6 @@ export const RatingClassMinOrderByAggregateInputSchema: z.ZodType<Prisma.RatingC
   name: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
 }).strict();
 
 export const IndustryRelationFilterSchema: z.ZodType<Prisma.IndustryRelationFilter> = z.object({
@@ -2615,14 +2659,6 @@ export const ClientMinOrderByAggregateInputSchema: z.ZodType<Prisma.ClientMinOrd
   isDeleted: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
-  _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
 export const ContactCountOrderByAggregateInputSchema: z.ZodType<Prisma.ContactCountOrderByAggregateInput> = z.object({
@@ -2877,6 +2913,10 @@ export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.Nu
   unset: z.boolean().optional()
 }).strict();
 
+export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
+  set: z.boolean().optional()
+}).strict();
+
 export const NullableEnumRatingStatusFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableEnumRatingStatusFieldUpdateOperationsInput> = z.object({
   set: z.lazy(() => RatingStatusSchema).optional().nullable(),
   unset: z.boolean().optional()
@@ -2995,10 +3035,6 @@ export const RatingUncheckedCreateNestedManyWithoutClientModelInputSchema: z.Zod
   connectOrCreate: z.union([ z.lazy(() => RatingCreateOrConnectWithoutClientModelInputSchema),z.lazy(() => RatingCreateOrConnectWithoutClientModelInputSchema).array() ]).optional(),
   createMany: z.lazy(() => RatingCreateManyClientModelInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
-  set: z.boolean().optional()
 }).strict();
 
 export const IndustryUpdateOneRequiredWithoutClientModelNestedInputSchema: z.ZodType<Prisma.IndustryUpdateOneRequiredWithoutClientModelNestedInput> = z.object({
@@ -3173,6 +3209,11 @@ export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNull
   isSet: z.boolean().optional()
 }).strict();
 
+export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const NestedEnumRatingStatusNullableFilterSchema: z.ZodType<Prisma.NestedEnumRatingStatusNullableFilter> = z.object({
   equals: z.lazy(() => RatingStatusSchema).optional().nullable(),
   in: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
@@ -3267,6 +3308,14 @@ export const NestedFloatFilterSchema: z.ZodType<Prisma.NestedFloatFilter> = z.ob
   not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
 }).strict();
 
+export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
 export const NestedEnumRatingStatusNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumRatingStatusNullableWithAggregatesFilter> = z.object({
   equals: z.lazy(() => RatingStatusSchema).optional().nullable(),
   in: z.lazy(() => RatingStatusSchema).array().optional().nullable(),
@@ -3293,19 +3342,6 @@ export const NestedDateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.
   isSet: z.boolean().optional()
 }).strict();
 
-export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
-}).strict();
-
-export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
-  _max: z.lazy(() => NestedBoolFilterSchema).optional()
-}).strict();
-
 export const RatingCreateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutMethodologyModelInput> = z.object({
   id: z.string().optional(),
   ratingTitle: z.string().optional(),
@@ -3316,6 +3352,8 @@ export const RatingCreateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.Ra
   secondaryAnalyst: z.string().optional().nullable(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -3339,6 +3377,8 @@ export const RatingUncheckedCreateWithoutMethodologyModelInputSchema: z.ZodType<
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -3388,6 +3428,8 @@ export const RatingScalarWhereInputSchema: z.ZodType<Prisma.RatingScalarWhereInp
   questionnaire: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   questionnaireFiles: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   additionalFiles: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -3405,6 +3447,8 @@ export const RatingCreateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.
   secondaryAnalyst: z.string().optional().nullable(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -3428,6 +3472,8 @@ export const RatingUncheckedCreateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   methodology: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -3820,6 +3866,8 @@ export const RatingCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
   secondaryAnalyst: z.string().optional().nullable(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -3843,6 +3891,8 @@ export const RatingUncheckedCreateWithoutRatingClassModelInputSchema: z.ZodType<
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -3935,6 +3985,8 @@ export const RatingCreateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingC
   secondaryAnalyst: z.string().optional().nullable(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -3958,6 +4010,8 @@ export const RatingUncheckedCreateWithoutClientModelInputSchema: z.ZodType<Prism
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4171,6 +4225,8 @@ export const RatingCreateManyMethodologyModelInputSchema: z.ZodType<Prisma.Ratin
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4187,6 +4243,8 @@ export const RatingUpdateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.Ra
   secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4209,6 +4267,8 @@ export const RatingUncheckedUpdateWithoutMethodologyModelInputSchema: z.ZodType<
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4228,6 +4288,8 @@ export const RatingUncheckedUpdateManyWithoutMethodologyModelInputSchema: z.ZodT
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4248,6 +4310,8 @@ export const RatingCreateManyQuestionnaireModelInputSchema: z.ZodType<Prisma.Rat
   methodology: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4264,6 +4328,8 @@ export const RatingUpdateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.
   secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4286,6 +4352,8 @@ export const RatingUncheckedUpdateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4305,6 +4373,8 @@ export const RatingUncheckedUpdateManyWithoutQuestionnaireModelInputSchema: z.Zo
   methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4418,6 +4488,8 @@ export const RatingCreateManyRatingClassModelInputSchema: z.ZodType<Prisma.Ratin
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4434,6 +4506,8 @@ export const RatingUpdateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
   secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4456,6 +4530,8 @@ export const RatingUncheckedUpdateWithoutRatingClassModelInputSchema: z.ZodType<
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4475,6 +4551,8 @@ export const RatingUncheckedUpdateManyWithoutRatingClassModelInputSchema: z.ZodT
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4506,6 +4584,8 @@ export const RatingCreateManyClientModelInputSchema: z.ZodType<Prisma.RatingCrea
   questionnaire: z.string(),
   questionnaireFiles: z.string().optional().nullable(),
   additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4552,6 +4632,8 @@ export const RatingUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingU
   secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4574,6 +4656,8 @@ export const RatingUncheckedUpdateWithoutClientModelInputSchema: z.ZodType<Prism
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4593,6 +4677,8 @@ export const RatingUncheckedUpdateManyWithoutClientModelInputSchema: z.ZodType<P
   questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
