@@ -106,8 +106,8 @@ export default function App() {
         <div className="opacity-40"> &copy; Copyright Agusto & Co.{dayjs().format('YYYY')}. </div>
 
         <div className="flex items-center justify-start gap-4 text-xs opacity-40">
-          <a href="#">Term of service</a>
-          <a href="#">Privacy Policy</a>
+          {/*  <a href="#">Term of service</a> */}
+          <a href="https://www.agusto.com/privacy-policy/">Privacy Policy</a>
         </div>
       </footer>
     </MenuLayout>

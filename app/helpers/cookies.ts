@@ -17,6 +17,26 @@ export const settingsCookie = createCookie('rms-settings', {
   sameSite: 'lax',
 });
 
+export const acceptCookie = createCookie('rms-accept-cookie', {
+  maxAge: 3600 * 24 * 365 * 5, // 5 years
+  httpOnly: true,
+  secure: true,
+  priority: 'high',
+  sameSite: 'lax',
+});
+
+export const validateAcceptedCookie = async (request: Request) => {
+  if (request.headers.get('cookie')) {
+    const cookie = request.headers.get('cookie');
+    if (cookie) {
+      const data = await acceptCookie.parse(cookie);
+      if (data === 'true') return true;
+    }
+  }
+
+  return false;
+};
+
 export const validateCookie = async (request: Request) => {
   let token = '' as string;
   let user = null as User | null;

@@ -1,9 +1,20 @@
 import Loader from '@ui/elements/loader';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useFetchers } from '@remix-run/react';
+import {
+  json,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useFetcher,
+  useFetchers,
+  useLoaderData,
+} from '@remix-run/react';
 import { ToastContainer } from 'react-toastify';
 import './styles/tailwind.css';
 import 'react-toastify/dist/ReactToastify.css';
-import type { MetaFunction } from '@remix-run/node';
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import AcceptCookieUI from '@ui/elements/accept-cookie-ui';
 
 export const meta: MetaFunction = ({ location }) => {
   const { pathname } = location;
@@ -11,7 +22,19 @@ export const meta: MetaFunction = ({ location }) => {
   return [{ title: `Rating Management System ${subTitle && `- ${capitalize(subTitle)}`}` }];
 };
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const acceptedCookie = await validateAcceptedCookie(request);
+  return json({ acceptedCookie });
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  return json({}, { headers: { 'Set-Cookie': await acceptCookie.serialize('true') } });
+};
+
 export default function App() {
+  const { acceptedCookie } = useLoaderData<typeof loader>();
+  const Fetcher = useFetcher();
+
   return (
     <html lang="en" data-theme="light">
       <head>
@@ -25,6 +48,7 @@ export default function App() {
         <Loader />
         <ToastContainer hideProgressBar={true} closeOnClick autoClose={2000} pauseOnHover={true} />
         <Outlet />
+        {!acceptedCookie && <AcceptCookieUI Fetcher={Fetcher} />}
         <ScrollRestoration />
         <Scripts />
       </body>
