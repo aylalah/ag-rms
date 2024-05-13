@@ -44,7 +44,7 @@ export default function UploadedFiles() {
   };
 
   useEffect(() => {
-    setAllFiles(ratingFiles as any);
+    setAllFiles(() => [...ratingFiles]);
   }, []);
 
   return (
@@ -62,16 +62,16 @@ export default function UploadedFiles() {
         <div className="flex justify-end flex-1">
           <div role="tablist" className="flex tabs tabs-lifted">
             {tabs.map((el) => (
-              <NavLink
+              <a
                 key={el?.slug}
-                to={`/app/ratings/${id}/uploaded-files/${el?.slug}`}
+                href={`/app/ratings/${id}/uploaded-files/${el?.slug}`}
                 role="tab"
                 className={`p-3 text-sm border border-secondary ${
                   slug === el.slug ? 'text-base-100 bg-secondary' : ' border-secondary opacity-30'
                 } `}
               >
                 {el?.name}
-              </NavLink>
+              </a>
             ))}
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function UploadedFiles() {
 
           <tbody>
             {allFiles?.map((el, i) => (
-              <tr className="text-sm text-left border-b bg-base-100">
+              <tr className="text-sm text-left border-b bg-base-100" key={el.id}>
                 <td className="text-center">{i + 1}</td>
                 <td className="p-3">
                   <Link to={el?.url} target="_blank" referrerPolicy="no-referrer" className="capitalize link">
