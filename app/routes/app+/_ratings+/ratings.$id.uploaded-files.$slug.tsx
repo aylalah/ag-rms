@@ -45,8 +45,8 @@ const tabs = [
 ];
 
 const acceptOptions = {
-  'questionnaire-docs': [{ name: 'Accept Questionnaire Info' }, { name: 'Request Questionnaire Info' }],
-  'additional-docs': [{ name: 'Accept Additional Info' }, { name: 'Request Additional Info' }],
+  'questionnaire-docs': [{ name: 'Disable Questionnaire Upload' }, { name: 'Enable Questionnaire Upload' }],
+  'additional-docs': [{ name: 'Disable Additional Docs Upload' }, { name: 'Disable Additional Docs Upload' }],
 };
 
 export default function UploadedFiles() {
@@ -68,25 +68,25 @@ export default function UploadedFiles() {
   };
 
   const onAcceptAction = (value: string) => {
-    if (value === 'Accept Questionnaire') {
+    if (value === 'Disable Questionnaire Upload') {
       const confirm = window.confirm('Are you sure you want to accept this questionnaire?');
       if (!confirm) return;
       Fetcher.submit({ requireQuestionnaireFiles: false }, { method: 'patch' });
     }
 
-    if (value === 'Request Questionnaire Info') {
+    if (value === 'Enable Questionnaire Upload') {
       const confirm = window.confirm('Are you sure you want to request questionnaire info?');
       if (!confirm) return;
       Fetcher.submit({ requireQuestionnaireFiles: true }, { method: 'patch' });
     }
 
-    if (value === 'Accept Additional Info') {
+    if (value === 'Disable Additional Docs Upload') {
       const confirm = window.confirm('Are you sure you want to accept this additional info?');
       if (!confirm) return;
       Fetcher.submit({ requireAdditionalFiles: false }, { method: 'patch' });
     }
 
-    if (value === 'Request Additional Info') {
+    if (value === 'Enable Additional Docs Upload') {
       const confirm = window.confirm('Are you sure you want to request additional info?');
       if (!confirm) return;
       Fetcher.submit({ requireAdditionalFiles: true }, { method: 'patch' });
@@ -133,11 +133,25 @@ export default function UploadedFiles() {
             className="w-full p-3 text-sm rounded outline-none"
           />
         </div>
+      </div>
 
-        <div className="flex justify-end flex-1">
+      <div className="flex items-center justify-between py-3">
+        <div>
+          <span className="font-bold capitalize text-primary">{slug?.replace('-docs', '')} Upload Status : </span>
+          {!rating?.requireQuestionnaireFiles && slug === 'questionnaire-docs' ? (
+            <span className="font-bold">Disabled</span>
+          ) : !rating?.requireAdditionalFiles && slug === 'additional-docs' ? (
+            <span className="font-bold">Disabled</span>
+          ) : (
+            <span className="font-bold">Enabled</span>
+          )}
+          <p className="text-sm opacity-70">Click "Action" button to Enable/Disable file uploads</p>
+        </div>
+
+        <div>
           <div className="dropdown dropdown-hover dropdown-end">
             <button tabIndex={1} className="btn btn-secondary">
-              Accept / Request <i className="ri-arrow-down-s-line" />
+              Action <i className="ri-arrow-down-s-line" />
             </button>
 
             <ul tabIndex={1} className="py-4 shadow-xl dropdown-content w-[16em] bg-base-100">
@@ -155,21 +169,6 @@ export default function UploadedFiles() {
             </ul>
           </div>
         </div>
-      </div>
-
-      <div className="flex items-center justify-between py-3">
-        <div>
-          <span className="font-bold capitalize text-primary">{slug?.replace('-docs', '')} Documents Status: </span>
-          {!rating?.requireQuestionnaireFiles && slug === 'questionnaire-docs' ? (
-            <i className="ri-checkbox-circle-fill text-success" />
-          ) : !rating?.requireAdditionalFiles && slug === 'additional-docs' ? (
-            <i className="ri-checkbox-circle-fill text-success" />
-          ) : (
-            <i className="ri-close-circle-fill text-error" />
-          )}
-        </div>
-
-        <div></div>
       </div>
 
       <div className="flex flex-col flex-1 overflow-y-scroll border-b bg-base-200">

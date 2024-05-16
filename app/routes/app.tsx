@@ -123,7 +123,7 @@ export default function App() {
 
   return (
     <MenuLayout links={MenuLinks} settings={SettingsLinks}>
-      <div className="my-2 mt-3 text-sm capitalize breadcrumbs">
+      <div className="my-2 mt-3 text-xs capitalize breadcrumbs opacity-60 ">
         <ul>
           <li>
             <Link to="/app/dashboard">Home</Link>
