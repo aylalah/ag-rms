@@ -219,7 +219,12 @@ export class RatingClass extends MainClass {
       //sort and move status to the end
       const filteredData = dataList.filter((el) => !toBeRemoved.includes(el.field));
       const status = filteredData.find((el) => el.field === 'status');
-      const rest = filteredData.filter((el) => el.field !== 'status');
+      const rest = filteredData
+        .filter((el) => el.field !== 'status')
+        .filter((el) => el.field !== 'questionnaireFiles')
+        .filter((el) => el.field !== 'additionalFiles')
+        .filter((el) => el.field !== 'requireAdditionalFiles')
+        .filter((el) => el.field !== 'requireQuestionnaireFiles');
       rest.push(status as any);
 
       return { formObject: rest };

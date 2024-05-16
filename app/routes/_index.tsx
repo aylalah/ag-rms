@@ -64,7 +64,7 @@ export default function Index() {
     <div className="h-screen overflow-auto">
       <div className="flex py-4 bg-primary frameBg">
         <div className="container flex lg:flex-row flex-col lg:gap-[6em]">
-          <div className="relative flex flex-col lg:text-left text-center justify-center flex-1 gap-6 text-white py-[10vh] lg:py-[28vh]">
+          <div className="relative flex flex-col lg:text-left text-center justify-center flex-1 gap-6 text-white py-[10vh] lg:py-[29vh]">
             <h1 className="text-6xl font-bold leading-[1.1em]">Agusto Rating Management System</h1>
 
             <p className="text-xl leading-[1.6em] opacity-70">
@@ -74,7 +74,7 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="flex items-center justify-center w-full lg:w-[25em] ">
+          <div className="flex items-center justify-center w-full lg:w-[30em] ">
             <LoginForm />
           </div>
         </div>

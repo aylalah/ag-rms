@@ -46,7 +46,7 @@ const tabs = [
 
 const acceptOptions = {
   'questionnaire-docs': [{ name: 'Disable Questionnaire Upload' }, { name: 'Enable Questionnaire Upload' }],
-  'additional-docs': [{ name: 'Disable Additional Docs Upload' }, { name: 'Disable Additional Docs Upload' }],
+  'additional-docs': [{ name: 'Disable Additional Docs Upload' }, { name: 'Enable Additional Docs Upload' }],
 };
 
 export default function UploadedFiles() {
@@ -111,7 +111,7 @@ export default function UploadedFiles() {
               <span>Info Type</span> <i className="ri-arrow-down-s-line" />
             </button>
 
-            <ul tabIndex={1} className="py-4 shadow-xl dropdown-content w-[15em] bg-base-100">
+            <ul tabIndex={1} className="py-4 shadow-xl dropdown-content w-[15em] bg-base-100 z-[10]">
               {tabs.map((el) => (
                 <li>
                   <a
