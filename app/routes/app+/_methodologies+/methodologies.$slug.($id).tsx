@@ -31,12 +31,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const fd = await request.formData();
   const data = Object.fromEntries(fd.entries()) as any;
 
+  console.log({ data, method, id });
+
   if (slug === 'create') {
     const { createMethodology, error } = await RMSservice(token).methodologies.create({ data });
     return json({ message: createMethodology, error });
   }
 
-  if (slug === 'PATCH' && id) {
+  if (method === 'PATCH' && id) {
     const { updateMethodology, error } = await RMSservice(token).methodologies.update({ id, data });
     return json({ message: updateMethodology, error });
   }
@@ -45,6 +47,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const { deleteMethodology, error } = await RMSservice(token).methodologies.delete({ id });
     return json({ message: deleteMethodology, error });
   }
+
+  return {};
 };
 
 export default function Breeds() {

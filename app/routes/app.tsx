@@ -115,7 +115,8 @@ export default function App() {
         };
       })
       .filter((el) => el.name?.toLowerCase() !== 'app')
-      .filter((el) => el.name?.toLowerCase() !== 'files-uploads');
+      .filter((el) => el.name?.toLowerCase() !== 'files-uploads')
+      .filter((el) => el.name?.toLowerCase() !== 'uploaded-files');
 
     setBreadcrumb(breadcrumb);
   }, [pathname, ratingsData]);
