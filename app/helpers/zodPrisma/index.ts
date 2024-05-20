@@ -16,6 +16,8 @@ export const QuestionnaireScalarFieldEnumSchema = z.enum(['id','name','url','cre
 
 export const IndustryScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
+export const ReportsScalarFieldEnumSchema = z.enum(['id','rating','reportTitle','reportFileUrl','version','createdAt','updatedAt']);
+
 export const RatingScalarFieldEnumSchema = z.enum(['id','ratingTitle','ratingScore','ratingClass','ratingYear','supervisor','primaryAnalyst','secondaryAnalyst','client','methodology','questionnaire','questionnaireFiles','additionalFiles','requireAdditionalFiles','requireQuestionnaireFiles','status','issueDate','expiryDate','createdAt','updatedAt']);
 
 export const RatingClassScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
@@ -191,6 +193,59 @@ export const IndustryOptionalDefaultsWithRelationsSchema: z.ZodType<IndustryOpti
 }))
 
 /////////////////////////////////////////
+// REPORTS SCHEMA
+/////////////////////////////////////////
+
+export const ReportsSchema = z.object({
+  id: z.string(),
+  rating: z.string(),
+  reportTitle: z.string(),
+  reportFileUrl: z.string(),
+  version: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type Reports = z.infer<typeof ReportsSchema>
+
+// REPORTS OPTIONAL DEFAULTS SCHEMA
+//------------------------------------------------------
+
+export const ReportsOptionalDefaultsSchema = ReportsSchema.merge(z.object({
+  id: z.string().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+}))
+
+export type ReportsOptionalDefaults = z.infer<typeof ReportsOptionalDefaultsSchema>
+
+// REPORTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type ReportsRelations = {
+  ratingModel: Rating;
+};
+
+export type ReportsWithRelations = z.infer<typeof ReportsSchema> & ReportsRelations
+
+export const ReportsWithRelationsSchema: z.ZodType<ReportsWithRelations> = ReportsSchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingSchema),
+}))
+
+// REPORTS OPTIONAL DEFAULTS RELATION SCHEMA
+//------------------------------------------------------
+
+export type ReportsOptionalDefaultsRelations = {
+  ratingModel: Rating;
+};
+
+export type ReportsOptionalDefaultsWithRelations = z.infer<typeof ReportsOptionalDefaultsSchema> & ReportsOptionalDefaultsRelations
+
+export const ReportsOptionalDefaultsWithRelationsSchema: z.ZodType<ReportsOptionalDefaultsWithRelations> = ReportsOptionalDefaultsSchema.merge(z.object({
+  ratingModel: z.lazy(() => RatingSchema),
+}))
+
+/////////////////////////////////////////
 // RATING SCHEMA
 /////////////////////////////////////////
 
@@ -242,6 +297,7 @@ export type RatingRelations = {
   clientModel: Client;
   methodologyModel: Methodology;
   questionnaireModel: Questionnaire;
+  reportModel: Reports[];
 };
 
 export type RatingWithRelations = z.infer<typeof RatingSchema> & RatingRelations
@@ -251,6 +307,7 @@ export const RatingWithRelationsSchema: z.ZodType<RatingWithRelations> = RatingS
   clientModel: z.lazy(() => ClientSchema),
   methodologyModel: z.lazy(() => MethodologySchema),
   questionnaireModel: z.lazy(() => QuestionnaireSchema),
+  reportModel: z.lazy(() => ReportsSchema).array(),
 }))
 
 // RATING OPTIONAL DEFAULTS RELATION SCHEMA
@@ -261,6 +318,7 @@ export type RatingOptionalDefaultsRelations = {
   clientModel: Client;
   methodologyModel: Methodology;
   questionnaireModel: Questionnaire;
+  reportModel: Reports[];
 };
 
 export type RatingOptionalDefaultsWithRelations = z.infer<typeof RatingOptionalDefaultsSchema> & RatingOptionalDefaultsRelations
@@ -270,6 +328,7 @@ export const RatingOptionalDefaultsWithRelationsSchema: z.ZodType<RatingOptional
   clientModel: z.lazy(() => ClientSchema),
   methodologyModel: z.lazy(() => MethodologySchema),
   questionnaireModel: z.lazy(() => QuestionnaireSchema),
+  reportModel: z.lazy(() => ReportsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -578,6 +637,28 @@ export const IndustrySelectSchema: z.ZodType<Prisma.IndustrySelect> = z.object({
   _count: z.union([z.boolean(),z.lazy(() => IndustryCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
+// REPORTS
+//------------------------------------------------------
+
+export const ReportsIncludeSchema: z.ZodType<Prisma.ReportsInclude> = z.object({
+}).strict()
+
+export const ReportsArgsSchema: z.ZodType<Prisma.ReportsDefaultArgs> = z.object({
+  select: z.lazy(() => ReportsSelectSchema).optional(),
+  include: z.lazy(() => ReportsIncludeSchema).optional(),
+}).strict();
+
+export const ReportsSelectSchema: z.ZodType<Prisma.ReportsSelect> = z.object({
+  id: z.boolean().optional(),
+  rating: z.boolean().optional(),
+  reportTitle: z.boolean().optional(),
+  reportFileUrl: z.boolean().optional(),
+  version: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  ratingModel: z.union([z.boolean(),z.lazy(() => RatingArgsSchema)]).optional(),
+}).strict()
+
 // RATING
 //------------------------------------------------------
 
@@ -587,6 +668,14 @@ export const RatingIncludeSchema: z.ZodType<Prisma.RatingInclude> = z.object({
 export const RatingArgsSchema: z.ZodType<Prisma.RatingDefaultArgs> = z.object({
   select: z.lazy(() => RatingSelectSchema).optional(),
   include: z.lazy(() => RatingIncludeSchema).optional(),
+}).strict();
+
+export const RatingCountOutputTypeArgsSchema: z.ZodType<Prisma.RatingCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => RatingCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const RatingCountOutputTypeSelectSchema: z.ZodType<Prisma.RatingCountOutputTypeSelect> = z.object({
+  reportModel: z.boolean().optional(),
 }).strict();
 
 export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
@@ -614,6 +703,8 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
   clientModel: z.union([z.boolean(),z.lazy(() => ClientArgsSchema)]).optional(),
   methodologyModel: z.union([z.boolean(),z.lazy(() => MethodologyArgsSchema)]).optional(),
   questionnaireModel: z.union([z.boolean(),z.lazy(() => QuestionnaireArgsSchema)]).optional(),
+  reportModel: z.union([z.boolean(),z.lazy(() => ReportsArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => RatingCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 // RATING CLASS
@@ -936,6 +1027,74 @@ export const IndustryScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Indu
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
+export const ReportsWhereInputSchema: z.ZodType<Prisma.ReportsWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ReportsWhereInputSchema),z.lazy(() => ReportsWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ReportsWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ReportsWhereInputSchema),z.lazy(() => ReportsWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rating: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  reportTitle: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  reportFileUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  version: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  ratingModel: z.union([ z.lazy(() => RatingRelationFilterSchema),z.lazy(() => RatingWhereInputSchema) ]).optional(),
+}).strict();
+
+export const ReportsOrderByWithRelationInputSchema: z.ZodType<Prisma.ReportsOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  rating: z.lazy(() => SortOrderSchema).optional(),
+  reportTitle: z.lazy(() => SortOrderSchema).optional(),
+  reportFileUrl: z.lazy(() => SortOrderSchema).optional(),
+  version: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  ratingModel: z.lazy(() => RatingOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const ReportsWhereUniqueInputSchema: z.ZodType<Prisma.ReportsWhereUniqueInput> = z.object({
+  id: z.string()
+})
+.and(z.object({
+  id: z.string().optional(),
+  AND: z.union([ z.lazy(() => ReportsWhereInputSchema),z.lazy(() => ReportsWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ReportsWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ReportsWhereInputSchema),z.lazy(() => ReportsWhereInputSchema).array() ]).optional(),
+  rating: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  reportTitle: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  reportFileUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  version: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  ratingModel: z.union([ z.lazy(() => RatingRelationFilterSchema),z.lazy(() => RatingWhereInputSchema) ]).optional(),
+}).strict());
+
+export const ReportsOrderByWithAggregationInputSchema: z.ZodType<Prisma.ReportsOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  rating: z.lazy(() => SortOrderSchema).optional(),
+  reportTitle: z.lazy(() => SortOrderSchema).optional(),
+  reportFileUrl: z.lazy(() => SortOrderSchema).optional(),
+  version: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => ReportsCountOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => ReportsMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => ReportsMinOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const ReportsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ReportsScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => ReportsScalarWhereWithAggregatesInputSchema),z.lazy(() => ReportsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ReportsScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ReportsScalarWhereWithAggregatesInputSchema),z.lazy(() => ReportsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  rating: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  reportTitle: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  reportFileUrl: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  version: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+}).strict();
+
 export const RatingWhereInputSchema: z.ZodType<Prisma.RatingWhereInput> = z.object({
   AND: z.union([ z.lazy(() => RatingWhereInputSchema),z.lazy(() => RatingWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => RatingWhereInputSchema).array().optional(),
@@ -964,6 +1123,7 @@ export const RatingWhereInputSchema: z.ZodType<Prisma.RatingWhereInput> = z.obje
   clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
   methodologyModel: z.union([ z.lazy(() => MethodologyRelationFilterSchema),z.lazy(() => MethodologyWhereInputSchema) ]).optional(),
   questionnaireModel: z.union([ z.lazy(() => QuestionnaireRelationFilterSchema),z.lazy(() => QuestionnaireWhereInputSchema) ]).optional(),
+  reportModel: z.lazy(() => ReportsListRelationFilterSchema).optional()
 }).strict();
 
 export const RatingOrderByWithRelationInputSchema: z.ZodType<Prisma.RatingOrderByWithRelationInput> = z.object({
@@ -990,7 +1150,8 @@ export const RatingOrderByWithRelationInputSchema: z.ZodType<Prisma.RatingOrderB
   ratingClassModel: z.lazy(() => RatingClassOrderByWithRelationInputSchema).optional(),
   clientModel: z.lazy(() => ClientOrderByWithRelationInputSchema).optional(),
   methodologyModel: z.lazy(() => MethodologyOrderByWithRelationInputSchema).optional(),
-  questionnaireModel: z.lazy(() => QuestionnaireOrderByWithRelationInputSchema).optional()
+  questionnaireModel: z.lazy(() => QuestionnaireOrderByWithRelationInputSchema).optional(),
+  reportModel: z.lazy(() => ReportsOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const RatingWhereUniqueInputSchema: z.ZodType<Prisma.RatingWhereUniqueInput> = z.object({
@@ -1024,6 +1185,7 @@ export const RatingWhereUniqueInputSchema: z.ZodType<Prisma.RatingWhereUniqueInp
   clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
   methodologyModel: z.union([ z.lazy(() => MethodologyRelationFilterSchema),z.lazy(() => MethodologyWhereInputSchema) ]).optional(),
   questionnaireModel: z.union([ z.lazy(() => QuestionnaireRelationFilterSchema),z.lazy(() => QuestionnaireWhereInputSchema) ]).optional(),
+  reportModel: z.lazy(() => ReportsListRelationFilterSchema).optional()
 }).strict());
 
 export const RatingOrderByWithAggregationInputSchema: z.ZodType<Prisma.RatingOrderByWithAggregationInput> = z.object({
@@ -1625,6 +1787,71 @@ export const IndustryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.IndustryUn
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const ReportsCreateInputSchema: z.ZodType<Prisma.ReportsCreateInput> = z.object({
+  id: z.string().optional(),
+  reportTitle: z.string(),
+  reportFileUrl: z.string(),
+  version: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  ratingModel: z.lazy(() => RatingCreateNestedOneWithoutReportModelInputSchema)
+}).strict();
+
+export const ReportsUncheckedCreateInputSchema: z.ZodType<Prisma.ReportsUncheckedCreateInput> = z.object({
+  id: z.string().optional(),
+  rating: z.string(),
+  reportTitle: z.string(),
+  reportFileUrl: z.string(),
+  version: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const ReportsUpdateInputSchema: z.ZodType<Prisma.ReportsUpdateInput> = z.object({
+  reportTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportFileUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  version: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  ratingModel: z.lazy(() => RatingUpdateOneRequiredWithoutReportModelNestedInputSchema).optional()
+}).strict();
+
+export const ReportsUncheckedUpdateInputSchema: z.ZodType<Prisma.ReportsUncheckedUpdateInput> = z.object({
+  rating: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportFileUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  version: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ReportsCreateManyInputSchema: z.ZodType<Prisma.ReportsCreateManyInput> = z.object({
+  id: z.string().optional(),
+  rating: z.string(),
+  reportTitle: z.string(),
+  reportFileUrl: z.string(),
+  version: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const ReportsUpdateManyMutationInputSchema: z.ZodType<Prisma.ReportsUpdateManyMutationInput> = z.object({
+  reportTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportFileUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  version: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ReportsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ReportsUncheckedUpdateManyInput> = z.object({
+  rating: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportFileUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  version: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const RatingCreateInputSchema: z.ZodType<Prisma.RatingCreateInput> = z.object({
   id: z.string().optional(),
   ratingTitle: z.string().optional(),
@@ -1645,7 +1872,8 @@ export const RatingCreateInputSchema: z.ZodType<Prisma.RatingCreateInput> = z.ob
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
   clientModel: z.lazy(() => ClientCreateNestedOneWithoutRatingModelInputSchema),
   methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
-  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema)
+  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
+  reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedCreateInputSchema: z.ZodType<Prisma.RatingUncheckedCreateInput> = z.object({
@@ -1668,7 +1896,8 @@ export const RatingUncheckedCreateInputSchema: z.ZodType<Prisma.RatingUncheckedC
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  reportModel: z.lazy(() => ReportsUncheckedCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingUpdateInputSchema: z.ZodType<Prisma.RatingUpdateInput> = z.object({
@@ -1690,7 +1919,8 @@ export const RatingUpdateInputSchema: z.ZodType<Prisma.RatingUpdateInput> = z.ob
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional()
+  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
+  reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateInput> = z.object({
@@ -1713,6 +1943,7 @@ export const RatingUncheckedUpdateInputSchema: z.ZodType<Prisma.RatingUncheckedU
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  reportModel: z.lazy(() => ReportsUncheckedUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingCreateManyInputSchema: z.ZodType<Prisma.RatingCreateManyInput> = z.object({
@@ -2304,6 +2535,41 @@ export const IndustryMinOrderByAggregateInputSchema: z.ZodType<Prisma.IndustryMi
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
+export const RatingRelationFilterSchema: z.ZodType<Prisma.RatingRelationFilter> = z.object({
+  is: z.lazy(() => RatingWhereInputSchema).optional(),
+  isNot: z.lazy(() => RatingWhereInputSchema).optional()
+}).strict();
+
+export const ReportsCountOrderByAggregateInputSchema: z.ZodType<Prisma.ReportsCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  rating: z.lazy(() => SortOrderSchema).optional(),
+  reportTitle: z.lazy(() => SortOrderSchema).optional(),
+  reportFileUrl: z.lazy(() => SortOrderSchema).optional(),
+  version: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ReportsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ReportsMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  rating: z.lazy(() => SortOrderSchema).optional(),
+  reportTitle: z.lazy(() => SortOrderSchema).optional(),
+  reportFileUrl: z.lazy(() => SortOrderSchema).optional(),
+  version: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ReportsMinOrderByAggregateInputSchema: z.ZodType<Prisma.ReportsMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  rating: z.lazy(() => SortOrderSchema).optional(),
+  reportTitle: z.lazy(() => SortOrderSchema).optional(),
+  reportFileUrl: z.lazy(() => SortOrderSchema).optional(),
+  version: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
 export const IntNullableFilterSchema: z.ZodType<Prisma.IntNullableFilter> = z.object({
   equals: z.number().optional().nullable(),
   in: z.number().array().optional().nullable(),
@@ -2386,6 +2652,16 @@ export const MethodologyRelationFilterSchema: z.ZodType<Prisma.MethodologyRelati
 export const QuestionnaireRelationFilterSchema: z.ZodType<Prisma.QuestionnaireRelationFilter> = z.object({
   is: z.lazy(() => QuestionnaireWhereInputSchema).optional(),
   isNot: z.lazy(() => QuestionnaireWhereInputSchema).optional()
+}).strict();
+
+export const ReportsListRelationFilterSchema: z.ZodType<Prisma.ReportsListRelationFilter> = z.object({
+  every: z.lazy(() => ReportsWhereInputSchema).optional(),
+  some: z.lazy(() => ReportsWhereInputSchema).optional(),
+  none: z.lazy(() => ReportsWhereInputSchema).optional()
+}).strict();
+
+export const ReportsOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ReportsOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RatingCountOrderByAggregateInputSchema: z.ZodType<Prisma.RatingCountOrderByAggregateInput> = z.object({
@@ -2867,6 +3143,20 @@ export const ClientUncheckedUpdateManyWithoutIndustryModelNestedInputSchema: z.Z
   deleteMany: z.union([ z.lazy(() => ClientScalarWhereInputSchema),z.lazy(() => ClientScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const RatingCreateNestedOneWithoutReportModelInputSchema: z.ZodType<Prisma.RatingCreateNestedOneWithoutReportModelInput> = z.object({
+  create: z.union([ z.lazy(() => RatingCreateWithoutReportModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReportModelInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => RatingCreateOrConnectWithoutReportModelInputSchema).optional(),
+  connect: z.lazy(() => RatingWhereUniqueInputSchema).optional()
+}).strict();
+
+export const RatingUpdateOneRequiredWithoutReportModelNestedInputSchema: z.ZodType<Prisma.RatingUpdateOneRequiredWithoutReportModelNestedInput> = z.object({
+  create: z.union([ z.lazy(() => RatingCreateWithoutReportModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReportModelInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => RatingCreateOrConnectWithoutReportModelInputSchema).optional(),
+  upsert: z.lazy(() => RatingUpsertWithoutReportModelInputSchema).optional(),
+  connect: z.lazy(() => RatingWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => RatingUpdateToOneWithWhereWithoutReportModelInputSchema),z.lazy(() => RatingUpdateWithoutReportModelInputSchema),z.lazy(() => RatingUncheckedUpdateWithoutReportModelInputSchema) ]).optional(),
+}).strict();
+
 export const RatingClassCreateNestedOneWithoutRatingModelInputSchema: z.ZodType<Prisma.RatingClassCreateNestedOneWithoutRatingModelInput> = z.object({
   create: z.union([ z.lazy(() => RatingClassCreateWithoutRatingModelInputSchema),z.lazy(() => RatingClassUncheckedCreateWithoutRatingModelInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => RatingClassCreateOrConnectWithoutRatingModelInputSchema).optional(),
@@ -2889,6 +3179,20 @@ export const QuestionnaireCreateNestedOneWithoutRatingModelInputSchema: z.ZodTyp
   create: z.union([ z.lazy(() => QuestionnaireCreateWithoutRatingModelInputSchema),z.lazy(() => QuestionnaireUncheckedCreateWithoutRatingModelInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => QuestionnaireCreateOrConnectWithoutRatingModelInputSchema).optional(),
   connect: z.lazy(() => QuestionnaireWhereUniqueInputSchema).optional()
+}).strict();
+
+export const ReportsCreateNestedManyWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsCreateNestedManyWithoutRatingModelInput> = z.object({
+  create: z.union([ z.lazy(() => ReportsCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateWithoutRatingModelInputSchema).array(),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ReportsCreateManyRatingModelInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const ReportsUncheckedCreateNestedManyWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUncheckedCreateNestedManyWithoutRatingModelInput> = z.object({
+  create: z.union([ z.lazy(() => ReportsCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateWithoutRatingModelInputSchema).array(),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ReportsCreateManyRatingModelInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const NullableIntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableIntFieldUpdateOperationsInput> = z.object({
@@ -2959,6 +3263,34 @@ export const QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema: 
   upsert: z.lazy(() => QuestionnaireUpsertWithoutRatingModelInputSchema).optional(),
   connect: z.lazy(() => QuestionnaireWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => QuestionnaireUpdateToOneWithWhereWithoutRatingModelInputSchema),z.lazy(() => QuestionnaireUpdateWithoutRatingModelInputSchema),z.lazy(() => QuestionnaireUncheckedUpdateWithoutRatingModelInputSchema) ]).optional(),
+}).strict();
+
+export const ReportsUpdateManyWithoutRatingModelNestedInputSchema: z.ZodType<Prisma.ReportsUpdateManyWithoutRatingModelNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ReportsCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateWithoutRatingModelInputSchema).array(),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ReportsUpsertWithWhereUniqueWithoutRatingModelInputSchema),z.lazy(() => ReportsUpsertWithWhereUniqueWithoutRatingModelInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ReportsCreateManyRatingModelInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ReportsUpdateWithWhereUniqueWithoutRatingModelInputSchema),z.lazy(() => ReportsUpdateWithWhereUniqueWithoutRatingModelInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ReportsUpdateManyWithWhereWithoutRatingModelInputSchema),z.lazy(() => ReportsUpdateManyWithWhereWithoutRatingModelInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ReportsScalarWhereInputSchema),z.lazy(() => ReportsScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const ReportsUncheckedUpdateManyWithoutRatingModelNestedInputSchema: z.ZodType<Prisma.ReportsUncheckedUpdateManyWithoutRatingModelNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ReportsCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateWithoutRatingModelInputSchema).array(),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ReportsUpsertWithWhereUniqueWithoutRatingModelInputSchema),z.lazy(() => ReportsUpsertWithWhereUniqueWithoutRatingModelInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ReportsCreateManyRatingModelInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ReportsWhereUniqueInputSchema),z.lazy(() => ReportsWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ReportsUpdateWithWhereUniqueWithoutRatingModelInputSchema),z.lazy(() => ReportsUpdateWithWhereUniqueWithoutRatingModelInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ReportsUpdateManyWithWhereWithoutRatingModelInputSchema),z.lazy(() => ReportsUpdateManyWithWhereWithoutRatingModelInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ReportsScalarWhereInputSchema),z.lazy(() => ReportsScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const RatingCreateNestedManyWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingCreateNestedManyWithoutRatingClassModelInput> = z.object({
@@ -3361,7 +3693,8 @@ export const RatingCreateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.Ra
   updatedAt: z.coerce.date().optional(),
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
   clientModel: z.lazy(() => ClientCreateNestedOneWithoutRatingModelInputSchema),
-  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema)
+  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
+  reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedCreateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutMethodologyModelInput> = z.object({
@@ -3383,7 +3716,8 @@ export const RatingUncheckedCreateWithoutMethodologyModelInputSchema: z.ZodType<
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  reportModel: z.lazy(() => ReportsUncheckedCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingCreateOrConnectWithoutMethodologyModelInputSchema: z.ZodType<Prisma.RatingCreateOrConnectWithoutMethodologyModelInput> = z.object({
@@ -3456,7 +3790,8 @@ export const RatingCreateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.
   updatedAt: z.coerce.date().optional(),
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
   clientModel: z.lazy(() => ClientCreateNestedOneWithoutRatingModelInputSchema),
-  methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema)
+  methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
+  reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedCreateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutQuestionnaireModelInput> = z.object({
@@ -3478,7 +3813,8 @@ export const RatingUncheckedCreateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  reportModel: z.lazy(() => ReportsUncheckedCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingCreateOrConnectWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.RatingCreateOrConnectWithoutQuestionnaireModelInput> = z.object({
@@ -3608,6 +3944,112 @@ export const ClientScalarWhereInputSchema: z.ZodType<Prisma.ClientScalarWhereInp
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
+export const RatingCreateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutReportModelInput> = z.object({
+  id: z.string().optional(),
+  ratingTitle: z.string().optional(),
+  ratingScore: z.number().int().optional().nullable(),
+  ratingYear: z.number().int(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
+  questionnaireFiles: z.string().optional().nullable(),
+  additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
+  status: z.lazy(() => RatingStatusSchema).optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
+  clientModel: z.lazy(() => ClientCreateNestedOneWithoutRatingModelInputSchema),
+  methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
+  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema)
+}).strict();
+
+export const RatingUncheckedCreateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutReportModelInput> = z.object({
+  id: z.string().optional(),
+  ratingTitle: z.string().optional(),
+  ratingScore: z.number().int().optional().nullable(),
+  ratingClass: z.string().optional().nullable(),
+  ratingYear: z.number().int(),
+  supervisor: z.string(),
+  primaryAnalyst: z.string().optional().nullable(),
+  secondaryAnalyst: z.string().optional().nullable(),
+  client: z.string(),
+  methodology: z.string(),
+  questionnaire: z.string(),
+  questionnaireFiles: z.string().optional().nullable(),
+  additionalFiles: z.string().optional().nullable(),
+  requireAdditionalFiles: z.boolean().optional(),
+  requireQuestionnaireFiles: z.boolean().optional(),
+  status: z.lazy(() => RatingStatusSchema).optional().nullable(),
+  issueDate: z.coerce.date().optional().nullable(),
+  expiryDate: z.coerce.date().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const RatingCreateOrConnectWithoutReportModelInputSchema: z.ZodType<Prisma.RatingCreateOrConnectWithoutReportModelInput> = z.object({
+  where: z.lazy(() => RatingWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => RatingCreateWithoutReportModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReportModelInputSchema) ]),
+}).strict();
+
+export const RatingUpsertWithoutReportModelInputSchema: z.ZodType<Prisma.RatingUpsertWithoutReportModelInput> = z.object({
+  update: z.union([ z.lazy(() => RatingUpdateWithoutReportModelInputSchema),z.lazy(() => RatingUncheckedUpdateWithoutReportModelInputSchema) ]),
+  create: z.union([ z.lazy(() => RatingCreateWithoutReportModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReportModelInputSchema) ]),
+  where: z.lazy(() => RatingWhereInputSchema).optional()
+}).strict();
+
+export const RatingUpdateToOneWithWhereWithoutReportModelInputSchema: z.ZodType<Prisma.RatingUpdateToOneWithWhereWithoutReportModelInput> = z.object({
+  where: z.lazy(() => RatingWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => RatingUpdateWithoutReportModelInputSchema),z.lazy(() => RatingUncheckedUpdateWithoutReportModelInputSchema) ]),
+}).strict();
+
+export const RatingUpdateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingUpdateWithoutReportModelInput> = z.object({
+  ratingTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  ratingScore: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
+  clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
+  methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
+  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional()
+}).strict();
+
+export const RatingUncheckedUpdateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutReportModelInput> = z.object({
+  ratingTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  ratingScore: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ratingYear: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const RatingClassCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.RatingClassCreateWithoutRatingModelInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
@@ -3722,6 +4164,33 @@ export const QuestionnaireUncheckedCreateWithoutRatingModelInputSchema: z.ZodTyp
 export const QuestionnaireCreateOrConnectWithoutRatingModelInputSchema: z.ZodType<Prisma.QuestionnaireCreateOrConnectWithoutRatingModelInput> = z.object({
   where: z.lazy(() => QuestionnaireWhereUniqueInputSchema),
   create: z.union([ z.lazy(() => QuestionnaireCreateWithoutRatingModelInputSchema),z.lazy(() => QuestionnaireUncheckedCreateWithoutRatingModelInputSchema) ]),
+}).strict();
+
+export const ReportsCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsCreateWithoutRatingModelInput> = z.object({
+  id: z.string().optional(),
+  reportTitle: z.string(),
+  reportFileUrl: z.string(),
+  version: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const ReportsUncheckedCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUncheckedCreateWithoutRatingModelInput> = z.object({
+  id: z.string().optional(),
+  reportTitle: z.string(),
+  reportFileUrl: z.string(),
+  version: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const ReportsCreateOrConnectWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsCreateOrConnectWithoutRatingModelInput> = z.object({
+  where: z.lazy(() => ReportsWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ReportsCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema) ]),
+}).strict();
+
+export const ReportsCreateManyRatingModelInputEnvelopeSchema: z.ZodType<Prisma.ReportsCreateManyRatingModelInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => ReportsCreateManyRatingModelInputSchema),z.lazy(() => ReportsCreateManyRatingModelInputSchema).array() ]),
 }).strict();
 
 export const RatingClassUpsertWithoutRatingModelInputSchema: z.ZodType<Prisma.RatingClassUpsertWithoutRatingModelInput> = z.object({
@@ -3856,6 +4325,35 @@ export const QuestionnaireUncheckedUpdateWithoutRatingModelInputSchema: z.ZodTyp
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const ReportsUpsertWithWhereUniqueWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUpsertWithWhereUniqueWithoutRatingModelInput> = z.object({
+  where: z.lazy(() => ReportsWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => ReportsUpdateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedUpdateWithoutRatingModelInputSchema) ]),
+  create: z.union([ z.lazy(() => ReportsCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema) ]),
+}).strict();
+
+export const ReportsUpdateWithWhereUniqueWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUpdateWithWhereUniqueWithoutRatingModelInput> = z.object({
+  where: z.lazy(() => ReportsWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => ReportsUpdateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedUpdateWithoutRatingModelInputSchema) ]),
+}).strict();
+
+export const ReportsUpdateManyWithWhereWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUpdateManyWithWhereWithoutRatingModelInput> = z.object({
+  where: z.lazy(() => ReportsScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => ReportsUpdateManyMutationInputSchema),z.lazy(() => ReportsUncheckedUpdateManyWithoutRatingModelInputSchema) ]),
+}).strict();
+
+export const ReportsScalarWhereInputSchema: z.ZodType<Prisma.ReportsScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ReportsScalarWhereInputSchema),z.lazy(() => ReportsScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ReportsScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ReportsScalarWhereInputSchema),z.lazy(() => ReportsScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rating: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  reportTitle: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  reportFileUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  version: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+}).strict();
+
 export const RatingCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutRatingClassModelInput> = z.object({
   id: z.string().optional(),
   ratingTitle: z.string().optional(),
@@ -3875,7 +4373,8 @@ export const RatingCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
   updatedAt: z.coerce.date().optional(),
   clientModel: z.lazy(() => ClientCreateNestedOneWithoutRatingModelInputSchema),
   methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
-  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema)
+  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
+  reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutRatingClassModelInput> = z.object({
@@ -3897,7 +4396,8 @@ export const RatingUncheckedCreateWithoutRatingClassModelInputSchema: z.ZodType<
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  reportModel: z.lazy(() => ReportsUncheckedCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingCreateOrConnectWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingCreateOrConnectWithoutRatingClassModelInput> = z.object({
@@ -3994,7 +4494,8 @@ export const RatingCreateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingC
   updatedAt: z.coerce.date().optional(),
   ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
   methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
-  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema)
+  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
+  reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedCreateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutClientModelInput> = z.object({
@@ -4016,7 +4517,8 @@ export const RatingUncheckedCreateWithoutClientModelInputSchema: z.ZodType<Prism
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  reportModel: z.lazy(() => ReportsUncheckedCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingCreateOrConnectWithoutClientModelInputSchema: z.ZodType<Prisma.RatingCreateOrConnectWithoutClientModelInput> = z.object({
@@ -4252,7 +4754,8 @@ export const RatingUpdateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.Ra
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional()
+  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
+  reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutMethodologyModelInput> = z.object({
@@ -4274,6 +4777,7 @@ export const RatingUncheckedUpdateWithoutMethodologyModelInputSchema: z.ZodType<
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  reportModel: z.lazy(() => ReportsUncheckedUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateManyWithoutMethodologyModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateManyWithoutMethodologyModelInput> = z.object({
@@ -4337,7 +4841,8 @@ export const RatingUpdateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional()
+  methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
+  reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutQuestionnaireModelInput> = z.object({
@@ -4359,6 +4864,7 @@ export const RatingUncheckedUpdateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  reportModel: z.lazy(() => ReportsUncheckedUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateManyWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateManyWithoutQuestionnaireModelInput> = z.object({
@@ -4475,6 +4981,39 @@ export const ClientUncheckedUpdateManyWithoutIndustryModelInputSchema: z.ZodType
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const ReportsCreateManyRatingModelInputSchema: z.ZodType<Prisma.ReportsCreateManyRatingModelInput> = z.object({
+  id: z.string().optional(),
+  reportTitle: z.string(),
+  reportFileUrl: z.string(),
+  version: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const ReportsUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUpdateWithoutRatingModelInput> = z.object({
+  reportTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportFileUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  version: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ReportsUncheckedUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUncheckedUpdateWithoutRatingModelInput> = z.object({
+  reportTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportFileUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  version: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ReportsUncheckedUpdateManyWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUncheckedUpdateManyWithoutRatingModelInput> = z.object({
+  reportTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  reportFileUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  version: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const RatingCreateManyRatingClassModelInputSchema: z.ZodType<Prisma.RatingCreateManyRatingClassModelInput> = z.object({
   id: z.string().optional(),
   ratingTitle: z.string().optional(),
@@ -4515,7 +5054,8 @@ export const RatingUpdateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional()
+  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
+  reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutRatingClassModelInput> = z.object({
@@ -4537,6 +5077,7 @@ export const RatingUncheckedUpdateWithoutRatingClassModelInputSchema: z.ZodType<
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  reportModel: z.lazy(() => ReportsUncheckedUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateManyWithoutRatingClassModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateManyWithoutRatingClassModelInput> = z.object({
@@ -4641,7 +5182,8 @@ export const RatingUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingU
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional()
+  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
+  reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutClientModelInput> = z.object({
@@ -4663,6 +5205,7 @@ export const RatingUncheckedUpdateWithoutClientModelInputSchema: z.ZodType<Prism
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  reportModel: z.lazy(() => ReportsUncheckedUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateManyWithoutClientModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateManyWithoutClientModelInput> = z.object({
@@ -4874,6 +5417,68 @@ export const IndustryFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.IndustryFindU
   select: IndustrySelectSchema.optional(),
   include: IndustryIncludeSchema.optional(),
   where: IndustryWhereUniqueInputSchema,
+}).strict() ;
+
+export const ReportsFindFirstArgsSchema: z.ZodType<Prisma.ReportsFindFirstArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  where: ReportsWhereInputSchema.optional(),
+  orderBy: z.union([ ReportsOrderByWithRelationInputSchema.array(),ReportsOrderByWithRelationInputSchema ]).optional(),
+  cursor: ReportsWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ReportsScalarFieldEnumSchema,ReportsScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ReportsFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ReportsFindFirstOrThrowArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  where: ReportsWhereInputSchema.optional(),
+  orderBy: z.union([ ReportsOrderByWithRelationInputSchema.array(),ReportsOrderByWithRelationInputSchema ]).optional(),
+  cursor: ReportsWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ReportsScalarFieldEnumSchema,ReportsScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ReportsFindManyArgsSchema: z.ZodType<Prisma.ReportsFindManyArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  where: ReportsWhereInputSchema.optional(),
+  orderBy: z.union([ ReportsOrderByWithRelationInputSchema.array(),ReportsOrderByWithRelationInputSchema ]).optional(),
+  cursor: ReportsWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ReportsScalarFieldEnumSchema,ReportsScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ReportsAggregateArgsSchema: z.ZodType<Prisma.ReportsAggregateArgs> = z.object({
+  where: ReportsWhereInputSchema.optional(),
+  orderBy: z.union([ ReportsOrderByWithRelationInputSchema.array(),ReportsOrderByWithRelationInputSchema ]).optional(),
+  cursor: ReportsWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const ReportsGroupByArgsSchema: z.ZodType<Prisma.ReportsGroupByArgs> = z.object({
+  where: ReportsWhereInputSchema.optional(),
+  orderBy: z.union([ ReportsOrderByWithAggregationInputSchema.array(),ReportsOrderByWithAggregationInputSchema ]).optional(),
+  by: ReportsScalarFieldEnumSchema.array(),
+  having: ReportsScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const ReportsFindUniqueArgsSchema: z.ZodType<Prisma.ReportsFindUniqueArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  where: ReportsWhereUniqueInputSchema,
+}).strict() ;
+
+export const ReportsFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ReportsFindUniqueOrThrowArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  where: ReportsWhereUniqueInputSchema,
 }).strict() ;
 
 export const RatingFindFirstArgsSchema: z.ZodType<Prisma.RatingFindFirstArgs> = z.object({
@@ -5299,6 +5904,46 @@ export const IndustryUpdateManyArgsSchema: z.ZodType<Prisma.IndustryUpdateManyAr
 
 export const IndustryDeleteManyArgsSchema: z.ZodType<Prisma.IndustryDeleteManyArgs> = z.object({
   where: IndustryWhereInputSchema.optional(),
+}).strict() ;
+
+export const ReportsCreateArgsSchema: z.ZodType<Prisma.ReportsCreateArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  data: z.union([ ReportsCreateInputSchema,ReportsUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const ReportsUpsertArgsSchema: z.ZodType<Prisma.ReportsUpsertArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  where: ReportsWhereUniqueInputSchema,
+  create: z.union([ ReportsCreateInputSchema,ReportsUncheckedCreateInputSchema ]),
+  update: z.union([ ReportsUpdateInputSchema,ReportsUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const ReportsCreateManyArgsSchema: z.ZodType<Prisma.ReportsCreateManyArgs> = z.object({
+  data: z.union([ ReportsCreateManyInputSchema,ReportsCreateManyInputSchema.array() ]),
+}).strict() ;
+
+export const ReportsDeleteArgsSchema: z.ZodType<Prisma.ReportsDeleteArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  where: ReportsWhereUniqueInputSchema,
+}).strict() ;
+
+export const ReportsUpdateArgsSchema: z.ZodType<Prisma.ReportsUpdateArgs> = z.object({
+  select: ReportsSelectSchema.optional(),
+  include: ReportsIncludeSchema.optional(),
+  data: z.union([ ReportsUpdateInputSchema,ReportsUncheckedUpdateInputSchema ]),
+  where: ReportsWhereUniqueInputSchema,
+}).strict() ;
+
+export const ReportsUpdateManyArgsSchema: z.ZodType<Prisma.ReportsUpdateManyArgs> = z.object({
+  data: z.union([ ReportsUpdateManyMutationInputSchema,ReportsUncheckedUpdateManyInputSchema ]),
+  where: ReportsWhereInputSchema.optional(),
+}).strict() ;
+
+export const ReportsDeleteManyArgsSchema: z.ZodType<Prisma.ReportsDeleteManyArgs> = z.object({
+  where: ReportsWhereInputSchema.optional(),
 }).strict() ;
 
 export const RatingCreateArgsSchema: z.ZodType<Prisma.RatingCreateArgs> = z.object({

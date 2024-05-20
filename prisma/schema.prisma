@@ -49,6 +49,17 @@ model Industry {
   updatedAt   DateTime @updatedAt
 }
 
+model Reports {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  rating        String   @db.ObjectId
+  ratingModel   Rating   @relation(fields: [rating], references: [id])
+  reportTitle   String
+  reportFileUrl String
+  version       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 model Rating {
   id                        String        @id @default(auto()) @map("_id") @db.ObjectId
   ratingTitle               String        @default("Issuer Rating")
@@ -72,6 +83,7 @@ model Rating {
   status                    RatingStatus? @default(ongoing)
   issueDate                 DateTime?
   expiryDate                DateTime?
+  reportModel               Reports[]
   createdAt                 DateTime      @default(now())
   updatedAt                 DateTime      @updatedAt
 }

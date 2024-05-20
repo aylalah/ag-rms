@@ -47,6 +47,7 @@ export class RatingClass extends MainClass {
       const rating = await dbQuery.rating.findUnique({
         where: { id },
         include: {
+          reportModel: true,
           ratingClassModel: true,
           methodologyModel: true,
           questionnaireModel: true,

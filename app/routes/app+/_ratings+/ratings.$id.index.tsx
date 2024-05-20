@@ -28,7 +28,8 @@ export default function Rating() {
   return (
     <RatingLayout
       linkTo={`/app/ratings/${id}/uploaded-files/questionnaire-docs`}
-      rating={rating}
+      isClientOnly={false}
+      rating={rating as any}
       Fetcher={Fetcher}
       reports={reports}
       isReadOnly={true}

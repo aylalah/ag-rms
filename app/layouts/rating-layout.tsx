@@ -11,6 +11,8 @@ type RatingProps = {
   isClientOnly: boolean;
 };
 
+const reportUploadMenu = [{ name: 'Draft Report' }, { name: 'Final Report' }];
+
 export default function RatingLayout({
   rating,
   reports,
@@ -91,8 +93,8 @@ export default function RatingLayout({
               <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">Summary</h2>
 
               <div className="grid grid-cols-2 gap-4">
-                <SummaryCard title="Rating Class" isLarge subTitle={rating?.ratingClassModel?.name || '-'} />
-                <SummaryCard title="Rating Year" isLarge subTitle={rating?.ratingYear || '-'} />
+                <SummaryCard title="Rating Class" isLarge subTitle={`${rating?.ratingClassModel?.name || '-'}`} />
+                <SummaryCard title="Rating Year" isLarge subTitle={`${rating?.ratingYear || ''}`} />
                 <SummaryCard
                   title="Issue Date"
                   subTitle={!rating?.issueDate ? '-' : dayjs(rating?.issueDate).format('MMMM DD, YYYY')}
@@ -135,7 +137,7 @@ export default function RatingLayout({
         </div>
 
         <div className="lg:w-[25em] flex flex-col h-full">
-          <div className="p-4 rounded bg-primary">
+          <div className="flex items-center justify-between p-4 rounded bg-primary">
             <h2 className="text-sm font-bold text-white uppercase ">Reports</h2>
           </div>
           <div className="p-4 border rounded bg-base-100 border-accent min-h-[20vh]">
@@ -145,6 +147,33 @@ export default function RatingLayout({
                 <Tr key={i} index={i + 1} name={report?.name} version={report?.version} link={report?.link} />
               ))}
             </ul>
+
+            <div className="flex justify-center">
+              <div className="flex justify-end mt-5 dropdown dropdown-end dropdown-hover">
+                <button tabIndex={1} className="text-sm border btn btn-secondary border-secondary">
+                  Upload Report
+                  <i className="ri-arrow-down-s-line" />
+                </button>
+
+                <ul
+                  tabIndex={1}
+                  className="rounded-lg p-4 text-sm shadow-lg dropdown-content border bg-base-100 w-[18em] z-[10] mr-1"
+                >
+                  {reportUploadMenu?.map((el) => (
+                    <li>
+                      <a
+                        key={el.name}
+                        href="#"
+                        className="flex items-center gap-2 py-4 hover:text-base-secondary hover:px-2"
+                      >
+                        <i className="ri-file-text-line" />
+                        {el?.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
 
           <div className="p-4 mt-4 border rounded bg-primary border-accent">
