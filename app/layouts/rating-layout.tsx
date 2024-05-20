@@ -3,7 +3,7 @@ import { FetcherWithComponents, Link } from '@remix-run/react';
 import dayjs from 'dayjs';
 
 type RatingProps = {
-  rating: Rating;
+  rating: RatingWithRelations;
   Fetcher?: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
@@ -143,14 +143,20 @@ export default function RatingLayout({
           <div className="p-4 border rounded bg-base-100 border-accent min-h-[20vh]">
             <ul>
               <Tr name="Report Name" version="Version" isHeader />
-              {reports?.map((report, i) => (
-                <Tr key={i} index={i + 1} name={report?.name} version={report?.version} link={report?.link} />
+              {rating?.reportModel?.map((report, i) => (
+                <Tr
+                  key={i}
+                  index={i + 1}
+                  name={report?.reportTitle}
+                  version={report?.version}
+                  link={report?.reportFileUrl}
+                />
               ))}
             </ul>
 
             <div className="flex justify-center">
               <div className="flex justify-end mt-5 dropdown dropdown-end dropdown-hover">
-                <button tabIndex={1} className="text-sm border btn btn-secondary border-secondary">
+                <button tabIndex={1} className="mt-6 text-sm border btn btn-secondary border-secondary">
                   Upload Report
                   <i className="ri-arrow-down-s-line" />
                 </button>
@@ -164,7 +170,7 @@ export default function RatingLayout({
                       <a
                         key={el.name}
                         href="#"
-                        className="flex items-center gap-2 py-4 hover:text-base-secondary hover:px-2"
+                        className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2"
                       >
                         <i className="ri-file-text-line" />
                         {el?.name}
