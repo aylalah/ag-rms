@@ -1,6 +1,6 @@
 import RatingLayout from '@layouts/rating-layout';
 import { LoaderFunctionArgs } from '@remix-run/node';
-import { json, useLoaderData } from '@remix-run/react';
+import { json, useFetcher, useLoaderData } from '@remix-run/react';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
@@ -18,9 +18,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function Rating() {
   const { rating, reports, error } = useLoaderData<typeof loader>();
+  const Fetcher = useFetcher();
 
   return (
     <RatingLayout
+      Fetcher={Fetcher}
       isClientOnly={true}
       linkTo="files-uploads"
       isReadOnly={false}

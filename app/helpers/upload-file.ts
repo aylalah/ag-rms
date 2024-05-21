@@ -69,6 +69,10 @@ export const uploadFileHandler = async (request: Request, id: string) => {
     const formData = await unstable_parseMultipartFormData(request, uploadHandler);
     const file = formData.get('file') as any;
     const fileName: any = formData.get('fileName');
+
+    console.log('File', file, fileName);
+
+    return {};
     const type = file?.type;
     const name = `${id}/${fileName?.replace(/\s/g, '-')}.${type?.split('/')[1]}`.toLowerCase();
     const upload = await uploadStreamToSpaces(file, name);
@@ -76,6 +80,7 @@ export const uploadFileHandler = async (request: Request, id: string) => {
     if (upload?.$metadata?.httpStatusCode === 200) return { storedUrl: upload?.Location };
     throw new Error('Upload failed');
   } catch (error: any) {
+    console.log('Error', error);
     return { error: error.message };
   }
 };

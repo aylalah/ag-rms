@@ -1,10 +1,12 @@
 import { Rating } from '@helpers/zodPrisma';
 import { FetcherWithComponents, Link } from '@remix-run/react';
 import dayjs from 'dayjs';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
 type RatingProps = {
   rating: RatingWithRelations;
-  Fetcher?: FetcherWithComponents<any>;
+  Fetcher: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
   linkTo: string;
@@ -13,14 +15,46 @@ type RatingProps = {
 
 const reportUploadMenu = [{ name: 'Draft Report' }, { name: 'Final Report' }];
 
-export default function RatingLayout({
-  rating,
-  reports,
-  isReadOnly,
-  linkTo,
-  Fetcher,
-  isClientOnly = false,
-}: RatingProps) {
+export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = false }: RatingProps) {
+  const ratingRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [reportType, setReportType] = useState<string>('');
+  const [reportVersion, setReportVersion] = useState<string>('');
+  const FetcherData = Fetcher?.data as { message: string; error: string };
+  const isSubmitting = Fetcher.state === 'submitting';
+
+  const getVersion = (name: string) => {
+    const thisReports = rating?.reportModel?.filter((el) => el.reportTitle === name);
+    return thisReports?.length ? thisReports.length + 1 : 1;
+  };
+
+  const onUploadHandler = (name: string) => {
+    ratingRef.current?.showModal();
+
+    if (name === 'Draft Report') {
+      const version = getVersion(name);
+      setReportType(name);
+      setReportVersion(`v${version}.0`);
+    }
+
+    if (name === 'Final Report') {
+      const version = getVersion(name);
+      setReportType(name);
+      setReportVersion(`v${version}.0`);
+    }
+  };
+
+  const onCloseHandler = () => ratingRef.current?.close();
+
+  useEffect(() => {
+    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: 'error' });
+    if (FetcherData?.message) {
+      toast.success(FetcherData?.message, { toastId: 'success' });
+      formRef.current?.reset();
+      onCloseHandler();
+    }
+  });
+
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
@@ -138,7 +172,7 @@ export default function RatingLayout({
 
         <div className="lg:w-[25em] flex flex-col h-full">
           <div className="flex items-center justify-between p-4 rounded bg-primary">
-            <h2 className="text-sm font-bold text-white uppercase ">Reports</h2>
+            <h2 className="text-sm font-bold text-white uppercase">Reports</h2>
           </div>
           <div className="p-4 border rounded bg-base-100 border-accent min-h-[20vh]">
             <ul>
@@ -154,32 +188,30 @@ export default function RatingLayout({
               ))}
             </ul>
 
-            <div className="flex justify-center">
-              <div className="flex justify-end mt-5 dropdown dropdown-end dropdown-hover">
-                <button tabIndex={1} className="mt-6 text-sm border btn btn-secondary border-secondary">
-                  Upload Report
-                  <i className="ri-arrow-down-s-line" />
-                </button>
+            {!isClientOnly && (
+              <div className="flex justify-center">
+                <div className="flex justify-end dropdown dropdown-end">
+                  <button tabIndex={1} className="mt-6 text-sm border btn btn-secondary border-secondary">
+                    Upload Report
+                    <i className="ri-arrow-down-s-line" />
+                  </button>
 
-                <ul
-                  tabIndex={1}
-                  className="rounded-lg p-4 text-sm shadow-lg dropdown-content border bg-base-100 w-[18em] z-[10] mr-1"
-                >
-                  {reportUploadMenu?.map((el) => (
-                    <li>
-                      <a
-                        key={el.name}
-                        href="#"
-                        className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2"
-                      >
-                        <i className="ri-file-text-line" />
-                        {el?.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                  <ul
+                    tabIndex={1}
+                    className="rounded-lg p-4 text-sm shadow-lg dropdown-content border bg-base-100 w-[18em] z-[10] mr-1"
+                  >
+                    {reportUploadMenu?.map((el) => (
+                      <li key={el.name} onClick={() => onUploadHandler(el.name)}>
+                        <a href="#" className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2">
+                          <i className="ri-file-text-line" />
+                          {el?.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="p-4 mt-4 border rounded bg-primary border-accent">
@@ -215,6 +247,26 @@ export default function RatingLayout({
           </div>
         </div>
       </div>
+
+      {!isClientOnly && (
+        <dialog ref={ratingRef} id="my_modal_2" className="modal">
+          <Fetcher.Form ref={formRef} method="patch" encType="multipart/form-data">
+            <fieldset disabled={isSubmitting} className="p-10 flex flex-col gap-6 bg-base-100 w-[30em] rounded">
+              <div className="flex justify-between">
+                <h2 className="text-lg font-bold text-center uppercase text-primary">{reportType} Upload</h2>
+                <i className="text-2xl cursor-pointer ri-close-circle-line text-secondary" onClick={onCloseHandler} />
+              </div>
+              <input type="hidden" required name="reportTitle" defaultValue={reportType} />
+              <input type="hidden" required name="version" defaultValue={reportVersion} />
+              <input type="file" required name="file" className="w-full file-input file-input-bordered" />
+              <button className="btn btn-secondary">
+                {isSubmitting && <span className="loading loading-xs"></span>}
+                Upload
+              </button>
+            </fieldset>
+          </Fetcher.Form>
+        </dialog>
+      )}
     </div>
   );
 }
@@ -223,12 +275,14 @@ const Tr = ({
   name,
   version,
   link,
+  action,
   isHeader,
   index,
 }: {
   name: string;
   version: string;
   link?: string;
+  action: string;
   isHeader?: boolean;
   index?: number;
 }) => {
@@ -248,6 +302,7 @@ const Tr = ({
       >
         {version}
       </Link>
+      <div></div>
     </li>
   );
 };

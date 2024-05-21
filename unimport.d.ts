@@ -526,6 +526,7 @@ declare global {
   const RatingWhereInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['RatingWhereInputSchema']
   const RatingWhereUniqueInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['RatingWhereUniqueInputSchema']
   const RatingWithRelationsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['RatingWithRelationsSchema']
+  const ReportClass: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/modules/services/reports.service')['ReportClass']
   const ReportsAggregateArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['ReportsAggregateArgsSchema']
   const ReportsArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['ReportsArgsSchema']
   const ReportsCountOrderByAggregateInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['ReportsCountOrderByAggregateInputSchema']

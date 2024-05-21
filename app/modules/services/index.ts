@@ -14,6 +14,7 @@ class RMSClass extends MainClass {
   readonly industries = new IndustryClass(this.token);
   readonly methodologies = new MethodologyClass(this.token);
   readonly ratings = new RatingClass(this.token);
+  readonly report = new ReportClass(this.token);
   readonly questionnaires = new QuestionnaireClass(this.token);
 }
 
