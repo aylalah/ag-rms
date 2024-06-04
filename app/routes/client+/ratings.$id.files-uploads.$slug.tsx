@@ -209,7 +209,7 @@ export default function Dragger() {
       //check if formData is empty
       if (formData.entries().next().done) return;
 
-      formData.append("supervisor", rating?.supervisor);
+      formData.append("supervisor", rating?.supervisor as string);
 
       Fetcher.submit(formData, {
         method: "POST",
