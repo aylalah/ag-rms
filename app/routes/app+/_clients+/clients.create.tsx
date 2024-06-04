@@ -1,9 +1,10 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs } from '@remix-run/node';
-import { FormLayout } from '@layouts/form-layout';
-import { toast } from 'react-toastify';
-import { useEffect } from 'react';
-import { useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
-import { validateCookie } from '@helpers/cookies';
+import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
+import { FormLayout } from "@layouts/form-layout";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { validateCookie } from "@helpers/cookies";
+import { sendEmailService } from "@helpers/email";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
@@ -16,8 +17,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const data = Object.fromEntries(fd.entries()) as any;
   const { token } = await validateCookie(request);
 
-  data.role = 'client';
-  const { createClient, error } = await RMSservice(token).clients.create({ data });
+  data.role = "client";
+  const { createClient, error } = await RMSservice(token).clients.create({
+    data,
+  });
+  const clientUrl = request.url.replace("/app/clients/create", "");
+  console.log(data);
+
+  sendEmailService({
+    From: "info@agusto.com",
+    To: `${data.email}`,
+    Subject: "Rating Management System Login",
+    HtmlBody: `<p>Please find attached your Login details</p><p>Email: ${data.email} </br> Username: ${data.username}</br> Password; ${data.password}</p>.The Login Url is ${clientUrl}`,
+  });
   return json({ message: createClient, error });
 };
 
@@ -29,17 +41,23 @@ export default function Breeds() {
 
   useEffect(() => {
     if (FetcherData?.message) {
-      toast.success(FetcherData?.message, { toastId: 'create-rating' });
+      toast.success(FetcherData?.message, { toastId: "create-rating" });
       navigate(-1);
       return;
     }
 
-    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: 'create-rating' });
+    if (FetcherData?.error)
+      toast.error(FetcherData?.error, { toastId: "create-rating" });
   }, [FetcherData]);
 
   return (
     <div className="h-full pb-10 overflow-hidden">
-      <FormLayout formObject={formObject as any} Fetcher={Fetcher} data={client} slug="client" />
+      <FormLayout
+        formObject={formObject as any}
+        Fetcher={Fetcher}
+        data={client}
+        slug="client"
+      />
     </div>
   );
 }

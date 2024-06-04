@@ -1,28 +1,36 @@
-import { json, LoaderFunctionArgs, redirectDocument } from '@remix-run/node';
-import { toast } from 'react-toastify';
-import { useEffect } from 'react';
-import { useFetcher, useLoaderData } from '@remix-run/react';
+import { json, LoaderFunctionArgs, redirectDocument } from "@remix-run/node";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 
 export const loader = ({ request }: LoaderFunctionArgs) => {
-  const email = new URL(request.url).searchParams.get('email');
+  const email = new URL(request.url).searchParams.get("email");
   return { email };
 };
 
 export const action = async ({ request }: LoaderFunctionArgs) => {
   const fd = await request.formData();
-  const body = Object.fromEntries(fd.entries()) as { email: string; token: string };
+  const body = Object.fromEntries(fd.entries()) as {
+    email: string;
+    token: string;
+  };
   const { client, token, error } = await RMSservice().auth.magicLinkLogin(body);
 
   if (client && token) {
-    return redirectDocument('/client/ratings', {
-      headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, client })) },
+    return redirectDocument("/client/ratings", {
+      headers: {
+        "set-cookie": await appCookie.serialize(
+          JSON.stringify({ token, client })
+        ),
+      },
     });
   }
 
   return json({ error });
 };
 
-const token = 699490;
+// const token = 699490;
+const token = "";
 
 export default function EmailConfirmation() {
   const Fetcher = useFetcher();
@@ -31,7 +39,7 @@ export default function EmailConfirmation() {
 
   useEffect(() => {
     if (FetcherData?.error) {
-      toast.error(FetcherData?.error, { toastId: 'login-error' });
+      toast.error(FetcherData?.error, { toastId: "login-error" });
       return;
     }
   }, [FetcherData]);
@@ -42,7 +50,8 @@ export default function EmailConfirmation() {
         <div className="flex flex-col items-center justify-center gap-4 p-8 border-b">
           <h1 className="text-2xl font-bold">2 Factor Authentication</h1>
           <div className="text-sm text-center opacity-70">
-            We have sent an email to <span className="font-bold text-secondary">{email}</span>.<br />
+            We have sent an email to{" "}
+            <span className="font-bold text-secondary">{email}</span>.<br />
             Please enter your six digit token to continue
           </div>
 
