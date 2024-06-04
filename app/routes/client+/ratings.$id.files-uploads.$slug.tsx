@@ -6,68 +6,109 @@ import {
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from '@remix-run/node';
-import { Link, useFetcher, useLoaderData } from '@remix-run/react';
-import numeral from 'numeral';
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
+} from "@remix-run/node";
+import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import numeral from "numeral";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 const allowFileTypes = [
-  'image/png',
-  'image/jpeg',
-  'image/jpg',
-  'application/pdf',
-  'application/zip',
-  'application/rar',
-  'text/csv',
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "application/pdf",
+  "application/zip",
+  "application/rar",
+  "text/csv",
 ];
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { token } = await validateCookie(request);
-  const id = params.id || 'testing';
-  const slug = params.slug as 'questionnaire-docs' | 'additional-docs';
+  const { token, client } = await validateCookie(request);
+  // console.log(client);
+  const id = params.id || "testing";
+  const slug = params.slug as "questionnaire-docs" | "additional-docs";
   const { rating, error } = await RMSservice(token).ratings.one({ id });
   let docs = [] as FileProp[];
 
-  if (slug === 'questionnaire-docs' && rating?.questionnaireFiles) docs = JSON.parse(rating.questionnaireFiles);
-  if (slug === 'additional-docs' && rating?.additionalFiles) docs = JSON.parse(rating.additionalFiles);
+  if (slug === "questionnaire-docs" && rating?.questionnaireFiles)
+    docs = JSON.parse(rating.questionnaireFiles);
+  if (slug === "additional-docs" && rating?.additionalFiles)
+    docs = JSON.parse(rating.additionalFiles);
   return json({ error, rating, docs });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const { token } = await validateCookie(request);
+  const { token, client } = await validateCookie(request);
   const method = request.method;
-  const id = params.id || 'testing';
-  const slug = params.slug as 'questionnaire-docs' | 'additional-docs';
+  const id = params.id || "testing";
+  const slug = params.slug as "questionnaire-docs" | "additional-docs";
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       avoidFileConflicts: true,
-      directory: '/tmp',
+      directory: "/tmp",
       maxPartSize: 30_000_000,
       file: ({ filename }) => filename,
     }),
     unstable_createMemoryUploadHandler()
   );
 
-  if (method === 'POST') {
-    const formData = await unstable_parseMultipartFormData(request, uploadHandler)
+  if (method === "POST") {
+    const formData = await unstable_parseMultipartFormData(
+      request,
+      uploadHandler
+    )
       .then(async (res) => {
         const files = Object.fromEntries(res.entries());
+
+        const supervisor = files.supervisor;
+
+        console.log(supervisor);
+
+        delete files.supervisor;
+
         if (Object.keys(files).length < 1) return json({});
 
         const saveFiles = await Promise.all(
           Object.entries(files).map(async ([key, file]) => {
-            const fileData = file as { name: string; type: string; size: number };
+            const fileData = file as {
+              name: string;
+              type: string;
+              size: number;
+            };
             const fileName = fileData?.name;
-            const name = `${id}/${fileName?.replace(/\s/g, '-')}`.toLowerCase();
+            const name = `${id}/${fileName?.replace(/\s/g, "-")}`.toLowerCase();
             const upload = await uploadStreamToSpaces(file, name);
 
-            if (upload?.$metadata?.httpStatusCode === 200)
-              return { storedUrl: upload?.Location, status: true, id: key };
+            if (upload?.$metadata?.httpStatusCode === 200) {
+              return {
+                name: fileName,
+                storedUrl: upload?.Location,
+                status: true,
+                id: key,
+              };
+            }
+
             return { storedUrl: null, status: false, id: key };
           })
         );
+        //sendEmail
+        //send mail
+        const fileList = saveFiles.map(
+          (el, index) => `${index + 1}. ${el?.name} <br/>`
+        );
+        sendEmailService({
+          From: "info@agusto.com",
+          To: "adeolaboluogun@agusto.com",
+
+          Subject: "Client File Upload",
+          HtmlBody: `${client?.companyName} just uploaded the following file${
+            fileList.length > 1 ? "s" : ""
+          }:<br/><br/> ${fileList.toString()} <br/> <br/> You can view the file${
+            fileList.length > 1 ? "s" : ""
+          } on the <strong>Rating Management System</strong>`,
+        });
+        console.log(saveFiles);
         return json({ saveQuery: saveFiles });
       })
       .catch((error) => json({ error }));
@@ -75,39 +116,49 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return formData;
   }
 
-  if (method === 'PATCH') {
+  if (method === "PATCH") {
     const fd = await request.formData();
     const data = Object.fromEntries(fd.entries()) as any;
-    if (slug === 'questionnaire-docs') data.questionnaireFiles = data.docs;
-    if (slug === 'additional-docs') data.additionalFiles = data.docs;
+    if (slug === "questionnaire-docs") data.questionnaireFiles = data.docs;
+    if (slug === "additional-docs") data.additionalFiles = data.docs;
     delete data.docs;
 
-    const { updateRating, error } = await RMSservice(token).ratings.update({ id, data });
+    const { updateRating, error } = await RMSservice(token).ratings.update({
+      id,
+      data,
+    });
     return json({ message: updateRating, error });
   }
 
-  if (method === 'DELETE') {
+  if (method === "DELETE") {
     const fd = await request.formData();
-    const url = fd.get('url') as string;
-    const fileName = url?.split('/').pop();
-    const { message, error } = await deleteFileFromSpaces(`${id}/${fileName}` || '');
+    const url = fd.get("url") as string;
+    const fileName = url?.split("/").pop();
+    const { message, error } = await deleteFileFromSpaces(
+      `${id}/${fileName}` || ""
+    );
     return json({ deletedMessage: message, error, url });
   }
 
-  return json({ error: 'Invalid request method' });
+  return json({ error: "Invalid request method" });
 };
 
 export default function Dragger() {
   const DiaRef = useRef<HTMLDialogElement>(null);
   const { rating, docs } = useLoaderData<typeof loader>();
   const Fetcher = useFetcher();
-  const isSubmitting = Fetcher.state === 'submitting';
+  const isSubmitting = Fetcher.state === "submitting";
   const FetcherData = Fetcher.data as {
     error: string;
     url: string;
     message: string;
     deletedMessage: string;
-    saveQuery: { id: string; storedUrl: string | null; status: boolean; fileName: string }[];
+    saveQuery: {
+      id: string;
+      storedUrl: string | null;
+      status: boolean;
+      fileName: string;
+    }[];
   };
   const dragRef = useRef<HTMLDivElement>(null);
   const [fileList, setFileList] = useState<FileProp[]>(docs as any);
@@ -142,7 +193,7 @@ export default function Dragger() {
           size: files[i].size,
           status: false,
           shouldAllow,
-          url: '',
+          url: "",
           date: new Date(),
         });
 
@@ -158,7 +209,12 @@ export default function Dragger() {
       //check if formData is empty
       if (formData.entries().next().done) return;
 
-      Fetcher.submit(formData, { method: 'POST', encType: 'multipart/form-data' });
+      formData.append("supervisor", rating?.supervisor);
+
+      Fetcher.submit(formData, {
+        method: "POST",
+        encType: "multipart/form-data",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -166,18 +222,18 @@ export default function Dragger() {
 
   const onDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    dragRef.current?.style.setProperty('background', '#07354f20');
+    dragRef.current?.style.setProperty("background", "#07354f20");
   };
 
   const onDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    dragRef.current?.style.setProperty('border', 'none');
+    dragRef.current?.style.setProperty("border", "none");
   };
 
   const onSubmit = (data: FileProp[]) => {
     //remove should not allow
     const newFileList = data.filter((file) => file.shouldAllow);
-    Fetcher.submit({ docs: JSON.stringify(newFileList) }, { method: 'PATCH' });
+    Fetcher.submit({ docs: JSON.stringify(newFileList) }, { method: "PATCH" });
   };
 
   const onDeleteStart = (file: FileProp) => {
@@ -186,7 +242,7 @@ export default function Dragger() {
   };
 
   const onDelete = () => {
-    Fetcher.submit({ url: selectedFile?.url || '' }, { method: 'DELETE' });
+    Fetcher.submit({ url: selectedFile?.url || "" }, { method: "DELETE" });
   };
 
   useEffect(() => {
@@ -194,7 +250,13 @@ export default function Dragger() {
       const saveQuery = FetcherData?.saveQuery;
       const newFileList = fileList.map((file) => {
         const found = saveQuery.find((query) => query.id === file.id);
-        if (found) return { ...file, status: found.status, url: found?.storedUrl || '', date: new Date() };
+        if (found)
+          return {
+            ...file,
+            status: found.status,
+            url: found?.storedUrl || "",
+            date: new Date(),
+          };
 
         return file;
       });
@@ -204,17 +266,19 @@ export default function Dragger() {
 
     if (FetcherData?.message) {
       DiaRef.current?.close();
-      toast.success(FetcherData?.message, { toastId: 'success-message' });
+      toast.success(FetcherData?.message, { toastId: "success-message" });
     }
 
     if (FetcherData?.deletedMessage) {
-      const newFileList = fileList.filter((file) => file.url !== FetcherData?.url);
+      const newFileList = fileList.filter(
+        (file) => file.url !== FetcherData?.url
+      );
       setFileList(newFileList);
       onSubmit(newFileList);
     }
 
     if (FetcherData?.error) {
-      toast.error(FetcherData?.error, { toastId: 'error' });
+      toast.error(FetcherData?.error, { toastId: "error" });
     }
   }, [FetcherData]);
 
@@ -242,43 +306,71 @@ export default function Dragger() {
         </div>
 
         <div className="relative w-44">
-          <button className="w-full text-sm shadow btn btn-secondary">Select File(s)</button>
-          <input type="file" accept="application/pdf" className="absolute inset-0 opacity-0 cursor-pointer" />
+          <button className="w-full text-sm shadow btn btn-secondary">
+            Select File(s)
+          </button>
+          <input
+            type="file"
+            accept="application/pdf"
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
         </div>
       </div>
 
       <div className="flex flex-col flex-1 w-full overflow-hidden">
         <h2 className="flex justify-between p-4 pr-6 font-semibold text-white capitalize bg-primary">
           <span>
-            {fileList?.length} File{fileList?.length > 1 ? 's' : ''}
+            {fileList?.length} File{fileList?.length > 1 ? "s" : ""}
           </span>
-          <span>{numeral(sumSizes()).format('0,00.00')} MB</span>
+          <span>{numeral(sumSizes()).format("0,00.00")} MB</span>
         </h2>
 
         <div className="flex-1 pr-6 overflow-auto rounded-lg bg-base-200">
           {fileList &&
             Array.from(fileList).map((file, index) => (
-              <div key={index} className="flex items-center justify-between py-4 border-b ">
+              <div
+                key={index}
+                className="flex items-center justify-between py-4 border-b "
+              >
                 <div className="flex items-center flex-1 gap-4">
-                  {file?.status && <i className="text-xl text-green-600 ri-checkbox-circle-fill" />}
-                  {!file?.shouldAllow && <i className="text-xl text-red-600 ri-close-circle-fill" />}
-                  {!file?.status && file.shouldAllow && <span className="loading loading-sm" />}
+                  {file?.status && (
+                    <i className="text-xl text-green-600 ri-checkbox-circle-fill" />
+                  )}
+                  {!file?.shouldAllow && (
+                    <i className="text-xl text-red-600 ri-close-circle-fill" />
+                  )}
+                  {!file?.status && file.shouldAllow && (
+                    <span className="loading loading-sm" />
+                  )}
 
-                  <p className={`${!file?.shouldAllow && 'text-red-500'} text-sm`}>
-                    <Link target="_blank" referrerPolicy="no-referrer" to={file?.url} className="link">
+                  <p
+                    className={`${
+                      !file?.shouldAllow && "text-red-500"
+                    } text-sm`}
+                  >
+                    <Link
+                      target="_blank"
+                      referrerPolicy="no-referrer"
+                      to={file?.url}
+                      className="link"
+                    >
                       {file.name}
                     </Link>
                   </p>
                 </div>
 
                 <div className="flex items-center gap-8 text-sm">
-                  <p className={`${!file?.shouldAllow && 'text-red-500'}`}>
-                    {file?.size && numeral(file.size / 1000000).format('0,00.00')} MB
+                  <p className={`${!file?.shouldAllow && "text-red-500"}`}>
+                    {file?.size &&
+                      numeral(file.size / 1000000).format("0,00.00")}{" "}
+                    MB
                   </p>
 
                   <p
                     role="button"
-                    className={`${!file?.shouldAllow && 'text-red-500'} cursor-pointer`}
+                    className={`${
+                      !file?.shouldAllow && "text-red-500"
+                    } cursor-pointer`}
                     onClick={() => onDeleteStart(file)}
                   >
                     <i className="text-lg ri-close-fill text-secondary" />
@@ -290,7 +382,9 @@ export default function Dragger() {
           {fileList && Array.from(fileList).length === 0 && (
             <div className="flex flex-col items-center justify-center h-full">
               <p className="text-gray-500">No files uploaded yet</p>
-              <p className="text-sm text-gray-500">Uploaded files will appear here</p>
+              <p className="text-sm text-gray-500">
+                Uploaded files will appear here
+              </p>
             </div>
           )}
         </div>
@@ -301,11 +395,19 @@ export default function Dragger() {
           <h3 className="text-lg font-bold">Delete File</h3>
           <p className="py-2">Are you sure you want to delete this file?</p>
           <div className="flex items-center justify-end gap-2 mt-4">
-            <button disabled={isSubmitting} className="btn btn-sm" onClick={() => DiaRef.current?.close()}>
+            <button
+              disabled={isSubmitting}
+              className="btn btn-sm"
+              onClick={() => DiaRef.current?.close()}
+            >
               Cancel
             </button>
 
-            <button disabled={isSubmitting} onClick={onDelete} className="btn btn-sm btn-secondary">
+            <button
+              disabled={isSubmitting}
+              onClick={onDelete}
+              className="btn btn-sm btn-secondary"
+            >
               Delete
               {isSubmitting && <span className="loading loading-sm"></span>}
             </button>
