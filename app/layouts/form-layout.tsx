@@ -1,5 +1,5 @@
-import { FetcherWithComponents } from '@remix-run/react';
-import { useRef } from 'react';
+import { FetcherWithComponents } from "@remix-run/react";
+import { useRef } from "react";
 import {
   ControlBoolean,
   ControlCheckboxes,
@@ -9,11 +9,12 @@ import {
   ControlTextArea,
   splitCamelCase,
   Title,
-} from './_/layoutComponents';
+} from "./_/layoutComponents";
 
 type FormLayoutProps = {
   slug: string;
   data: any;
+  onAddEmail?: () => void;
   formObject:
     | {
         field: string;
@@ -26,10 +27,17 @@ type FormLayoutProps = {
   Fetcher: FetcherWithComponents<any>;
 };
 
-export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutProps) => {
-  const method = data?.id ? 'PATCH' : 'POST';
-  const title = data?.id ? 'Update' : 'Create';
-  const isSubmitting = Fetcher?.state === 'submitting';
+export const FormLayout = ({
+  Fetcher,
+  data,
+  formObject,
+  onAddEmail,
+  ...props
+}: FormLayoutProps) => {
+  const password = "";
+  const method = data?.id ? "PATCH" : "POST";
+  const title = data?.id ? "Update" : "Create";
+  const isSubmitting = Fetcher?.state === "submitting";
   const modalRef = useRef<HTMLDialogElement>(null);
 
   const onDeleteClick = () => {
@@ -38,41 +46,63 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
   };
 
   const onConfirmDelete = (decision: boolean) => {
-    if (decision) Fetcher?.submit({}, { method: 'DELETE' });
+    if (decision) Fetcher?.submit({}, { method: "DELETE" });
   };
 
   return (
     <div className="h-[100%]">
       <Fetcher.Form method={method} className="flex h-full">
-        <fieldset disabled={isSubmitting} className="grid grid-cols-4 flex-1 overflow-hidden h-[100%] gap-2">
-          <div className="flex flex-col flex-1 h-[100%] col-span-3 gap-4 overflow-auto ">
+        <fieldset
+          disabled={isSubmitting}
+          className="grid grid-cols-4 flex-1 overflow-hidden h-[100%] gap-2"
+        >
+          <div className="flex flex-col flex-1 h-[100%] col-span-3 gap-4 overflow-auto relative ">
             <Title title={`${title} ${props?.slug}`} />
 
             <div className="grid flex-col col-span-2 grid-cols-2 gap-4 pt-6 pr-[4em] pb-10">
               {formObject?.map((el, i: number) => {
                 const field = el?.field;
                 const defaultValue = el.value;
-                const dataType = el?.type || 'input';
+                const dataType = el?.type || "input";
                 const isRequired = el?.required;
                 const list = el?.list;
 
                 return (
-                  <div key={i} className="flex grid flex-col grid-cols-1 gap-1 mb-3">
+                  <div
+                    key={el?.field}
+                    className="flex grid flex-col grid-cols-1 gap-1 mb-3"
+                  >
                     <p className="text-xs font-bold uppercase text-text text-light">
-                      {splitCamelCase(field)} {isRequired && '*'}
+                      {splitCamelCase(field)} {isRequired && "*"}
                     </p>
 
-                    {dataType === 'json' && <ControlJsonTextArea el={field} required={isRequired} />}
-                    {dataType === 'textarea' && (
-                      <ControlTextArea placeholder={field} required={isRequired} defaultValue={defaultValue} />
+                    {dataType === "json" && (
+                      <ControlJsonTextArea el={field} required={isRequired} />
                     )}
-                    {dataType === 'text' && (
-                      <ControlInput placeholder={field} required={isRequired} type="text" defaultValue={defaultValue} />
+                    {dataType === "textarea" && (
+                      <ControlTextArea
+                        placeholder={field}
+                        required={isRequired}
+                        defaultValue={defaultValue}
+                      />
                     )}
-                    {dataType === 'date' && (
-                      <ControlInput placeholder={field} required={isRequired} type="date" defaultValue={defaultValue} />
+                    {dataType === "text" && (
+                      <ControlInput
+                        placeholder={field}
+                        required={isRequired}
+                        type="text"
+                        defaultValue={defaultValue}
+                      />
                     )}
-                    {dataType === 'email' && (
+                    {dataType === "date" && (
+                      <ControlInput
+                        placeholder={field}
+                        required={isRequired}
+                        type="date"
+                        defaultValue={defaultValue}
+                      />
+                    )}
+                    {dataType === "email" && (
                       <ControlInput
                         placeholder={field}
                         required={isRequired}
@@ -80,7 +110,7 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
                         defaultValue={defaultValue}
                       />
                     )}
-                    {dataType === 'number' && (
+                    {dataType === "number" && (
                       <ControlInput
                         placeholder={field}
                         required={isRequired}
@@ -88,15 +118,15 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
                         defaultValue={defaultValue}
                       />
                     )}
-                    {dataType === 'boolean' && (
+                    {dataType === "boolean" && (
                       <ControlBoolean
                         placeholder={field}
                         required={isRequired}
-                        defaultValue={defaultValue || 'false'}
+                        defaultValue={defaultValue || "false"}
                       />
                     )}
 
-                    {dataType === 'object' && (
+                    {dataType === "object" && (
                       <ControlObject
                         name={field}
                         placeholder={field}
@@ -106,7 +136,7 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
                       />
                     )}
 
-                    {dataType === 'checkboxes' && (
+                    {dataType === "checkboxes" && (
                       <ControlCheckboxes
                         el={field}
                         value={list}
@@ -119,6 +149,13 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
                 );
               })}
             </div>
+
+            <span
+              onClick={onAddEmail}
+              className="absolute cursor-pointer  bottom-5 right-5 bg-red-500 "
+            >
+              Add Email
+            </span>
           </div>
 
           <div className="relative flex flex-col gap-4 overflow-hidden border rounded bg-base-100 border-line">
@@ -130,7 +167,9 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
               </div>
 
               <div className="flex gap-4 py-3 border-b border-line">
-                <button className="flex-1 p-3 font-semibold rounded shadow btn bg-secondary text-base-100">Save</button>
+                <button className="flex-1 p-3 font-semibold rounded shadow btn bg-secondary text-base-100">
+                  Save
+                </button>
                 <span
                   onClick={onDeleteClick}
                   className="flex-1 p-3 font-semibold border rounded shadow bg-surface btn text-text"
@@ -153,14 +192,22 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
       <dialog className="modal" ref={modalRef}>
         <div className="modal-box">
           <h3 className="font-semibold">Confirm Delete</h3>
-          <p className="py-2 text-sm font-normal">Delete Continue with delete ?</p>
+          <p className="py-2 text-sm font-normal">
+            Delete Continue with delete ?
+          </p>
 
           <form method="dialog" className="flex justify-end w-full gap-4 mt-2">
-            <button onClick={() => onConfirmDelete(false)} className="btn btn-outlined">
+            <button
+              onClick={() => onConfirmDelete(false)}
+              className="btn btn-outlined"
+            >
               Cancel
             </button>
 
-            <button onClick={() => onConfirmDelete(true)} className="btn btn-secondary">
+            <button
+              onClick={() => onConfirmDelete(true)}
+              className="btn btn-secondary"
+            >
               Delete
             </button>
           </form>
@@ -172,7 +219,9 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
 
 const Card = (input: { title: string; description: string }) => (
   <div>
-    <h1 className="text-[10px] font-bold uppercase opacity-70">{input.title}</h1>
+    <h1 className="text-[10px] font-bold uppercase opacity-70">
+      {input.title}
+    </h1>
     <p className="text-sm">{input.description}</p>
   </div>
 );
