@@ -1,5 +1,5 @@
-import { useFetcher, useLoaderData } from '@remix-run/react';
-import { validateCookie } from '@helpers/cookies';
+import { useFetcher, useLoaderData } from "@remix-run/react";
+import { validateCookie } from "@helpers/cookies";
 import {
   ActionFunctionArgs,
   json,
@@ -8,24 +8,41 @@ import {
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from '@remix-run/node';
-import RatingLayout from '@layouts/rating-layout';
-import { useEffect } from 'react';
+} from "@remix-run/node";
+import RatingLayout from "@layouts/rating-layout";
+import { useEffect } from "react";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
   const { token } = await validateCookie(request);
-  const { rating, error } = await RMSservice(token).ratings.one({ id });
+  const { rating, error } = await RMSservice(token)
+    .ratings.one({ id })
+    .then((res) => {
+      const { rating, error } = res || {};
+      const PrimaryAnalystObject = JSON.parse(rating?.primaryAnalyst as any);
+      const SecondaryAnalystObject = JSON.parse(rating?.secondaryAnalyst as any);
+
+      return {
+        error,
+        rating: {
+          ...rating,
+          primaryAnalyst: PrimaryAnalystObject?.firstname + " " + PrimaryAnalystObject?.lastname,
+          secondaryAnalyst: SecondaryAnalystObject?.firstname + " " + SecondaryAnalystObject?.lastname,
+          primaryAnalystEmail: PrimaryAnalystObject?.email,
+          secondaryAnalystEmail: SecondaryAnalystObject?.email,
+        },
+      };
+    });
   const { additionalFiles, questionnaireFiles, ...rest } = rating || {};
 
-  return json({ rating, id, error });
+  return json({ rating: rating as typeof rating, id, error });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 5_000_000,
-      directory: '/tmp',
+      directory: "/tmp",
       file: ({ filename }) => filename,
     }),
     unstable_createMemoryUploadHandler()
@@ -35,24 +52,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const id = params.id as string;
   const { token } = await validateCookie(request);
 
-  if (method === 'PATCH') {
+  if (method === "PATCH") {
     const formData = await unstable_parseMultipartFormData(request, uploadHandler);
-    const file = formData.get('file') as any;
-    const reportTitle = formData.get('reportTitle') as any;
-    const version = formData.get('version') as any;
+    const file = formData.get("file") as any;
+    const reportTitle = formData.get("reportTitle") as any;
+    const version = formData.get("version") as any;
     const fileName = `${id}-${reportTitle}.${version}`;
     const upload = await uploadStreamToSpaces(file, fileName);
 
     if (upload?.$metadata?.httpStatusCode === 200) {
       const reportFileUrl = upload?.Location;
-      const { createReport, error } = await RMSservice(token).report.create({
+      const { CreateReport, error } = await RMSservice(token).report.create({
         data: { reportFileUrl, reportTitle, version, rating: id },
       });
-      return { message: createReport, error };
+      return { message: CreateReport, error };
     }
   }
 
-  return { error: 'Unable to upload report at this time' };
+  return { error: "Unable to upload report at this time" };
 };
 
 export default function Rating() {

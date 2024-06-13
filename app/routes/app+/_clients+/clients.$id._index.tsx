@@ -36,11 +36,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         client: {
           ...client,
           ratingModel: client?.ratingModel?.map((el) => {
-            const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst);
-
+            const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
+            const SecondaryAnalystObject = JSON.parse(el?.secondaryAnalyst as any);
             return {
               ...el,
-              primaryAnalyst: PrimaryAnalystObject?.firstname,
+              primaryAnalyst: PrimaryAnalystObject?.firstname + " " + PrimaryAnalystObject?.lastname,
+              secondaryAnalyst: SecondaryAnalystObject?.firstname + " " + SecondaryAnalystObject?.lastname,
             };
           }),
         },
@@ -71,7 +72,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (method === "POST") {
     const { id, ...rest } = body || {};
     //at post return true for canLogin
-    console.log(rest);
     rest.canLogin = rest.canLogin === "on" ? true : false;
 
     const { createContact, error } = await RMSservice(token).contacts.create({
@@ -93,8 +93,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function ClientEdit() {
   const { ratingQuery } = useLoaderData<typeof loader>();
-  const [client, setClient] =
-    useState<ClientOptionalDefaultsWithRelations | null>(null);
+  const [client, setClient] = useState<ClientOptionalDefaultsWithRelations | null>(null);
   const Fetcher = useFetcher();
   const navigate = useNavigate();
   const FetcherData = Fetcher.data as { message: string; error: string };
@@ -126,7 +125,6 @@ export default function ClientEdit() {
 
   useEffect(() => {
     ratingQuery?.then((data) => {
-      console.log(data);
       if (!data?.client) return navigate("/app/clients", { replace: true });
       setClient(data?.client as any);
     });
@@ -164,10 +162,7 @@ export default function ClientEdit() {
           </div>
         </div>
 
-        <Link
-          to="create-ratings"
-          className="tracking-wide btn btn-sm btn-secondary"
-        >
+        <Link to="create-ratings" className="tracking-wide btn btn-sm btn-secondary">
           <i className="ri-add-fill" />
           New Rating
         </Link>
@@ -177,34 +172,20 @@ export default function ClientEdit() {
         <div className="flex flex-col flex-1 h-full gap-3">
           <div className="grid flex-1 grid-cols-3 gap-2">
             <Card title="Industry" subTitle={client?.industryModel?.name} />
-            <Card
-              title="Company Phone Numbers"
-              subTitle={client?.companyPhoneNumbers || "-"}
-            />
-            <Card
-              title="NumberAnd  Street"
-              subTitle={client?.numberAndStreet || "-"}
-            />
+            <Card title="Company Phone Numbers" subTitle={client?.companyPhoneNumbers || "-"} />
+            <Card title="NumberAnd  Street" subTitle={client?.numberAndStreet || "-"} />
             <Card title="building" subTitle={client?.building || "-"} />
             <Card title="area" subTitle={client?.area || "-"} />
             <Card title="landmark" subTitle={client?.landmark || "-"} />
-            <Card
-              title="Region/State"
-              subTitle={client?.regionOrState || "-"}
-            />
+            <Card title="Region/State" subTitle={client?.regionOrState || "-"} />
             <Card title="country" subTitle={client?.country || "-"} />
             <Card title="website" subTitle={client?.website || "-"} />
           </div>
 
           <div className="flex-1 h-full border bg-bae-100 border-accent">
             <div className="flex items-center justify-between bg-primary">
-              <p className="flex flex-col p-4 text-base text-base-100">
-                Rating History
-              </p>
-              <Link
-                to="/app/ratings"
-                className="p-4 text-xs hover:underline text-base-100"
-              >
+              <p className="flex flex-col p-4 text-base text-base-100">Rating History</p>
+              <Link to="/app/ratings" className="p-4 text-xs hover:underline text-base-100">
                 View All
               </Link>
             </div>
@@ -230,15 +211,13 @@ export default function ClientEdit() {
                       className="border-b cursor-pointer border-accent hover:opacity-70"
                     >
                       <td className="px-2">{index + 1}</td>
-                      <td>{rating.primaryAnalyst || "-"}</td>
-                      <td>{rating.secondaryAnalyst || "-"}</td>
-                      <td>{rating.ratingScore || "-"}</td>
-                      <td>{rating.ratingClassModel?.name || "-"}</td>
+                      <td>{rating?.primaryAnalyst || "-"}</td>
+                      <td>{rating?.secondaryAnalyst || "-"}</td>
+                      <td>{rating?.ratingScore || "-"}</td>
+                      <td>{rating?.ratingClassModel?.name || "-"}</td>
                       <td className="p-3">{rating.ratingYear || "-"}</td>
                       <td>
-                        <span className={`${rating.status} capitalize text-xs`}>
-                          {rating.status || "-"}
-                        </span>
+                        <span className={`${rating.status} capitalize text-xs`}>{rating.status || "-"}</span>
                       </td>
                     </tr>
                   ))}
@@ -251,21 +230,13 @@ export default function ClientEdit() {
         <div className=" w-[17em] bg-base-100 p-4 border border-accent">
           <div className="flex items-center justify-between pb-4 border-b border-accent">
             <p>Contacts</p>
-            <button
-              onClick={onNewContact}
-              className="text-xs btn btn-sm btn-secondary btn-outline"
-            >
+            <button onClick={onNewContact} className="text-xs btn btn-sm btn-secondary btn-outline">
               Add Contact
             </button>
           </div>
 
           {client?.contactModel?.map((contact) => (
-            <ContactCard
-              onEditForm={onEditForm}
-              onDeleteForm={onDeleteForm}
-              contact={contact}
-              key={contact.id}
-            />
+            <ContactCard onEditForm={onEditForm} onDeleteForm={onDeleteForm} contact={contact} key={contact.id} />
           ))}
         </div>
       </div>

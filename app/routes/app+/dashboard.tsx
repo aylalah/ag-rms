@@ -1,16 +1,16 @@
-import { Await, useLoaderData, useNavigate } from '@remix-run/react';
-import { Bar, Line, Pie } from 'react-chartjs-2';
-import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { defer, LoaderFunctionArgs } from '@remix-run/node';
-import { ListLayout } from '@layouts/list-layout';
-import { Suspense, useEffect, useState } from 'react';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Await, useLoaderData, useNavigate } from "@remix-run/react";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
+import { defer, LoaderFunctionArgs } from "@remix-run/node";
+import { ListLayout } from "@layouts/list-layout";
+import { Suspense, useEffect, useState } from "react";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ChartDataLabels, Title, Tooltip, Legend);
 ChartJS.defaults.font.size = 12;
-ChartJS.defaults.font.family = 'Rethink Sans';
+ChartJS.defaults.font.family = "Rethink Sans";
 const options = {
-  indexAxis: 'y' as const,
+  indexAxis: "y" as const,
   maintainAspectRatio: false,
   responsive: true,
 
@@ -18,14 +18,14 @@ const options = {
     legend: { display: false },
     title: {
       display: true,
-      text: 'Distribution by Industry',
+      text: "Distribution by Industry",
     },
     datalabels: {
-      anchor: 'end' as any,
+      anchor: "end" as any,
       padding: 5,
       borderRadius: 5,
-      backgroundColor: '#002d53',
-      color: '#efefef',
+      backgroundColor: "#002d53",
+      color: "#efefef",
       font: {
         size: 12,
       },
@@ -43,14 +43,14 @@ const options = {
     },
   },
 };
-const labels = ['Banks', 'Funds', 'Insurance', 'Microfinance', 'Mortgage Banks', 'Municipals', 'Corporate'];
+const labels = ["Banks", "Funds", "Insurance", "Microfinance", "Mortgage Banks", "Municipals", "Corporate"];
 const data = {
   labels: labels,
   datasets: [
     {
-      label: 'My First Dataset',
+      label: "My First Dataset",
       data: [6, 5, 9.1, 9, 5, 5, 7],
-      backgroundColor: '#CE5A61',
+      backgroundColor: "#CE5A61",
     },
   ],
 };
@@ -65,7 +65,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   //total client
   const Client = RMSservice(token)
-    .clients.all({ limit: 5, page: 1, orderBy: { createdAt: 'desc' } })
+    .clients.all({ limit: 4, page: 1, orderBy: { createdAt: "desc" } })
     .then((res) => {
       const { docs, ...meta } = res?.clients || {};
       return {
@@ -77,7 +77,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   //total client
   const Ratings = RMSservice(token)
-    .ratings.all({ limit: 5, page: 1, include: { clientModel: true }, orderBy: { createdAt: 'desc' } })
+    .ratings.all({ limit: 4, page: 1, include: { clientModel: true }, orderBy: { createdAt: "desc" } })
     .then((res) => {
       const { docs, ...meta } = res?.ratings || {};
       return {
@@ -93,12 +93,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   //total completed ratings
   const CompletedRatings = RMSservice(token)
-    .ratings.all({ limit: 1, page: 1, where: { status: 'concluded' } })
+    .ratings.all({ limit: 1, page: 1, where: { status: "concluded" } })
     .then((res) => ({ count: res?.ratings?.totalDocs }));
 
   //total pending ratings
   const PendingRatings = RMSservice(token)
-    .ratings.all({ limit: 1, page: 1, include: { clientModel: true }, where: { status: { not: 'concluded' } } })
+    .ratings.all({ limit: 1, page: 1, include: { clientModel: true }, where: { status: { not: "concluded" } } })
     .then((res) => {
       const { docs, ...meta } = res?.ratings || {};
       return {
@@ -129,7 +129,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
+    <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
       <div className="grid flex-1 w-full gap-4 lg:grid-cols-2">
         <div className="grid gap-4 lg:grid-cols-2 ">
           <BoxChart title="Clients" subTitle={dashboardCounts?.clients || 0} bgColor="box1" />
@@ -143,8 +143,8 @@ export default function Dashboard() {
         </LongBoxChart>
       </div>
 
-      <div className="grid flex-1 w-full gap-4 lg:grid-cols-2">
-        <HalfBoxChart title="Recently Added Ratings" actionButton="See ALL" action={() => navigate('/app/ratings')}>
+      <div className="grid flex-1 w-full h-full gap-4 overflow-hidden lg:grid-cols-2">
+        <HalfBoxChart title="Recently Added Ratings" actionButton="See ALL" action={() => navigate("/app/ratings")}>
           <Suspense fallback={<></>}>
             <Await resolve={Ratings}>
               {(res) => (
@@ -155,14 +155,14 @@ export default function Dashboard() {
                   showHeader={false}
                   meta={res?.meta as any}
                   tbody={res.data}
-                  thead={['ratingTitle', 'companyName']}
+                  thead={["ratingTitle", "companyName"]}
                 />
               )}
             </Await>
           </Suspense>
         </HalfBoxChart>
 
-        <HalfBoxChart title="Recently Added Client" actionButton="See ALL" action={() => navigate('/app/clients')}>
+        <HalfBoxChart title="Recently Added Client" actionButton="See ALL" action={() => navigate("/app/clients")}>
           <Suspense fallback={<></>}>
             <Await resolve={Client}>
               {(res) => (
@@ -173,7 +173,7 @@ export default function Dashboard() {
                   showHeader={false}
                   meta={res?.meta as any}
                   tbody={res.data}
-                  thead={['companyName', 'country']}
+                  thead={["companyName", "country"]}
                 />
               )}
             </Await>
@@ -205,7 +205,7 @@ const LongBoxChart = ({ ...props }: BoxChartProps) => (
 );
 
 const HalfBoxChart = ({ ...props }: BoxChartProps) => (
-  <div className="flex flex-col flex-1 gap-4 p-4 p-6 overflow-hidden rounded shadow bg-base-100">
+  <div className="flex flex-col flex-1 h-full gap-4 p-4 p-6 overflow-hidden rounded shadow bg-base-100">
     <div className="flex items-center justify-between">
       <h3 className="text-sm font-semibold opacity-80">{props?.title}</h3>
       <button onClick={props?.action} className="btn-xs btn btn-outline btn-secondary">
@@ -213,6 +213,6 @@ const HalfBoxChart = ({ ...props }: BoxChartProps) => (
       </button>
     </div>
 
-    <div className="flex-1">{props?.children}</div>
+    <div className="flex-1 overflow-hidden">{props?.children}</div>
   </div>
 );

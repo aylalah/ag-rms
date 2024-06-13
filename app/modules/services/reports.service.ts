@@ -2,7 +2,7 @@ export class ReportClass extends MainClass {
   async create(input: { data: any }) {
     try {
       const { data } = input;
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(["admin", "hod"]);
 
       //const check for existing rating with year and client
       const check = await dbQuery.reports.findFirst({
@@ -15,14 +15,16 @@ export class ReportClass extends MainClass {
         const result = await dbQuery.reports.create({ data });
 
         this.LogAction({
-          table: 'rating',
-          action: 'create',
-          prevDocs: '',
+          table: "rating",
+          action: "create",
+          prevDocs: "",
           newDocs: JSON.stringify(result),
           user: `${this.user?.id}`,
         });
-        return { createReport: 'Report uploaded successfully' };
+        return { CreateReport: "Report uploaded successfully" };
       }
+
+      return { CreateReport: null };
     } catch (error: any) {
       return { error: error.message };
     }

@@ -5,23 +5,23 @@ import {
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from '@remix-run/node';
-import { useFetcher } from '@remix-run/react';
-import numeral from 'numeral';
-import { useEffect, useRef, useState } from 'react';
+} from "@remix-run/node";
+import { useFetcher } from "@remix-run/react";
+import numeral from "numeral";
+import { useEffect, useRef, useState } from "react";
 
 const allowFileTypes = [
-  'image/png',
-  'image/jpeg',
-  'image/jpg',
-  'application/pdf',
-  'application/zip',
-  'application/rar',
-  'text/csv',
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "application/pdf",
+  "application/zip",
+  "application/rar",
+  "text/csv",
 ];
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const id = params.id || 'testing';
+  const id = params.id || "testing";
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 30_000_000,
@@ -39,7 +39,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       const fileData = file as { name: string; type: string; size: number };
       const fileName = fileData?.name;
 
-      const name = `${id}/${fileName?.replace(/\s/g, '-')}`.toLowerCase();
+      const name = `${id}/${fileName?.replace(/\s/g, "-")}`.toLowerCase();
       const upload = await uploadStreamToSpaces(file, name);
 
       if (upload?.$metadata?.httpStatusCode === 200) return { storedUrl: upload?.Location, status: true, id: key };
@@ -85,21 +85,20 @@ export default function Dragger() {
     }
 
     setFileList([...fileList, ...payload]);
-    Fetcher.submit(formData, { method: 'POST', encType: 'multipart/form-data' });
+    Fetcher.submit(formData, { method: "POST", encType: "multipart/form-data" });
   };
 
   const onDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    dragRef.current?.style.setProperty('border', '2px dashed #9f9f9f');
+    dragRef.current?.style.setProperty("border", "2px dashed #9f9f9f");
   };
 
   const onDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    dragRef.current?.style.setProperty('border', 'none');
+    dragRef.current?.style.setProperty("border", "none");
   };
 
   useEffect(() => {
-    console.log('FetcherData', FetcherData);
     const saveQuery = FetcherData?.saveQuery;
     if (saveQuery) {
       const newFileList = fileList.map((file) => {
@@ -143,10 +142,10 @@ export default function Dragger() {
                 {!file?.shouldAllow && <i className="text-xl text-red-600 ri-close-circle-fill" />}
                 {!file?.status && file.shouldAllow && <span className="loading loading-sm" />}
 
-                <p className={`${!file?.shouldAllow && 'text-red-500'}`}>{file.name}</p>
+                <p className={`${!file?.shouldAllow && "text-red-500"}`}>{file.name}</p>
               </div>
-              <p className={`${!file?.shouldAllow && 'text-red-500'}`}>
-                {file?.size && numeral(file.size / 1000000).format('0,00.00')} MB
+              <p className={`${!file?.shouldAllow && "text-red-500"}`}>
+                {file?.size && numeral(file.size / 1000000).format("0,00.00")} MB
               </p>
             </div>
           ))}

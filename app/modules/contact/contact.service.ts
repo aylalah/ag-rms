@@ -44,10 +44,7 @@ export class ContactClass extends MainClass {
     }
   }
 
-  async one(input: {
-    id: string;
-    include?: Prisma.ContactInclude<DefaultArgs> | null | undefined;
-  }) {
+  async one(input: { id: string; include?: Prisma.ContactInclude<DefaultArgs> | null | undefined }) {
     try {
       await this.hasAccess("all");
 
@@ -65,7 +62,7 @@ export class ContactClass extends MainClass {
   async create(input: { data: Prisma.ContactCreateInput }) {
     try {
       const { data } = input;
-      // console.log(data);
+
       await this.hasAccess("all");
       const result = await dbQuery.contact.create({ data });
 
@@ -88,7 +85,7 @@ export class ContactClass extends MainClass {
           HtmlBody: `<p>Please find attached your Login details</p><p>Email: ${data.email} </br> </br> Password; ${data.password}</p>.The Login Url is ${clientUrl}`,
         });
       }
-      
+
       return { createContact: "Contact successfully created" };
     } catch (error: any) {
       return { error: error.message };

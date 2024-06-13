@@ -1,63 +1,60 @@
-import LoginForm from '@ui/forms/login';
-import { ActionFunctionArgs, json, redirectDocument } from '@remix-run/node';
-import { appCookie } from '@helpers/cookies';
-import { toast } from 'react-toastify';
-import { useEffect } from 'react';
-import { useFetcher } from '@remix-run/react';
-import { z } from 'zod';
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-});
+import LoginForm from "@ui/forms/login";
+import { ActionFunctionArgs, json, redirectDocument } from "@remix-run/node";
+import { appCookie } from "@helpers/cookies";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useFetcher } from "@remix-run/react";
+import { z } from "zod";
 
 const whyUs = [
-  'Our approach',
-  'Understanding of the local business terrain and network of contacts',
-  'Our database spans various industries and sectors of the Nigerian, Kenyan and Rwandan economies',
-  'Our track record and reputation',
-  'Our people are technically sound',
-  'Extensive research on key industries in the Nigerian, Kenyan and Rwandan economies',
-  'In depth knowledge of the financial strength of companies in the financial services and the real sector',
-  'Our rich economic and industry databases',
+  "Our approach",
+  "Understanding of the local business terrain and network of contacts",
+  "Our database spans various industries and sectors of the Nigerian, Kenyan and Rwandan economies",
+  "Our track record and reputation",
+  "Our people are technically sound",
+  "Extensive research on key industries in the Nigerian, Kenyan and Rwandan economies",
+  "In depth knowledge of the financial strength of companies in the financial services and the real sector",
+  "Our rich economic and industry databases",
 ];
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const fd = await request.formData();
-    const body = loginSchema.parse(Object.fromEntries(fd));
+    const body = Object.fromEntries(fd) as { email: string; password: string; terms?: string };
+    if (!body?.terms) return json({ error: "Please accept our terms and conditions to continue." });
+
     const { token, user, error, apiToken, client, message } = await RMSservice().auth.login(body);
 
     if (message) {
       return redirectDocument(`/auth/client-validation?email=${body.email}`, {
-        headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
+        headers: { "set-cookie": await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
       });
     }
 
     if (token && user) {
-      return redirectDocument('/app/dashboard', {
-        headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
+      return redirectDocument("/app/dashboard", {
+        headers: { "set-cookie": await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
       });
     }
 
     if (client && token) {
-      return redirectDocument('/client/dashboard', {
-        headers: { 'set-cookie': await appCookie.serialize(JSON.stringify({ token, client })) },
+      return redirectDocument("/client/dashboard", {
+        headers: { "set-cookie": await appCookie.serialize(JSON.stringify({ token, client })) },
       });
     }
 
     return json({ error });
   } catch (error) {
-    return { error: 'Unable to login at this time. Please try again later.' };
+    return { error: "Unable to login at this time. Please try again later." };
   }
 };
 
 export default function Index() {
-  const fetcher = useFetcher({ key: 'login' });
-  const fetcherData = fetcher.data as { error: string };
+  const Fetcher = useFetcher();
+  const fetcherData = Fetcher.data as { error: string };
 
   useEffect(() => {
-    if (fetcherData?.error) toast.error(fetcherData?.error, { toastId: 'login-error' });
+    if (fetcherData?.error) toast.error(fetcherData?.error, { toastId: "login-error" });
   }, [fetcherData]);
 
   return (
@@ -75,7 +72,7 @@ export default function Index() {
           </div>
 
           <div className="flex items-center justify-center w-full lg:w-[30em] ">
-            <LoginForm />
+            <LoginForm Fetcher={Fetcher} />
           </div>
         </div>
       </div>
@@ -96,7 +93,7 @@ export default function Index() {
           <p className="text-lg">
             For over 25 years, we have employed our unique research methodology and wealth of experience in sub-Saharan
             Africa to deliver considered perspectives on more than 50 industries including Banking, Oil & Gas, Real
-            Estate, Food & Beverage, Construction, Building Materials and Telecommunications.{' '}
+            Estate, Food & Beverage, Construction, Building Materials and Telecommunications.{" "}
           </p>
         </div>
       </div>

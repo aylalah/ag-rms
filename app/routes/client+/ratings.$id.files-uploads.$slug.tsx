@@ -24,16 +24,14 @@ const allowFileTypes = [
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
-  // console.log(client);
+
   const id = params.id || "testing";
   const slug = params.slug as "questionnaire-docs" | "additional-docs";
   const { rating, error } = await RMSservice(token).ratings.one({ id });
   let docs = [] as FileProp[];
 
-  if (slug === "questionnaire-docs" && rating?.questionnaireFiles)
-    docs = JSON.parse(rating.questionnaireFiles);
-  if (slug === "additional-docs" && rating?.additionalFiles)
-    docs = JSON.parse(rating.additionalFiles);
+  if (slug === "questionnaire-docs" && rating?.questionnaireFiles) docs = JSON.parse(rating.questionnaireFiles);
+  if (slug === "additional-docs" && rating?.additionalFiles) docs = JSON.parse(rating.additionalFiles);
   return json({ error, rating, docs });
 };
 
@@ -54,20 +52,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   );
 
   if (method === "POST") {
-    const formData = await unstable_parseMultipartFormData(
-      request,
-      uploadHandler
-    )
+    const formData = await unstable_parseMultipartFormData(request, uploadHandler)
       .then(async (res) => {
         const files = Object.fromEntries(res.entries());
 
-        const supervisor = files.supervisor;
-        const primaryAnalyst = files.primaryAnalyst;
-        const secondaryAnalyst = files.secondaryAnalyst;
-
-        console.log(supervisor);
-
-        delete files.supervisor;
+        const supervisor = files.supervisor as string;
+        const primaryAnalyst = files.primaryAnalyst as string;
+        const secondaryAnalyst = files.secondaryAnalyst as string;
 
         if (Object.keys(files).length < 1) return json({});
 
@@ -96,12 +87,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         );
         //sendEmail
         //send mail
-        const fileList = saveFiles.map(
-          (el, index) => `${index + 1}. ${el?.name} <br/>`
-        );
+        const fileList = saveFiles.map((el, index) => `${index + 1}. ${el?.name} <br/>`);
         sendEmailService({
           From: "info@agusto.com",
-          To: "adeolaboluogun@agusto.com",
+          To: primaryAnalyst,
+          Cc: `${supervisor},${secondaryAnalyst}`,
 
           Subject: "Client File Upload",
           HtmlBody: `${client?.companyName} just uploaded the following file${
@@ -110,7 +100,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             fileList.length > 1 ? "s" : ""
           } on the <strong>Rating Management System</strong>`,
         });
-        console.log(saveFiles);
         return json({ saveQuery: saveFiles });
       })
       .catch((error) => json({ error }));
@@ -136,9 +125,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const fd = await request.formData();
     const url = fd.get("url") as string;
     const fileName = url?.split("/").pop();
-    const { message, error } = await deleteFileFromSpaces(
-      `${id}/${fileName}` || ""
-    );
+    const { message, error } = await deleteFileFromSpaces(`${id}/${fileName}` || "");
     return json({ deletedMessage: message, error, url });
   }
 
@@ -179,49 +166,9 @@ export default function Dragger() {
   const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
     try {
       event.preventDefault();
-      let size = 0;
       const files = event?.dataTransfer?.files;
-      const payload = [];
-      const formData = new FormData();
-
-      for (let i = 0; i < files.length; i++) {
-        const key = randomString(10);
-        const fileType = files[i].type;
-        const shouldAllow = allowFileTypes.includes(fileType);
-
-        payload.push({
-          id: key,
-          name: files[i].name,
-          size: files[i].size,
-          status: false,
-          shouldAllow,
-          url: "",
-          date: new Date(),
-        });
-
-        if (allowFileTypes.includes(files[i].type)) {
-          size += files[i].size;
-          formData.append(key, files[i]);
-        }
-      }
-
-      setTotalSize(size);
-      setFileList([...fileList, ...payload]);
-
-      //check if formData is empty
-      if (formData.entries().next().done) return;
-
-      formData.append("supervisor", rating?.supervisor as string);
-      formData.append("primaryAnalyst", rating?.primaryAnalyst as string);
-      formData.append("secondaryAnalyst", rating?.secondaryAnalyst as string);
-
-      Fetcher.submit(formData, {
-        method: "POST",
-        encType: "multipart/form-data",
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      onUploadFiles(files);
+    } catch (error) {}
   };
 
   const onDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
@@ -232,6 +179,57 @@ export default function Dragger() {
   const onDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     dragRef.current?.style.setProperty("border", "none");
+  };
+
+  const onChangeFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files?.length > 0) onUploadFiles(files);
+  };
+
+  const onUploadFiles = (files: FileList) => {
+    let size = 0;
+    const payload = [];
+    const formData = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+      const key = randomString(10);
+      const fileType = files[i].type;
+      const shouldAllow = allowFileTypes.includes(fileType);
+
+      payload.push({
+        id: key,
+        name: files[i].name,
+        size: files[i].size,
+        status: false,
+        shouldAllow,
+        url: "",
+        date: new Date(),
+      });
+
+      if (allowFileTypes.includes(files[i].type)) {
+        size += files[i].size;
+        formData.append(key, files[i]);
+      }
+    }
+
+    setTotalSize(size);
+    setFileList([...fileList, ...payload]);
+
+    //check if formData is empty
+    if (formData.entries().next().done) return;
+
+    const SupervisorAnalystObject = JSON.parse(rating?.supervisor as any);
+    const PrimaryAnalystObject = JSON.parse(rating?.primaryAnalyst as any);
+    const SecondaryAnalystObject = JSON.parse(rating?.secondaryAnalyst as any);
+
+    formData.append("supervisor", SupervisorAnalystObject?.email as string);
+    formData.append("primaryAnalyst", PrimaryAnalystObject?.email as string);
+    formData.append("secondaryAnalyst", SecondaryAnalystObject?.email as string);
+
+    Fetcher.submit(formData, {
+      method: "POST",
+      encType: "multipart/form-data",
+    });
   };
 
   const onSubmit = (data: FileProp[]) => {
@@ -274,9 +272,7 @@ export default function Dragger() {
     }
 
     if (FetcherData?.deletedMessage) {
-      const newFileList = fileList.filter(
-        (file) => file.url !== FetcherData?.url
-      );
+      const newFileList = fileList.filter((file) => file.url !== FetcherData?.url);
       setFileList(newFileList);
       onSubmit(newFileList);
     }
@@ -310,10 +306,9 @@ export default function Dragger() {
         </div>
 
         <div className="relative w-44">
-          <button className="w-full text-sm shadow btn btn-secondary">
-            Select File(s)
-          </button>
+          <button className="w-full text-sm shadow btn btn-secondary">Select File(s)</button>
           <input
+            onChange={onChangeFileInput}
             type="file"
             accept="application/pdf"
             className="absolute inset-0 opacity-0 cursor-pointer"
@@ -332,32 +327,14 @@ export default function Dragger() {
         <div className="flex-1 pr-6 overflow-auto rounded-lg bg-base-200">
           {fileList &&
             Array.from(fileList).map((file, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between py-4 border-b "
-              >
+              <div key={index} className="flex items-center justify-between py-4 border-b ">
                 <div className="flex items-center flex-1 gap-4">
-                  {file?.status && (
-                    <i className="text-xl text-green-600 ri-checkbox-circle-fill" />
-                  )}
-                  {!file?.shouldAllow && (
-                    <i className="text-xl text-red-600 ri-close-circle-fill" />
-                  )}
-                  {!file?.status && file.shouldAllow && (
-                    <span className="loading loading-sm" />
-                  )}
+                  {file?.status && <i className="text-xl text-green-600 ri-checkbox-circle-fill" />}
+                  {!file?.shouldAllow && <i className="text-xl text-red-600 ri-close-circle-fill" />}
+                  {!file?.status && file.shouldAllow && <span className="loading loading-sm" />}
 
-                  <p
-                    className={`${
-                      !file?.shouldAllow && "text-red-500"
-                    } text-sm`}
-                  >
-                    <Link
-                      target="_blank"
-                      referrerPolicy="no-referrer"
-                      to={file?.url}
-                      className="link"
-                    >
+                  <p className={`${!file?.shouldAllow && "text-red-500"} text-sm`}>
+                    <Link target="_blank" referrerPolicy="no-referrer" to={file?.url} className="link">
                       {file.name}
                     </Link>
                   </p>
@@ -365,16 +342,12 @@ export default function Dragger() {
 
                 <div className="flex items-center gap-8 text-sm">
                   <p className={`${!file?.shouldAllow && "text-red-500"}`}>
-                    {file?.size &&
-                      numeral(file.size / 1000000).format("0,00.00")}{" "}
-                    MB
+                    {file?.size && numeral(file.size / 1000000).format("0,00.00")} MB
                   </p>
 
                   <p
                     role="button"
-                    className={`${
-                      !file?.shouldAllow && "text-red-500"
-                    } cursor-pointer`}
+                    className={`${!file?.shouldAllow && "text-red-500"} cursor-pointer`}
                     onClick={() => onDeleteStart(file)}
                   >
                     <i className="text-lg ri-close-fill text-secondary" />
@@ -386,9 +359,7 @@ export default function Dragger() {
           {fileList && Array.from(fileList).length === 0 && (
             <div className="flex flex-col items-center justify-center h-full">
               <p className="text-gray-500">No files uploaded yet</p>
-              <p className="text-sm text-gray-500">
-                Uploaded files will appear here
-              </p>
+              <p className="text-sm text-gray-500">Uploaded files will appear here</p>
             </div>
           )}
         </div>
@@ -399,19 +370,11 @@ export default function Dragger() {
           <h3 className="text-lg font-bold">Delete File</h3>
           <p className="py-2">Are you sure you want to delete this file?</p>
           <div className="flex items-center justify-end gap-2 mt-4">
-            <button
-              disabled={isSubmitting}
-              className="btn btn-sm"
-              onClick={() => DiaRef.current?.close()}
-            >
+            <button disabled={isSubmitting} className="btn btn-sm" onClick={() => DiaRef.current?.close()}>
               Cancel
             </button>
 
-            <button
-              disabled={isSubmitting}
-              onClick={onDelete}
-              className="btn btn-sm btn-secondary"
-            >
+            <button disabled={isSubmitting} onClick={onDelete} className="btn btn-sm btn-secondary">
               Delete
               {isSubmitting && <span className="loading loading-sm"></span>}
             </button>

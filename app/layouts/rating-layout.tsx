@@ -1,11 +1,11 @@
-import { Rating } from '@helpers/zodPrisma';
-import { FetcherWithComponents, Link } from '@remix-run/react';
-import dayjs from 'dayjs';
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
+import { Rating } from "@helpers/zodPrisma";
+import { FetcherWithComponents, Link } from "@remix-run/react";
+import dayjs from "dayjs";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 type RatingProps = {
-  rating: RatingWithRelations;
+  rating: RatingWithRelations & { primaryAnalystEmail?: string; secondaryAnalystEmail?: string };
   Fetcher: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
@@ -13,15 +13,15 @@ type RatingProps = {
   isClientOnly: boolean;
 };
 
-const reportUploadMenu = [{ name: 'Draft Report' }, { name: 'Final Report' }];
+const reportUploadMenu = [{ name: "Draft Report" }, { name: "Final Report" }];
 
 export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = false }: RatingProps) {
   const ratingRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [reportType, setReportType] = useState<string>('');
-  const [reportVersion, setReportVersion] = useState<string>('');
+  const [reportType, setReportType] = useState<string>("");
+  const [reportVersion, setReportVersion] = useState<string>("");
   const FetcherData = Fetcher?.data as { message: string; error: string };
-  const isSubmitting = Fetcher.state === 'submitting';
+  const isSubmitting = Fetcher.state === "submitting";
 
   const getVersion = (name: string) => {
     const thisReports = rating?.reportModel?.filter((el) => el.reportTitle === name);
@@ -31,13 +31,13 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
   const onUploadHandler = (name: string) => {
     ratingRef.current?.showModal();
 
-    if (name === 'Draft Report') {
+    if (name === "Draft Report") {
       const version = getVersion(name);
       setReportType(name);
       setReportVersion(`v${version}.0`);
     }
 
-    if (name === 'Final Report') {
+    if (name === "Final Report") {
       const version = getVersion(name);
       setReportType(name);
       setReportVersion(`v${version}.0`);
@@ -47,9 +47,9 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
   const onCloseHandler = () => ratingRef.current?.close();
 
   useEffect(() => {
-    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: 'error' });
+    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: "error" });
     if (FetcherData?.message) {
-      toast.success(FetcherData?.message, { toastId: 'success' });
+      toast.success(FetcherData?.message, { toastId: "success" });
       formRef.current?.reset();
       onCloseHandler();
     }
@@ -127,15 +127,15 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
               <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">Summary</h2>
 
               <div className="grid grid-cols-2 gap-4">
-                <SummaryCard title="Rating Class" isLarge subTitle={`${rating?.ratingClassModel?.name || '-'}`} />
-                <SummaryCard title="Rating Year" isLarge subTitle={`${rating?.ratingYear || ''}`} />
+                <SummaryCard title="Rating Class" isLarge subTitle={`${rating?.ratingClassModel?.name || "-"}`} />
+                <SummaryCard title="Rating Year" isLarge subTitle={`${rating?.ratingYear || ""}`} />
                 <SummaryCard
                   title="Issue Date"
-                  subTitle={!rating?.issueDate ? '-' : dayjs(rating?.issueDate).format('MMMM DD, YYYY')}
+                  subTitle={!rating?.issueDate ? "-" : dayjs(rating?.issueDate).format("MMMM DD, YYYY")}
                 />
                 <SummaryCard
                   title="Expiry Date"
-                  subTitle={!rating?.expiryDate ? '-' : dayjs(rating?.expiryDate).format('MMMM DD, YYYY')}
+                  subTitle={!rating?.expiryDate ? "-" : dayjs(rating?.expiryDate).format("MMMM DD, YYYY")}
                 />
               </div>
             </div>
@@ -145,14 +145,14 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
                   title="Primary Analyst"
-                  subTitle={rating?.primaryAnalyst || '-'}
-                  subSubTitle="info@agusto.com | 01-2707222-3"
+                  subTitle={rating?.primaryAnalyst || "-"}
+                  subSubTitle={rating?.primaryAnalystEmail || "-"}
                 />
 
                 <SummaryCard
                   title="Secondary Analyst"
-                  subTitle={rating?.secondaryAnalyst || '-'}
-                  subSubTitle="info@agusto.com | 01-2707222-3"
+                  subTitle={rating?.secondaryAnalyst || "-"}
+                  subSubTitle={rating?.secondaryAnalystEmail || "-"}
                 />
 
                 <div className="col-span-2 ">
@@ -282,7 +282,7 @@ const Tr = ({
   name: string;
   version: string;
   link?: string;
-  action: string;
+  action?: string;
   isHeader?: boolean;
   index?: number;
 }) => {
@@ -290,15 +290,15 @@ const Tr = ({
   return (
     <li
       className={`grid items-center grid-cols-3 text-sm ${
-        isHeader && 'font-bold uppercase bg-accent'
-      } border-b border-accent ${isEvenStyle && 'bg-gray-100'}`}
+        isHeader && "font-bold uppercase bg-accent"
+      } border-b border-accent ${isEvenStyle && "bg-gray-100"}`}
     >
       <div className="h-full col-span-2 px-2 py-3 border-r">{name}</div>
       <Link
         to={`${link}`}
         target="_blank"
         referrerPolicy="no-referrer"
-        className={`py-3 text-center p-x2  ${!isHeader && 'link text-secondary'}`}
+        className={`py-3 text-center p-x2  ${!isHeader && "link text-secondary"}`}
       >
         {version}
       </Link>
@@ -321,6 +321,6 @@ const SummaryCard = ({
   <div className="flex flex-col gap-1 px-4 py-3 shadow bg-base-100">
     <p className="text-sm font-bold capitalize opacity-60 ">{title}</p>
     {subSubTitle && <h2 className="font-medium opacity-90">{subSubTitle}</h2>}
-    <h2 className={` font-bold opacity-90 ${isLarge ? 'text-[20px]' : 'text-[14px]'}`}>{subTitle}</h2>
+    <h2 className={` font-bold opacity-90 ${isLarge ? "text-[20px]" : "text-[14px]"}`}>{subTitle}</h2>
   </div>
 );
