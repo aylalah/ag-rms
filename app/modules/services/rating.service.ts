@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { appDecryptData } from '@helpers/validation';
-import { convertZodSchema } from '@helpers/utils';
-import { dbQuery } from '@helpers/prisma';
-import { DefaultArgs } from '@prisma/client/runtime/library';
-import { MainClass } from './main.service';
-import { Prisma } from '@prisma/client';
-import { RatingSchema, RatingStatusSchema } from '@helpers/zodPrisma';
+import axios from "axios";
+import { appDecryptData } from "@helpers/validation";
+import { convertZodSchema } from "@helpers/utils";
+import { dbQuery } from "@helpers/prisma";
+import { DefaultArgs } from "@prisma/client/runtime/library";
+import { MainClass } from "./main.service";
+import { Prisma } from "@prisma/client";
+import { RatingSchema, RatingStatusSchema } from "@helpers/zodPrisma";
 
 interface AllArgs extends Prisma.RatingFindManyArgs {
   limit: number;
@@ -18,13 +18,19 @@ interface AllArgs extends Prisma.RatingFindManyArgs {
 export class RatingClass extends MainClass {
   async all(args: AllArgs) {
     try {
-      await this.hasAccess('all');
+      await this.hasAccess("all");
       const { where, orderBy, page, limit, include } = args;
       const setPage = page || 1;
       const take = limit || 10;
       const skip = (setPage - 1) * take || 0;
       const industries = await dbQuery.$transaction([
-        dbQuery.rating.findMany({ where, orderBy, take, skip, include: { ratingClassModel: true, ...include } }),
+        dbQuery.rating.findMany({
+          where,
+          orderBy,
+          take,
+          skip,
+          include: { ratingClassModel: true, ...include },
+        }),
         dbQuery.rating.count({ where }),
       ]);
 
@@ -33,15 +39,28 @@ export class RatingClass extends MainClass {
       const hasNextPage = setPage < totalPages;
       const hasPrevPage = setPage > 1;
 
-      return { ratings: { page: setPage, limit: take, totalPages, totalDocs, hasNextPage, hasPrevPage, docs } };
+      return {
+        ratings: {
+          page: setPage,
+          limit: take,
+          totalPages,
+          totalDocs,
+          hasNextPage,
+          hasPrevPage,
+          docs,
+        },
+      };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  async one(input: { id: string; include?: Prisma.RatingInclude<DefaultArgs> }) {
+  async one(input: {
+    id: string;
+    include?: Prisma.RatingInclude<DefaultArgs>;
+  }) {
     try {
-      await this.hasAccess('all');
+      await this.hasAccess("all");
 
       const { id, include } = input;
       const rating = await dbQuery.rating.findUnique({
@@ -65,25 +84,30 @@ export class RatingClass extends MainClass {
   async create(input: { data: any }) {
     try {
       const { data } = input;
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(["admin", "hod"]);
 
       //const check for existing rating with year and client
       const check = await dbQuery.rating.findFirst({
-        where: { ratingYear: data.ratingYear, client: data.client },
+        where: {
+          ratingYear: data.ratingYear,
+          client: data.client,
+          ratingTitle: data.ratingTitle,
+        },
       });
 
-      if (check) throw new Error('Rating already exists for this year and client');
+      if (check)
+        throw new Error("Rating already exists for this year and client");
 
       const result = await dbQuery.rating.create({ data });
 
       this.LogAction({
-        table: 'rating',
-        action: 'create',
-        prevDocs: '',
+        table: "rating",
+        action: "create",
+        prevDocs: "",
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { createRating: 'Rating successfully created' };
+      return { createRating: "Rating successfully created" };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -91,20 +115,20 @@ export class RatingClass extends MainClass {
 
   async update(input: { id: string; data: Prisma.RatingUpdateInput }) {
     try {
-      await this.hasAccess(['admin', 'client', 'hod']);
+      await this.hasAccess(["admin", "client", "hod"]);
       const { id, data } = input;
 
       const prevDocs = await dbQuery.rating.findUnique({ where: { id } });
       const result = await dbQuery.rating.update({ where: { id }, data });
 
       this.LogAction({
-        table: 'rating',
-        action: 'update',
+        table: "rating",
+        action: "update",
         prevDocs: JSON.stringify(prevDocs),
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { updateRating: 'Rating successfully updated' };
+      return { updateRating: "Rating successfully updated" };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -113,16 +137,16 @@ export class RatingClass extends MainClass {
   async delete(input: { id: string }) {
     try {
       const { id } = input;
-      await this.hasAccess(['admin', 'hod']);
+      await this.hasAccess(["admin", "hod"]);
       const result = await dbQuery.rating.delete({ where: { id } });
       this.LogAction({
-        table: 'rating',
-        action: 'delete',
-        prevDocs: '',
+        table: "rating",
+        action: "delete",
+        prevDocs: "",
         newDocs: JSON.stringify(result),
         user: `${this.user?.id}`,
       });
-      return { deleteRating: 'Rating successfully deleted' };
+      return { deleteRating: "Rating successfully deleted" };
     } catch (error: any) {
       return { error: error.message };
     }
@@ -132,102 +156,130 @@ export class RatingClass extends MainClass {
     try {
       const user = await appDecryptData(token);
       const endPoint = process.env.AGUSTO_SERVICES_URL;
-      const { data } = await axios.get(`${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`, {
-        headers: { Authorization: `Bearer ${apiToken}` },
-      });
+      const { data } = await axios.get(
+        `${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${apiToken}` },
+        }
+      );
 
       const unitMembers = data?.data || [];
 
       if (!unitMembers?.length || unitMembers?.length < 1)
-        return { error: 'You are not a supervisor. Please contact your supervisor to create a rating' };
+        return {
+          error:
+            "You are not a supervisor. Please contact your supervisor to create a rating",
+        };
 
       const objData = convertZodSchema(RatingSchema);
       const ratingStatus = RatingStatusSchema;
-      const methodology = await dbQuery.methodology.findMany({ select: { id: true, name: true } });
-      const questionnaire = await dbQuery.questionnaire.findMany({ select: { id: true, name: true } });
-      const ratingClass = await dbQuery.ratingClass.findMany({ select: { id: true, name: true } });
+      const methodology = await dbQuery.methodology.findMany({
+        select: { id: true, name: true },
+      });
+      const questionnaire = await dbQuery.questionnaire.findMany({
+        select: { id: true, name: true },
+      });
+      const ratingClass = await dbQuery.ratingClass.findMany({
+        select: { id: true, name: true },
+      });
 
       const dataList = objData
-        .filter((el) => el?.field !== 'role')
+        .filter((el) => el?.field !== "role")
         .map((el) => {
           //last 10 years
-          if (el.field === 'ratingYear') {
-            el.type = 'object';
-            el.list = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((el) => ({
+          if (el.field === "ratingYear") {
+            el.type = "object";
+            el.list = Array.from(
+              { length: 10 },
+              (_, i) => new Date().getFullYear() - i
+            ).map((el) => ({
               id: el,
               name: el,
             }));
           }
 
-          if (el.field === 'status') {
-            el.type = 'object';
-            el.list = Object.keys(ratingStatus?.Values).map((el) => ({ id: el, name: el }));
+          if (el.field === "status") {
+            el.type = "object";
+            el.list = Object.keys(ratingStatus?.Values).map((el) => ({
+              id: el,
+              name: el,
+            }));
           }
 
-          if (el.field === 'supervisor') {
-            el.type = 'object';
+          if (el.field === "supervisor") {
+            el.type = "object";
             el.list = unitMembers
               ?.map((el: any) => ({
                 employee_id: el?.employee_id,
-                id: `${el?.firstname} ${el?.lastname}`,
+                id: JSON.stringify({
+                  firstname: el?.firstname,
+                  lastname: el?.lastname,
+                  email: el?.corporate_email,
+                  employee_id: el?.employee_id,
+                }),
                 name: `${el?.firstname} ${el?.lastname}`,
               }))
               .filter((el: any) => el?.employee_id === user?.employee_id);
           }
 
-          if (el.field === 'primaryAnalyst') {
-            el.type = 'object';
+          if (el.field === "primaryAnalyst") {
+            el.type = "object";
             el.list = unitMembers
               ?.map((el: any) => ({
                 employee_id: el?.employee_id,
                 id: `${el?.firstname} ${el?.lastname}`,
                 name: `${el?.firstname} ${el?.lastname}`,
+                email: `${el?.corporate_email}`,
               }))
               .filter((el: any) => el?.employee_id !== user?.employee_id);
           }
 
-          if (el.field === 'secondaryAnalyst') {
-            el.type = 'object';
+          if (el.field === "secondaryAnalyst") {
+            el.type = "object";
             el.list = unitMembers
               ?.map((el: any) => ({
                 employee_id: el?.employee_id,
-                id: `${el?.firstname} ${el?.lastname}`,
+                id: `${el?.firstname} ${el?.lastname} 123433kfjelw23`,
                 name: `${el?.firstname} ${el?.lastname}`,
+                email: `${el?.corporate_email}`,
               }))
               .filter((el: any) => el?.employee_id !== user?.employee_id);
           }
 
-          if (el.field === 'methodology') {
-            el.type = 'object';
+          if (el.field === "methodology") {
+            el.type = "object";
             el.list = methodology.map((el) => ({ id: el.id, name: el.name }));
           }
 
-          if (el.field === 'questionnaire') {
-            el.type = 'object';
+          if (el.field === "questionnaire") {
+            el.type = "object";
             el.list = questionnaire.map((el) => ({ id: el.id, name: el.name }));
           }
 
-          if (el.field === 'ratingClass') {
-            el.type = 'object';
+          if (el.field === "ratingClass") {
+            el.type = "object";
             el.list = ratingClass.map((el) => ({ id: el.id, name: el.name }));
           }
 
           return el;
         });
 
-      const toBeRemoved = ['responses', 'client'];
+      const toBeRemoved = ["responses", "client"];
 
       //sort and move status to the end
-      const filteredData = dataList.filter((el) => !toBeRemoved.includes(el.field));
-      const status = filteredData.find((el) => el.field === 'status');
+      const filteredData = dataList.filter(
+        (el) => !toBeRemoved.includes(el.field)
+      );
+      const status = filteredData.find((el) => el.field === "status");
       const rest = filteredData
-        .filter((el) => el.field !== 'status')
-        .filter((el) => el.field !== 'questionnaireFiles')
-        .filter((el) => el.field !== 'additionalFiles')
-        .filter((el) => el.field !== 'requireAdditionalFiles')
-        .filter((el) => el.field !== 'requireQuestionnaireFiles');
+        .filter((el) => el.field !== "status")
+        .filter((el) => el.field !== "questionnaireFiles")
+        .filter((el) => el.field !== "additionalFiles")
+        .filter((el) => el.field !== "requireAdditionalFiles")
+        .filter((el) => el.field !== "requireQuestionnaireFiles");
       rest.push(status as any);
 
+      console.log({ rest });
       return { formObject: rest };
     } catch (error: any) {
       return { error: error?.message };

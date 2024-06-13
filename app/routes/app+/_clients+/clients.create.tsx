@@ -24,18 +24,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     data,
   });
 
-  const clientUrl = request.url.replace("/app/clients/create", "");
-  
-  //only send email when client is created
-  if (createClient) {
-    sendEmailService({
-      From: "info@agusto.com",
-      To: `${data.email}`,
-      Subject: "Rating Management System Login",
-      HtmlBody: `<p>Please find attached your Login details</p><p>Email: ${data.email} </br> Username: ${data.username}</br> Password; ${data.password}</p>.The Login Url is ${clientUrl}`,
-    });
-  }
-
   return json({ message: createClient, error });
 };
 
@@ -84,7 +72,6 @@ export default function Breeds() {
   return (
     <div className="h-full pb-10 overflow-hidden">
       <FormLayout
-        onAddEmail={addEmail}
         formObject={FormData as any}
         Fetcher={Fetcher}
         data={client}

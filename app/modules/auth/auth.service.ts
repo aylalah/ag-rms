@@ -43,8 +43,9 @@ export class AuthClass extends MainClass {
         };
       }
 
-      const user = await dbQuery.client.findFirst({
+      const user = await dbQuery.contact.findFirst({
         where: { email, password: input.password },
+        include: { clientModel: true },
       });
 
       if (!user) throw new Error("User not found");
@@ -52,7 +53,7 @@ export class AuthClass extends MainClass {
 
       //six digit token
       const magicToken = Math.floor(100000 + Math.random() * 900000).toString();
-      await dbQuery.client.update({
+      await dbQuery.contact.update({
         where: { id: user.id },
         data: { magicToken },
       });
@@ -88,7 +89,7 @@ export class AuthClass extends MainClass {
   public async magicLinkLogin(input: { email: string; token: string }) {
     try {
       const { email, token } = input;
-      const user = await dbQuery.client.findFirst({
+      const user = await dbQuery.contact.findFirst({
         where: { magicToken: token, email },
       });
 
@@ -96,7 +97,10 @@ export class AuthClass extends MainClass {
         throw new Error(
           "Wrong token or email. Please use the correct token sent to your email"
         );
-      //await dbQuery.client.update({ where: { id: user.id }, data: { magicToken: null } });
+      await dbQuery.contact.update({
+        where: { id: user.id },
+        data: { magicToken: null },
+      });
 
       const { password, ...rest } = user;
       const userJWT = await this.EncryptData({ ...rest, role: "client" });

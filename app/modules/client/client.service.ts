@@ -150,25 +150,6 @@ export class ClientClass extends MainClass {
           return el;
         });
 
-      //sort datlist and move email and password to the end, but email appears first before password at the end of the list
-      dataList.sort((a, b) => a.field.localeCompare(b.field));
-
-      dataList.sort((a, b) => {
-        if (a.field === "password") {
-          return 1;
-        }
-        if (b.field === "password") {
-          return -1;
-        }
-        if (a.field === "email") {
-          return 1;
-        }
-        if (b.field === "email") {
-          return -1;
-        }
-        return 0;
-      });
-
       return { formObject: dataList };
     } catch (error: unknown) {
       return { error: "Something went wrong" };

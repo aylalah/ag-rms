@@ -22,9 +22,9 @@ export const RatingScalarFieldEnumSchema = z.enum(['id','ratingTitle','ratingSco
 
 export const RatingClassScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
-export const ClientScalarFieldEnumSchema = z.enum(['id','industry','username','password','companyName','email','logo','companyPhoneNumbers','numberAndStreet','building','area','landmark','regionOrState','country','website','role','createdBy','magicToken','isDeleted','createdAt','updatedAt']);
+export const ClientScalarFieldEnumSchema = z.enum(['id','industry','companyName','logo','companyPhoneNumbers','numberAndStreet','building','area','landmark','regionOrState','country','website','role','createdBy','isDeleted','createdAt','updatedAt']);
 
-export const ContactScalarFieldEnumSchema = z.enum(['id','fullName','email','position','phoneNumbers','client','address','createdAt','updatedAt']);
+export const ContactScalarFieldEnumSchema = z.enum(['id','fullName','email','password','position','phoneNumbers','magicToken','client','address','canLogin','createdAt','updatedAt']);
 
 export const LogScalarFieldEnumSchema = z.enum(['id','user','action','table','message','prevDocs','newDocs','createdAt','updatedAt']);
 
@@ -388,10 +388,7 @@ export const RatingClassOptionalDefaultsWithRelationsSchema: z.ZodType<RatingCla
 export const ClientSchema = z.object({
   id: z.string(),
   industry: z.string(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().nullable(),
   companyPhoneNumbers: z.string().nullable(),
   numberAndStreet: z.string().nullable(),
@@ -403,7 +400,6 @@ export const ClientSchema = z.object({
   website: z.string().nullable(),
   role: z.string(),
   createdBy: z.string().nullable(),
-  magicToken: z.string().nullable(),
   isDeleted: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -467,10 +463,13 @@ export const ContactSchema = z.object({
   id: z.string(),
   fullName: z.string(),
   email: z.string(),
+  password: z.string().nullable(),
   position: z.string().nullable(),
   phoneNumbers: z.string().nullable(),
+  magicToken: z.string().nullable(),
   client: z.string(),
   address: z.string().nullable(),
+  canLogin: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
@@ -482,6 +481,7 @@ export type Contact = z.infer<typeof ContactSchema>
 
 export const ContactOptionalDefaultsSchema = ContactSchema.merge(z.object({
   id: z.string().optional(),
+  canLogin: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 }))
@@ -758,10 +758,7 @@ export const ClientCountOutputTypeSelectSchema: z.ZodType<Prisma.ClientCountOutp
 export const ClientSelectSchema: z.ZodType<Prisma.ClientSelect> = z.object({
   id: z.boolean().optional(),
   industry: z.boolean().optional(),
-  username: z.boolean().optional(),
-  password: z.boolean().optional(),
   companyName: z.boolean().optional(),
-  email: z.boolean().optional(),
   logo: z.boolean().optional(),
   companyPhoneNumbers: z.boolean().optional(),
   numberAndStreet: z.boolean().optional(),
@@ -773,7 +770,6 @@ export const ClientSelectSchema: z.ZodType<Prisma.ClientSelect> = z.object({
   website: z.boolean().optional(),
   role: z.boolean().optional(),
   createdBy: z.boolean().optional(),
-  magicToken: z.boolean().optional(),
   isDeleted: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
@@ -798,10 +794,13 @@ export const ContactSelectSchema: z.ZodType<Prisma.ContactSelect> = z.object({
   id: z.boolean().optional(),
   fullName: z.boolean().optional(),
   email: z.boolean().optional(),
+  password: z.boolean().optional(),
   position: z.boolean().optional(),
   phoneNumbers: z.boolean().optional(),
+  magicToken: z.boolean().optional(),
   client: z.boolean().optional(),
   address: z.boolean().optional(),
+  canLogin: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   clientModel: z.union([z.boolean(),z.lazy(() => ClientArgsSchema)]).optional(),
@@ -1310,10 +1309,7 @@ export const ClientWhereInputSchema: z.ZodType<Prisma.ClientWhereInput> = z.obje
   NOT: z.union([ z.lazy(() => ClientWhereInputSchema),z.lazy(() => ClientWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   industry: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  password: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   companyName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   logo: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   numberAndStreet: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
@@ -1325,7 +1321,6 @@ export const ClientWhereInputSchema: z.ZodType<Prisma.ClientWhereInput> = z.obje
   website: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   role: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdBy: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  magicToken: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isDeleted: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -1337,10 +1332,7 @@ export const ClientWhereInputSchema: z.ZodType<Prisma.ClientWhereInput> = z.obje
 export const ClientOrderByWithRelationInputSchema: z.ZodType<Prisma.ClientOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   industry: z.lazy(() => SortOrderSchema).optional(),
-  username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
   companyName: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional(),
   logo: z.lazy(() => SortOrderSchema).optional(),
   companyPhoneNumbers: z.lazy(() => SortOrderSchema).optional(),
   numberAndStreet: z.lazy(() => SortOrderSchema).optional(),
@@ -1352,7 +1344,6 @@ export const ClientOrderByWithRelationInputSchema: z.ZodType<Prisma.ClientOrderB
   website: z.lazy(() => SortOrderSchema).optional(),
   role: z.lazy(() => SortOrderSchema).optional(),
   createdBy: z.lazy(() => SortOrderSchema).optional(),
-  magicToken: z.lazy(() => SortOrderSchema).optional(),
   isDeleted: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
@@ -1361,43 +1352,15 @@ export const ClientOrderByWithRelationInputSchema: z.ZodType<Prisma.ClientOrderB
   ratingModel: z.lazy(() => RatingOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const ClientWhereUniqueInputSchema: z.ZodType<Prisma.ClientWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string(),
-    username: z.string(),
-    email: z.string()
-  }),
-  z.object({
-    id: z.string(),
-    username: z.string(),
-  }),
-  z.object({
-    id: z.string(),
-    email: z.string(),
-  }),
-  z.object({
-    id: z.string(),
-  }),
-  z.object({
-    username: z.string(),
-    email: z.string(),
-  }),
-  z.object({
-    username: z.string(),
-  }),
-  z.object({
-    email: z.string(),
-  }),
-])
+export const ClientWhereUniqueInputSchema: z.ZodType<Prisma.ClientWhereUniqueInput> = z.object({
+  id: z.string()
+})
 .and(z.object({
   id: z.string().optional(),
-  username: z.string().optional(),
-  email: z.string().optional(),
   AND: z.union([ z.lazy(() => ClientWhereInputSchema),z.lazy(() => ClientWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => ClientWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => ClientWhereInputSchema),z.lazy(() => ClientWhereInputSchema).array() ]).optional(),
   industry: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  password: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   companyName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   logo: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
@@ -1410,7 +1373,6 @@ export const ClientWhereUniqueInputSchema: z.ZodType<Prisma.ClientWhereUniqueInp
   website: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   role: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdBy: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  magicToken: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isDeleted: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -1422,10 +1384,7 @@ export const ClientWhereUniqueInputSchema: z.ZodType<Prisma.ClientWhereUniqueInp
 export const ClientOrderByWithAggregationInputSchema: z.ZodType<Prisma.ClientOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   industry: z.lazy(() => SortOrderSchema).optional(),
-  username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
   companyName: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional(),
   logo: z.lazy(() => SortOrderSchema).optional(),
   companyPhoneNumbers: z.lazy(() => SortOrderSchema).optional(),
   numberAndStreet: z.lazy(() => SortOrderSchema).optional(),
@@ -1437,7 +1396,6 @@ export const ClientOrderByWithAggregationInputSchema: z.ZodType<Prisma.ClientOrd
   website: z.lazy(() => SortOrderSchema).optional(),
   role: z.lazy(() => SortOrderSchema).optional(),
   createdBy: z.lazy(() => SortOrderSchema).optional(),
-  magicToken: z.lazy(() => SortOrderSchema).optional(),
   isDeleted: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
@@ -1452,10 +1410,7 @@ export const ClientScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Client
   NOT: z.union([ z.lazy(() => ClientScalarWhereWithAggregatesInputSchema),z.lazy(() => ClientScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   industry: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  username: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  password: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   companyName: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  email: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   logo: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   numberAndStreet: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
@@ -1467,7 +1422,6 @@ export const ClientScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Client
   website: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   role: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   createdBy: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  magicToken: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   isDeleted: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
@@ -1480,10 +1434,13 @@ export const ContactWhereInputSchema: z.ZodType<Prisma.ContactWhereInput> = z.ob
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   fullName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  password: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   position: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   phoneNumbers: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  magicToken: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   address: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  canLogin: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
@@ -1493,29 +1450,44 @@ export const ContactOrderByWithRelationInputSchema: z.ZodType<Prisma.ContactOrde
   id: z.lazy(() => SortOrderSchema).optional(),
   fullName: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
+  password: z.lazy(() => SortOrderSchema).optional(),
   position: z.lazy(() => SortOrderSchema).optional(),
   phoneNumbers: z.lazy(() => SortOrderSchema).optional(),
+  magicToken: z.lazy(() => SortOrderSchema).optional(),
   client: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
+  canLogin: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   clientModel: z.lazy(() => ClientOrderByWithRelationInputSchema).optional()
 }).strict();
 
-export const ContactWhereUniqueInputSchema: z.ZodType<Prisma.ContactWhereUniqueInput> = z.object({
-  id: z.string()
-})
+export const ContactWhereUniqueInputSchema: z.ZodType<Prisma.ContactWhereUniqueInput> = z.union([
+  z.object({
+    id: z.string(),
+    email: z.string()
+  }),
+  z.object({
+    id: z.string(),
+  }),
+  z.object({
+    email: z.string(),
+  }),
+])
 .and(z.object({
   id: z.string().optional(),
+  email: z.string().optional(),
   AND: z.union([ z.lazy(() => ContactWhereInputSchema),z.lazy(() => ContactWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => ContactWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => ContactWhereInputSchema),z.lazy(() => ContactWhereInputSchema).array() ]).optional(),
   fullName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  password: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   position: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   phoneNumbers: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  magicToken: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   address: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  canLogin: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
@@ -1525,10 +1497,13 @@ export const ContactOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContactO
   id: z.lazy(() => SortOrderSchema).optional(),
   fullName: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
+  password: z.lazy(() => SortOrderSchema).optional(),
   position: z.lazy(() => SortOrderSchema).optional(),
   phoneNumbers: z.lazy(() => SortOrderSchema).optional(),
+  magicToken: z.lazy(() => SortOrderSchema).optional(),
   client: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
+  canLogin: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => ContactCountOrderByAggregateInputSchema).optional(),
@@ -1543,10 +1518,13 @@ export const ContactScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Conta
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   fullName: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   email: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  password: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   position: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   phoneNumbers: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  magicToken: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   address: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  canLogin: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -2060,10 +2038,7 @@ export const RatingClassUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RatingC
 
 export const ClientCreateInputSchema: z.ZodType<Prisma.ClientCreateInput> = z.object({
   id: z.string().optional(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -2075,7 +2050,6 @@ export const ClientCreateInputSchema: z.ZodType<Prisma.ClientCreateInput> = z.ob
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -2087,10 +2061,7 @@ export const ClientCreateInputSchema: z.ZodType<Prisma.ClientCreateInput> = z.ob
 export const ClientUncheckedCreateInputSchema: z.ZodType<Prisma.ClientUncheckedCreateInput> = z.object({
   id: z.string().optional(),
   industry: z.string(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -2102,7 +2073,6 @@ export const ClientUncheckedCreateInputSchema: z.ZodType<Prisma.ClientUncheckedC
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -2111,10 +2081,7 @@ export const ClientUncheckedCreateInputSchema: z.ZodType<Prisma.ClientUncheckedC
 }).strict();
 
 export const ClientUpdateInputSchema: z.ZodType<Prisma.ClientUpdateInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2126,7 +2093,6 @@ export const ClientUpdateInputSchema: z.ZodType<Prisma.ClientUpdateInput> = z.ob
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2137,10 +2103,7 @@ export const ClientUpdateInputSchema: z.ZodType<Prisma.ClientUpdateInput> = z.ob
 
 export const ClientUncheckedUpdateInputSchema: z.ZodType<Prisma.ClientUncheckedUpdateInput> = z.object({
   industry: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2152,7 +2115,6 @@ export const ClientUncheckedUpdateInputSchema: z.ZodType<Prisma.ClientUncheckedU
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2163,10 +2125,7 @@ export const ClientUncheckedUpdateInputSchema: z.ZodType<Prisma.ClientUncheckedU
 export const ClientCreateManyInputSchema: z.ZodType<Prisma.ClientCreateManyInput> = z.object({
   id: z.string().optional(),
   industry: z.string(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -2178,17 +2137,13 @@ export const ClientCreateManyInputSchema: z.ZodType<Prisma.ClientCreateManyInput
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const ClientUpdateManyMutationInputSchema: z.ZodType<Prisma.ClientUpdateManyMutationInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2200,7 +2155,6 @@ export const ClientUpdateManyMutationInputSchema: z.ZodType<Prisma.ClientUpdateM
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2208,10 +2162,7 @@ export const ClientUpdateManyMutationInputSchema: z.ZodType<Prisma.ClientUpdateM
 
 export const ClientUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ClientUncheckedUpdateManyInput> = z.object({
   industry: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2223,7 +2174,6 @@ export const ClientUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ClientUnchec
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2233,9 +2183,12 @@ export const ContactCreateInputSchema: z.ZodType<Prisma.ContactCreateInput> = z.
   id: z.string().optional(),
   fullName: z.string(),
   email: z.string(),
+  password: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
   phoneNumbers: z.string().optional().nullable(),
+  magicToken: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
+  canLogin: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   clientModel: z.lazy(() => ClientCreateNestedOneWithoutContactModelInputSchema)
@@ -2245,10 +2198,13 @@ export const ContactUncheckedCreateInputSchema: z.ZodType<Prisma.ContactUnchecke
   id: z.string().optional(),
   fullName: z.string(),
   email: z.string(),
+  password: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
   phoneNumbers: z.string().optional().nullable(),
+  magicToken: z.string().optional().nullable(),
   client: z.string(),
   address: z.string().optional().nullable(),
+  canLogin: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -2256,9 +2212,12 @@ export const ContactUncheckedCreateInputSchema: z.ZodType<Prisma.ContactUnchecke
 export const ContactUpdateInputSchema: z.ZodType<Prisma.ContactUpdateInput> = z.object({
   fullName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  password: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   phoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   address: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  canLogin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutContactModelNestedInputSchema).optional()
@@ -2267,10 +2226,13 @@ export const ContactUpdateInputSchema: z.ZodType<Prisma.ContactUpdateInput> = z.
 export const ContactUncheckedUpdateInputSchema: z.ZodType<Prisma.ContactUncheckedUpdateInput> = z.object({
   fullName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  password: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   phoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   address: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  canLogin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -2279,10 +2241,13 @@ export const ContactCreateManyInputSchema: z.ZodType<Prisma.ContactCreateManyInp
   id: z.string().optional(),
   fullName: z.string(),
   email: z.string(),
+  password: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
   phoneNumbers: z.string().optional().nullable(),
+  magicToken: z.string().optional().nullable(),
   client: z.string(),
   address: z.string().optional().nullable(),
+  canLogin: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -2290,9 +2255,12 @@ export const ContactCreateManyInputSchema: z.ZodType<Prisma.ContactCreateManyInp
 export const ContactUpdateManyMutationInputSchema: z.ZodType<Prisma.ContactUpdateManyMutationInput> = z.object({
   fullName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  password: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   phoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   address: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  canLogin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -2300,10 +2268,13 @@ export const ContactUpdateManyMutationInputSchema: z.ZodType<Prisma.ContactUpdat
 export const ContactUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ContactUncheckedUpdateManyInput> = z.object({
   fullName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  password: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   phoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   address: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  canLogin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -2868,10 +2839,7 @@ export const ContactOrderByRelationAggregateInputSchema: z.ZodType<Prisma.Contac
 export const ClientCountOrderByAggregateInputSchema: z.ZodType<Prisma.ClientCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   industry: z.lazy(() => SortOrderSchema).optional(),
-  username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
   companyName: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional(),
   logo: z.lazy(() => SortOrderSchema).optional(),
   companyPhoneNumbers: z.lazy(() => SortOrderSchema).optional(),
   numberAndStreet: z.lazy(() => SortOrderSchema).optional(),
@@ -2883,7 +2851,6 @@ export const ClientCountOrderByAggregateInputSchema: z.ZodType<Prisma.ClientCoun
   website: z.lazy(() => SortOrderSchema).optional(),
   role: z.lazy(() => SortOrderSchema).optional(),
   createdBy: z.lazy(() => SortOrderSchema).optional(),
-  magicToken: z.lazy(() => SortOrderSchema).optional(),
   isDeleted: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
@@ -2892,10 +2859,7 @@ export const ClientCountOrderByAggregateInputSchema: z.ZodType<Prisma.ClientCoun
 export const ClientMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ClientMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   industry: z.lazy(() => SortOrderSchema).optional(),
-  username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
   companyName: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional(),
   logo: z.lazy(() => SortOrderSchema).optional(),
   companyPhoneNumbers: z.lazy(() => SortOrderSchema).optional(),
   numberAndStreet: z.lazy(() => SortOrderSchema).optional(),
@@ -2907,7 +2871,6 @@ export const ClientMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ClientMaxOrd
   website: z.lazy(() => SortOrderSchema).optional(),
   role: z.lazy(() => SortOrderSchema).optional(),
   createdBy: z.lazy(() => SortOrderSchema).optional(),
-  magicToken: z.lazy(() => SortOrderSchema).optional(),
   isDeleted: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
@@ -2916,10 +2879,7 @@ export const ClientMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ClientMaxOrd
 export const ClientMinOrderByAggregateInputSchema: z.ZodType<Prisma.ClientMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   industry: z.lazy(() => SortOrderSchema).optional(),
-  username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
   companyName: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional(),
   logo: z.lazy(() => SortOrderSchema).optional(),
   companyPhoneNumbers: z.lazy(() => SortOrderSchema).optional(),
   numberAndStreet: z.lazy(() => SortOrderSchema).optional(),
@@ -2931,7 +2891,6 @@ export const ClientMinOrderByAggregateInputSchema: z.ZodType<Prisma.ClientMinOrd
   website: z.lazy(() => SortOrderSchema).optional(),
   role: z.lazy(() => SortOrderSchema).optional(),
   createdBy: z.lazy(() => SortOrderSchema).optional(),
-  magicToken: z.lazy(() => SortOrderSchema).optional(),
   isDeleted: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
@@ -2941,10 +2900,13 @@ export const ContactCountOrderByAggregateInputSchema: z.ZodType<Prisma.ContactCo
   id: z.lazy(() => SortOrderSchema).optional(),
   fullName: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
+  password: z.lazy(() => SortOrderSchema).optional(),
   position: z.lazy(() => SortOrderSchema).optional(),
   phoneNumbers: z.lazy(() => SortOrderSchema).optional(),
+  magicToken: z.lazy(() => SortOrderSchema).optional(),
   client: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
+  canLogin: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2953,10 +2915,13 @@ export const ContactMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ContactMaxO
   id: z.lazy(() => SortOrderSchema).optional(),
   fullName: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
+  password: z.lazy(() => SortOrderSchema).optional(),
   position: z.lazy(() => SortOrderSchema).optional(),
   phoneNumbers: z.lazy(() => SortOrderSchema).optional(),
+  magicToken: z.lazy(() => SortOrderSchema).optional(),
   client: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
+  canLogin: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2965,10 +2930,13 @@ export const ContactMinOrderByAggregateInputSchema: z.ZodType<Prisma.ContactMinO
   id: z.lazy(() => SortOrderSchema).optional(),
   fullName: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
+  password: z.lazy(() => SortOrderSchema).optional(),
   position: z.lazy(() => SortOrderSchema).optional(),
   phoneNumbers: z.lazy(() => SortOrderSchema).optional(),
+  magicToken: z.lazy(() => SortOrderSchema).optional(),
   client: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
+  canLogin: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -3844,10 +3812,7 @@ export const RatingUpdateManyWithWhereWithoutQuestionnaireModelInputSchema: z.Zo
 
 export const ClientCreateWithoutIndustryModelInputSchema: z.ZodType<Prisma.ClientCreateWithoutIndustryModelInput> = z.object({
   id: z.string().optional(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -3859,7 +3824,6 @@ export const ClientCreateWithoutIndustryModelInputSchema: z.ZodType<Prisma.Clien
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -3869,10 +3833,7 @@ export const ClientCreateWithoutIndustryModelInputSchema: z.ZodType<Prisma.Clien
 
 export const ClientUncheckedCreateWithoutIndustryModelInputSchema: z.ZodType<Prisma.ClientUncheckedCreateWithoutIndustryModelInput> = z.object({
   id: z.string().optional(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -3884,7 +3845,6 @@ export const ClientUncheckedCreateWithoutIndustryModelInputSchema: z.ZodType<Pri
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -3923,10 +3883,7 @@ export const ClientScalarWhereInputSchema: z.ZodType<Prisma.ClientScalarWhereInp
   NOT: z.union([ z.lazy(() => ClientScalarWhereInputSchema),z.lazy(() => ClientScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   industry: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  password: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   companyName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   logo: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   numberAndStreet: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
@@ -3938,7 +3895,6 @@ export const ClientScalarWhereInputSchema: z.ZodType<Prisma.ClientScalarWhereInp
   website: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   role: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdBy: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  magicToken: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isDeleted: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -4071,10 +4027,7 @@ export const RatingClassCreateOrConnectWithoutRatingModelInputSchema: z.ZodType<
 
 export const ClientCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientCreateWithoutRatingModelInput> = z.object({
   id: z.string().optional(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -4086,7 +4039,6 @@ export const ClientCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientC
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -4097,10 +4049,7 @@ export const ClientCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientC
 export const ClientUncheckedCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientUncheckedCreateWithoutRatingModelInput> = z.object({
   id: z.string().optional(),
   industry: z.string(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -4112,7 +4061,6 @@ export const ClientUncheckedCreateWithoutRatingModelInputSchema: z.ZodType<Prism
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -4228,10 +4176,7 @@ export const ClientUpdateToOneWithWhereWithoutRatingModelInputSchema: z.ZodType<
 }).strict();
 
 export const ClientUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientUpdateWithoutRatingModelInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4243,7 +4188,6 @@ export const ClientUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientU
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4253,10 +4197,7 @@ export const ClientUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientU
 
 export const ClientUncheckedUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ClientUncheckedUpdateWithoutRatingModelInput> = z.object({
   industry: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4268,7 +4209,6 @@ export const ClientUncheckedUpdateWithoutRatingModelInputSchema: z.ZodType<Prism
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4448,9 +4388,12 @@ export const ContactCreateWithoutClientModelInputSchema: z.ZodType<Prisma.Contac
   id: z.string().optional(),
   fullName: z.string(),
   email: z.string(),
+  password: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
   phoneNumbers: z.string().optional().nullable(),
+  magicToken: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
+  canLogin: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -4459,9 +4402,12 @@ export const ContactUncheckedCreateWithoutClientModelInputSchema: z.ZodType<Pris
   id: z.string().optional(),
   fullName: z.string(),
   email: z.string(),
+  password: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
   phoneNumbers: z.string().optional().nullable(),
+  magicToken: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
+  canLogin: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -4576,10 +4522,13 @@ export const ContactScalarWhereInputSchema: z.ZodType<Prisma.ContactScalarWhereI
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   fullName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  password: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   position: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   phoneNumbers: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  magicToken: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   client: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   address: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  canLogin: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -4602,10 +4551,7 @@ export const RatingUpdateManyWithWhereWithoutClientModelInputSchema: z.ZodType<P
 
 export const ClientCreateWithoutContactModelInputSchema: z.ZodType<Prisma.ClientCreateWithoutContactModelInput> = z.object({
   id: z.string().optional(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -4617,7 +4563,6 @@ export const ClientCreateWithoutContactModelInputSchema: z.ZodType<Prisma.Client
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -4628,10 +4573,7 @@ export const ClientCreateWithoutContactModelInputSchema: z.ZodType<Prisma.Client
 export const ClientUncheckedCreateWithoutContactModelInputSchema: z.ZodType<Prisma.ClientUncheckedCreateWithoutContactModelInput> = z.object({
   id: z.string().optional(),
   industry: z.string(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -4643,7 +4585,6 @@ export const ClientUncheckedCreateWithoutContactModelInputSchema: z.ZodType<Pris
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -4667,10 +4608,7 @@ export const ClientUpdateToOneWithWhereWithoutContactModelInputSchema: z.ZodType
 }).strict();
 
 export const ClientUpdateWithoutContactModelInputSchema: z.ZodType<Prisma.ClientUpdateWithoutContactModelInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4682,7 +4620,6 @@ export const ClientUpdateWithoutContactModelInputSchema: z.ZodType<Prisma.Client
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4692,10 +4629,7 @@ export const ClientUpdateWithoutContactModelInputSchema: z.ZodType<Prisma.Client
 
 export const ClientUncheckedUpdateWithoutContactModelInputSchema: z.ZodType<Prisma.ClientUncheckedUpdateWithoutContactModelInput> = z.object({
   industry: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4707,7 +4641,6 @@ export const ClientUncheckedUpdateWithoutContactModelInputSchema: z.ZodType<Pris
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4890,10 +4823,7 @@ export const RatingUncheckedUpdateManyWithoutQuestionnaireModelInputSchema: z.Zo
 
 export const ClientCreateManyIndustryModelInputSchema: z.ZodType<Prisma.ClientCreateManyIndustryModelInput> = z.object({
   id: z.string().optional(),
-  username: z.string(),
-  password: z.string(),
   companyName: z.string(),
-  email: z.string(),
   logo: z.string().optional().nullable(),
   companyPhoneNumbers: z.string().optional().nullable(),
   numberAndStreet: z.string().optional().nullable(),
@@ -4905,17 +4835,13 @@ export const ClientCreateManyIndustryModelInputSchema: z.ZodType<Prisma.ClientCr
   website: z.string().optional().nullable(),
   role: z.string().optional().nullable(),
   createdBy: z.string().optional().nullable(),
-  magicToken: z.string().optional().nullable(),
   isDeleted: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const ClientUpdateWithoutIndustryModelInputSchema: z.ZodType<Prisma.ClientUpdateWithoutIndustryModelInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4927,7 +4853,6 @@ export const ClientUpdateWithoutIndustryModelInputSchema: z.ZodType<Prisma.Clien
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4936,10 +4861,7 @@ export const ClientUpdateWithoutIndustryModelInputSchema: z.ZodType<Prisma.Clien
 }).strict();
 
 export const ClientUncheckedUpdateWithoutIndustryModelInputSchema: z.ZodType<Prisma.ClientUncheckedUpdateWithoutIndustryModelInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4951,7 +4873,6 @@ export const ClientUncheckedUpdateWithoutIndustryModelInputSchema: z.ZodType<Pri
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4960,10 +4881,7 @@ export const ClientUncheckedUpdateWithoutIndustryModelInputSchema: z.ZodType<Pri
 }).strict();
 
 export const ClientUncheckedUpdateManyWithoutIndustryModelInputSchema: z.ZodType<Prisma.ClientUncheckedUpdateManyWithoutIndustryModelInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   logo: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   companyPhoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   numberAndStreet: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4975,7 +4893,6 @@ export const ClientUncheckedUpdateManyWithoutIndustryModelInputSchema: z.ZodType
   website: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   role: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdBy: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isDeleted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5105,9 +5022,12 @@ export const ContactCreateManyClientModelInputSchema: z.ZodType<Prisma.ContactCr
   id: z.string().optional(),
   fullName: z.string(),
   email: z.string(),
+  password: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
   phoneNumbers: z.string().optional().nullable(),
+  magicToken: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
+  canLogin: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -5137,9 +5057,12 @@ export const RatingCreateManyClientModelInputSchema: z.ZodType<Prisma.RatingCrea
 export const ContactUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.ContactUpdateWithoutClientModelInput> = z.object({
   fullName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  password: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   phoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   address: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  canLogin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -5147,9 +5070,12 @@ export const ContactUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.Contac
 export const ContactUncheckedUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.ContactUncheckedUpdateWithoutClientModelInput> = z.object({
   fullName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  password: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   phoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   address: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  canLogin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -5157,9 +5083,12 @@ export const ContactUncheckedUpdateWithoutClientModelInputSchema: z.ZodType<Pris
 export const ContactUncheckedUpdateManyWithoutClientModelInputSchema: z.ZodType<Prisma.ContactUncheckedUpdateManyWithoutClientModelInput> = z.object({
   fullName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  password: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   position: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   phoneNumbers: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  magicToken: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   address: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  canLogin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();

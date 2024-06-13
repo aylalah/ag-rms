@@ -100,10 +100,7 @@ model Client {
   id                  String    @id @default(auto()) @map("_id") @db.ObjectId
   industry            String    @db.ObjectId
   industryModel       Industry  @relation(fields: [industry], references: [id])
-  username            String    @unique
-  password            String
   companyName         String
-  email               String    @unique
   logo                String?
   companyPhoneNumbers String?
   numberAndStreet     String?
@@ -117,7 +114,6 @@ model Client {
   contactModel        Contact[]
   ratingModel         Rating[]
   createdBy           String?
-  magicToken          String?
   isDeleted           Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
@@ -126,11 +122,14 @@ model Client {
 model Contact {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   fullName     String
-  email        String
+  email        String   @unique
+  password     String?
   position     String?
   phoneNumbers String?
+  magicToken   String?
   client       String   @db.ObjectId
   address      String?
+  canLogin     Boolean  @default(false)
   clientModel  Client   @relation(fields: [client], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

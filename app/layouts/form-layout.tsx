@@ -14,7 +14,6 @@ import {
 type FormLayoutProps = {
   slug: string;
   data: any;
-  onAddEmail?: () => void;
   formObject:
     | {
         field: string;
@@ -31,7 +30,6 @@ export const FormLayout = ({
   Fetcher,
   data,
   formObject,
-  onAddEmail,
   ...props
 }: FormLayoutProps) => {
   const password = "";
@@ -149,13 +147,6 @@ export const FormLayout = ({
                 );
               })}
             </div>
-
-            <span
-              onClick={onAddEmail}
-              className="absolute cursor-pointer  bottom-5 right-5 bg-red-500 "
-            >
-              Add Email
-            </span>
           </div>
 
           <div className="relative flex flex-col gap-4 overflow-hidden border rounded bg-base-100 border-line">

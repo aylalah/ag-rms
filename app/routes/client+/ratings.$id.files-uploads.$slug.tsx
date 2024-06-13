@@ -62,6 +62,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         const files = Object.fromEntries(res.entries());
 
         const supervisor = files.supervisor;
+        const primaryAnalyst = files.primaryAnalyst;
+        const secondaryAnalyst = files.secondaryAnalyst;
 
         console.log(supervisor);
 
@@ -210,6 +212,8 @@ export default function Dragger() {
       if (formData.entries().next().done) return;
 
       formData.append("supervisor", rating?.supervisor as string);
+      formData.append("primaryAnalyst", rating?.primaryAnalyst as string);
+      formData.append("secondaryAnalyst", rating?.secondaryAnalyst as string);
 
       Fetcher.submit(formData, {
         method: "POST",

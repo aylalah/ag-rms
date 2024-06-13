@@ -1,6 +1,6 @@
-import useAppStore from '@stores';
-import { Icons } from '@components';
-import { NavLink } from '@remix-run/react';
+import useAppStore from "@stores";
+import { Icons } from "@components";
+import { NavLink } from "@remix-run/react";
 
 interface IRoute {
   name: string;
@@ -66,10 +66,17 @@ export default function MenuLayout({
 
                   <i className="text-lg text-white ri-arrow-down-s-fill" />
                 </div>
-                <ul tabIndex={0} className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+                <ul
+                  tabIndex={0}
+                  className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"
+                >
                   {settings.map((el, i) => (
                     <li key={i}>
-                      <a href={el.to} key={i} className="flex items-center gap-2 py-4 text-sm capitalize text-primary">
+                      <a
+                        href={el.to}
+                        key={i}
+                        className="flex items-center gap-2 py-4 text-sm capitalize text-primary"
+                      >
                         <i className={`"text-white ${el.icon}`} />
                         {el.name}
                       </a>
@@ -80,13 +87,17 @@ export default function MenuLayout({
 
               <div
                 className="flex w-10 h-10 bg-cover rounded-full bg-base-100"
-                style={{ backgroundImage: `url(${user?.image || client?.logo})` }}
+                style={{
+                  backgroundImage: `url(${user?.image || client?.logo})`,
+                }}
               ></div>
             </div>
           </div>
         </header>
 
-        <div className="container flex flex-col flex-1 h-full overflow-hidden">{children}</div>
+        <div className="container flex flex-col flex-1 h-full overflow-hidden">
+          {children}
+        </div>
       </div>
     </div>
   );
