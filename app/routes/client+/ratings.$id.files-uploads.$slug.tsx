@@ -60,7 +60,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }),
     unstable_createMemoryUploadHandler()
   );
-
+  const appUrl = process.env.ROOT_URL;
   if (method === "POST") {
     const formData = await unstable_parseMultipartFormData(
       request,
@@ -114,7 +114,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             fileList.length > 1 ? "s" : ""
           } for ${ratingname}.<br/><br/> </n> ${fileList.toString()} </n> You can view the file${
             fileList.length > 1 ? "s" : ""
-          } on the <strong>Rating Management System</strong>`,
+          } on the <strong>Rating Management System</strong> </n> <br/> ${appUrl}`,
         });
 
         return json({ saveQuery: saveFiles });
