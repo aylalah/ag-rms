@@ -35,6 +35,7 @@ export class AuthClass extends MainClass {
           unit: Me?.data?.data?.unit,
           role: Me?.data?.data?.isAdmin ? "admin" : "user",
         });
+
         return {
           user: Me?.data?.data as User,
           apiToken: token,
@@ -59,20 +60,20 @@ export class AuthClass extends MainClass {
       });
 
       //send magic link to user email
+      // <h2>Agusto & Co.s Rating Mgt System - Login Token</h2>
       sendEmailService({
         From: "info@agusto.com",
         To: email,
-        Subject: "Agusto Rating System Login Token",
+        Subject: "Agusto & Co's Rating System Login Token",
         HtmlBody: `
-        <h2>Agusto Rating Mgt System - Login Token</h2>
-        <p>Hello ${email},</p>
-        <p>Please see your six digit token below</p>
+        <p>Hello ${user?.fullName},</p>
+        <p>Please find below your six digit token</p>
         <h2>${magicToken}</h2>
 
         <p>Thank you</p>
         <p>Agusto & Co.</p>`,
 
-        TextBody: `Hello ${email}, Please see your six digit token below ${magicToken}`,
+        TextBody: `Hello ${user?.fullName}, Please find below your six digit token ${magicToken}`,
       });
 
       return {
