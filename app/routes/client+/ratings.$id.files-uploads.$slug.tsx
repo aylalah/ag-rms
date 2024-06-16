@@ -49,6 +49,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   const { rating, error } = await RMSservice(token).ratings.one({ id });
   const company = rating?.clientModel?.companyName;
+  const ratingname = rating?.ratingTitle;
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
@@ -100,7 +101,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
         const fileList = saveFiles
           .filter((file) => file?.name !== undefined)
-          .map((el, index) => `${index + 1}. ${el?.name} <br/>`);
+          .map((el, index) => `${index + 1}. ${el?.name} <br/> <br/>`)
+          .join("\n");
 
         sendEmailService({
           From: "info@agusto.com",
@@ -110,7 +112,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           Subject: "Client File Upload",
           HtmlBody: `${company} just uploaded the following file${
             fileList.length > 1 ? "s" : ""
-          }:<br/><br/> ${fileList.toString()} <br/> <br/> You can view the file${
+          } for ${ratingname}.<br/><br/> </n> ${fileList.toString()} </n> You can view the file${
             fileList.length > 1 ? "s" : ""
           } on the <strong>Rating Management System</strong>`,
         });
