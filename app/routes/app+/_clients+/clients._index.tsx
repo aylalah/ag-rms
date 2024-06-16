@@ -1,10 +1,10 @@
-import dayjs from 'dayjs';
-import { Await, useLoaderData } from '@remix-run/react';
-import { defer, LoaderFunctionArgs } from '@remix-run/node';
-import { ListLayout } from '@layouts/list-layout';
-import { Suspense, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import { validateCookie } from '@helpers/cookies';
+import dayjs from "dayjs";
+import { Await, useLoaderData } from "@remix-run/react";
+import { defer, LoaderFunctionArgs } from "@remix-run/node";
+import { ListLayout } from "@layouts/list-layout";
+import { Suspense, useEffect } from "react";
+import { toast } from "react-toastify";
+import { validateCookie } from "@helpers/cookies";
 
 export const loader = async (ctx: LoaderFunctionArgs) => {
   return ClientLoader(ctx);
@@ -15,7 +15,11 @@ export default function Clients() {
   const { setQueryData, storeQueryData } = useClientStore((state) => state);
 
   useEffect(() => {
-    toast.promise(queryData, { pending: 'Loading clients . . . ' }, { toastId: 'clients' });
+    toast.promise(
+      queryData,
+      { pending: "Loading clients . . . " },
+      { toastId: "clients" }
+    );
     queryData.then((res) => setQueryData(res));
   }, []);
 

@@ -23,11 +23,11 @@ const ContactCard = ({
         <i className="mr-2 ri-mail-line" />
         {contact.email}
       </p>
-      <p>
+      {/* <p>
         <i className="mr-2 ri-password-line" />
 
         {contact.password}
-      </p>
+      </p> */}
       <p>
         <i className="mr-2 ri-phone-line" />
         {contact.phoneNumbers}

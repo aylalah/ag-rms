@@ -44,7 +44,10 @@ export class ContactClass extends MainClass {
     }
   }
 
-  async one(input: { id: string; include?: Prisma.ContactInclude<DefaultArgs> | null | undefined }) {
+  async one(input: {
+    id: string;
+    include?: Prisma.ContactInclude<DefaultArgs> | null | undefined;
+  }) {
     try {
       await this.hasAccess("all");
 
@@ -81,8 +84,8 @@ export class ContactClass extends MainClass {
         sendEmailService({
           From: "info@agusto.com",
           To: `${data.email}`,
-          Subject: "Rating Management System Login",
-          HtmlBody: `<p>Please find attached your Login details</p><p>Email: ${data.email} </br> </br> Password; ${data.password}</p>.The Login Url is ${clientUrl}`,
+          Subject: "Agusto Rating Management System ",
+          HtmlBody: `<p>Please find below your Agusto RMS login credentials </p><p>Email: ${data.email} <br/> <br/> Password: ${data.password}</p><p>The Login Url is ${clientUrl}  </p>`,
         });
       }
 

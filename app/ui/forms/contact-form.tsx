@@ -62,7 +62,7 @@ const ContactForm = ({
                 onChange={(e) => setCanLogin(e.target.checked)}
                 className="checkbox checkbox-secondary"
               />
-              Can Contact Login?
+              Can Login?
             </label>
             <input
               name="client"
