@@ -6,7 +6,11 @@ import { FetcherWithComponents, useFetcher } from "@remix-run/react";
 const email = "bamidelejoel@agusto.com";
 const password = "agusto130476";
 
-export default function LoginForm({ Fetcher }: { Fetcher: FetcherWithComponents<any> }) {
+export default function LoginForm({
+  Fetcher,
+}: {
+  Fetcher: FetcherWithComponents<any>;
+}) {
   const isSubmitting = Fetcher.state === "submitting";
   const { setLoader } = useAppStore.general((state) => state);
   const checkRef = useRef<HTMLInputElement>(null);
@@ -26,12 +30,24 @@ export default function LoginForm({ Fetcher }: { Fetcher: FetcherWithComponents<
       >
         <div className="flex flex-col">
           <p className="text-2xl font-bold">User Login</p>
-          <p className="text-sm opacity-40">Please enter your email and password to login</p>
+          <p className="text-sm opacity-40">
+            Please enter your email and password to login
+          </p>
         </div>
 
         <div className="flex flex-col flex-1 gap-1">
-          <TextInput defaultValue={email} name="email" type="email" placeholder="Enter you email address" />
-          <TextInput defaultValue={password} name="password" type="password" placeholder="Enter your password" />
+          <TextInput
+            defaultValue={email}
+            name="email"
+            type="email"
+            placeholder="Enter you email address"
+          />
+          <TextInput
+            defaultValue={password}
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+          />
           <div className="flex items-center py-4">
             <div className="flex items-center gap-2 text-sm opacity-80">
               <input

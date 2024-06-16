@@ -84,8 +84,8 @@ export class ContactClass extends MainClass {
         sendEmailService({
           From: "info@agusto.com",
           To: `${data.email}`,
-          Subject: "Agusto Rating Management System ",
-          HtmlBody: `<p>Please find below your Agusto RMS login credentials </p><p>Email: ${data.email} <br/> <br/> Password: ${data.password}</p><p>The Login Url is ${clientUrl}  </p>`,
+          Subject: "Agusto & Co. Rating Management System ",
+          HtmlBody: `<p>Please find below your Agusto & Co RMS login credentials </p><p>Email: ${data.email} <br/> <br/> Password: ${data.password}</p><p>The Login Url is ${clientUrl}  </p>`,
         });
       }
 
