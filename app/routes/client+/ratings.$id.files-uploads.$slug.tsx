@@ -238,9 +238,9 @@ export default function Dragger() {
     if (formData.entries().next().done) return;
 
     const SupervisorAnalystObject = JSON.parse(rating?.supervisor as any);
-    console.log({ SupervisorAnalystObject });
+ 
     const PrimaryAnalystObject = JSON.parse(rating?.primaryAnalyst as any);
-    console.log({ PrimaryAnalystObject });
+   
     const SecondaryAnalystObject = JSON.parse(rating?.secondaryAnalyst as any);
 
     formData.append("supervisor", SupervisorAnalystObject?.email as string);

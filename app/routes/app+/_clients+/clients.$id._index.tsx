@@ -10,7 +10,6 @@ import { validateCookie } from "@helpers/cookies";
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
   const id = params?.id as string;
-  console.log({ id });
 
   const ratingQuery = RMSservice(token)
     .clients.one({
@@ -137,10 +136,8 @@ export default function ClientEdit() {
 
   useEffect(() => {
     ratingQuery?.then((data) => {
-      console.log({ data });
       if (!data?.client) return navigate("/app/clients", { replace: true });
       setClient(data?.client as any);
-      console.log({ client });
     });
 
     toast.promise(

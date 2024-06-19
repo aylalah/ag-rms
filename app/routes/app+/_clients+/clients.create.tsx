@@ -32,7 +32,7 @@ export default function Breeds() {
   const { client, formObject } = useLoaderData<typeof loader>();
   const Fetcher = useFetcher();
   const FetcherData = Fetcher?.data as { message: string; error: string };
-  const [emailCount, setEmailCount] = useState(0);
+ 
 
   const [FormData, setFormData] = useState(formObject);
 
@@ -47,28 +47,7 @@ export default function Breeds() {
       toast.error(FetcherData?.error, { toastId: "create-rating" });
   }, [FetcherData]);
 
-  const addEmail = () => {
-    const x = [
-      {
-        field: `email${emailCount + 1}`,
-        type: "text",
-        required: true,
-        list: null,
-        value: null,
-      },
-      {
-        field: `password${emailCount + 1}`,
-        type: "text",
-        required: true,
-        list: null,
-        value: randomString(10),
-      },
-    ];
-
-    setFormData([...(FormData as any), ...x]);
-    setEmailCount(emailCount + 1);
-  };
-
+  
   return (
     <div className="h-full pb-10 overflow-hidden">
       <FormLayout

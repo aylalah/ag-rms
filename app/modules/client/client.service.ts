@@ -141,7 +141,10 @@ export class ClientClass extends MainClass {
         .map((el) => {
           if (el.field === "industry") {
             el.type = "object";
-            el.list = industry.map((el) => ({ id: el.id, name: el.name }));
+
+            el.list = industry
+              .sort((a: any, b: any) => a.name.localeCompare(b.name))
+              .map((el) => ({ id: el.id, name: el.name }));
           }
 
           if (el.field === "password") {

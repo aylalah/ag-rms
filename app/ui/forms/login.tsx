@@ -3,8 +3,10 @@ import { Button, TextInput } from "@components";
 import { useEffect, useRef, useState } from "react";
 import { FetcherWithComponents, useFetcher } from "@remix-run/react";
 
-const email = "bamidelejoel@agusto.com";
-const password = "agusto130476";
+// const email = "bamidelejoel@agusto.com";
+// const password = "agusto130476";
+const email = "";
+const password = "";
 
 export default function LoginForm({
   Fetcher,
