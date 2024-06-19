@@ -607,7 +607,6 @@ declare global {
   const splitCamelCase: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/utils')['splitCamelCase']
   const stores: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/stores/index')['default']
   const uploadFileHandler: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/upload-file')['uploadFileHandler']
-  const uploadHandler: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/utils')['uploadHandler']
   const uploadLogoToSpaces: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/upload-file')['uploadLogoToSpaces']
   const uploadStreamToSpaces: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/upload-file')['uploadStreamToSpaces']
   const useClientStore: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/stores/client.store')['useClientStore']

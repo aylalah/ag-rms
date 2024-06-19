@@ -215,7 +215,7 @@ export default function ClientEdit() {
                   </tr>
                 </thead>
                 <tbody>
-                  {client?.ratingModel?.map((rating, index) => (
+                  {client?.ratingModel?.map((rating: any, index) => (
                     <tr
                       onClick={() => goto(rating)}
                       key={rating.id}
