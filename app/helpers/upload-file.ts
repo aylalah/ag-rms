@@ -41,6 +41,18 @@ export const uploadStreamToSpaces = (file: any, fileName: string) => {
   }).done();
 };
 
+export const uploadLogoToSpaces = (file: any, fileName: string) => {
+  return new Upload({
+    client: s3,
+    params: {
+      Bucket: "agustoportals",
+      Key: `rating-mgt-portal/logos/${fileName}`,
+      Body: file,
+      ACL: "public-read",
+    },
+  }).done();
+};
+
 export const deleteFileFromSpaces = async (fileName: string) => {
   const params = {
     Bucket: "agustoportals",

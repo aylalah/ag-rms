@@ -39,19 +39,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
           ratingModel: client?.ratingModel?.map((el: any) => {
             const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
 
-            const SecondaryAnalystObject = JSON.parse(
-              el?.secondaryAnalyst as any
-            );
+            const SecondaryAnalystObject = JSON.parse(el?.secondaryAnalyst as any);
             return {
               ...el,
-              primaryAnalyst:
-                PrimaryAnalystObject?.firstname +
-                " " +
-                PrimaryAnalystObject?.lastname,
-              secondaryAnalyst:
-                SecondaryAnalystObject?.firstname +
-                " " +
-                SecondaryAnalystObject?.lastname,
+              primaryAnalyst: PrimaryAnalystObject?.firstname + " " + PrimaryAnalystObject?.lastname,
+              secondaryAnalyst: SecondaryAnalystObject?.firstname + " " + SecondaryAnalystObject?.lastname,
             };
           }),
         },
@@ -103,8 +95,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function ClientEdit() {
   const { ratingQuery } = useLoaderData<typeof loader>();
-  const [client, setClient] =
-    useState<ClientOptionalDefaultsWithRelations | null>(null);
+  const [client, setClient] = useState<ClientOptionalDefaultsWithRelations | null>(null);
   const Fetcher = useFetcher();
   const navigate = useNavigate();
   const FetcherData = Fetcher.data as { message: string; error: string };
@@ -163,21 +154,26 @@ export default function ClientEdit() {
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
-      <div className="flex items-center justify-between px-4 py-3 border rounded bg-primary border-accent text-base-100">
-        <div>
-          <p className="font-semibold">{client?.companyName} </p>
-          <div className="flex items-center gap-4">
-            <p className="text-xs opacity-80">{client?.industryModel?.name}</p>
-            <Link to={`edit`} className="font-bold text-secondary">
-              Edit
-            </Link>
+      <div className="flex items-center justify-between px-4 py-4 border rounded bg-primary border-accent text-base-100">
+        <div className="flex items-center gap-3">
+          <div
+            className="bg-cover rounded-lg w-7 h-7 bg-[#fff2]"
+            style={{ backgroundImage: `url(${client?.logo})` }}
+          ></div>
+
+          <div className="">
+            <p className="font-semibold leading-none capitalize">{client?.companyName} </p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs opacity-80">{client?.industryModel?.name}</p>
+              <Link to={`edit`} className="text-sm font-bold text-secondary">
+                <i className="ri-edit-fill" />
+                Edit
+              </Link>
+            </div>
           </div>
         </div>
 
-        <Link
-          to="create-ratings"
-          className="tracking-wide btn btn-sm btn-secondary"
-        >
+        <Link to="create-ratings" className="tracking-wide btn btn-sm btn-secondary">
           <i className="ri-add-fill" />
           New Rating
         </Link>
@@ -187,34 +183,20 @@ export default function ClientEdit() {
         <div className="flex flex-col flex-1 h-full gap-3">
           <div className="grid flex-1 grid-cols-3 gap-2">
             <Card title="Industry" subTitle={client?.industryModel?.name} />
-            <Card
-              title="Company Phone Numbers"
-              subTitle={client?.companyPhoneNumbers || "-"}
-            />
-            <Card
-              title="NumberAnd  Street"
-              subTitle={client?.numberAndStreet || "-"}
-            />
+            <Card title="Company Phone Numbers" subTitle={client?.companyPhoneNumbers || "-"} />
+            <Card title="NumberAnd  Street" subTitle={client?.numberAndStreet || "-"} />
             <Card title="building" subTitle={client?.building || "-"} />
             <Card title="area" subTitle={client?.area || "-"} />
             <Card title="landmark" subTitle={client?.landmark || "-"} />
-            <Card
-              title="Region/State"
-              subTitle={client?.regionOrState || "-"}
-            />
+            <Card title="Region/State" subTitle={client?.regionOrState || "-"} />
             <Card title="country" subTitle={client?.country || "-"} />
             <Card title="website" subTitle={client?.website || "-"} />
           </div>
 
           <div className="flex-1 h-full border bg-bae-100 border-accent">
             <div className="flex items-center justify-between bg-primary">
-              <p className="flex flex-col p-4 text-base text-base-100">
-                Rating History
-              </p>
-              <Link
-                to="/app/ratings"
-                className="p-4 text-xs hover:underline text-base-100"
-              >
+              <p className="flex flex-col p-4 text-base text-base-100">Rating History</p>
+              <Link to="/app/ratings" className="p-4 text-xs hover:underline text-base-100">
                 View All
               </Link>
             </div>
@@ -246,9 +228,7 @@ export default function ClientEdit() {
                       <td>{rating?.ratingClassModel?.name || "-"}</td>
                       <td className="p-3">{rating.ratingYear || "-"}</td>
                       <td>
-                        <span className={`${rating.status} capitalize text-xs`}>
-                          {rating.status || "-"}
-                        </span>
+                        <span className={`${rating.status} capitalize text-xs`}>{rating.status || "-"}</span>
                       </td>
                     </tr>
                   ))}
@@ -261,21 +241,13 @@ export default function ClientEdit() {
         <div className=" w-[17em] bg-base-100 p-4 border border-accent">
           <div className="flex items-center justify-between pb-4 border-b border-accent">
             <p>Contacts</p>
-            <button
-              onClick={onNewContact}
-              className="text-xs btn btn-sm btn-secondary btn-outline"
-            >
+            <button onClick={onNewContact} className="text-xs btn btn-sm btn-secondary btn-outline">
               Add Contact
             </button>
           </div>
 
           {client?.contactModel?.map((contact) => (
-            <ContactCard
-              onEditForm={onEditForm}
-              onDeleteForm={onDeleteForm}
-              contact={contact}
-              key={contact.id}
-            />
+            <ContactCard onEditForm={onEditForm} onDeleteForm={onDeleteForm} contact={contact} key={contact.id} />
           ))}
         </div>
       </div>

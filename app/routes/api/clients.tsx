@@ -34,13 +34,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         industry: client?.industryModel?.name,
         createdAt: dayjs(client.createdAt).format("MMMM DD, YYYY"),
       }));
+
       return {
         thead,
         tbody,
         meta,
         error,
-        searchTitle:
-          "Search by clients, emails, industries, phone & countries ",
+        searchTitle: "Search by clients, emails, industries, phone & countries ",
       };
     });
   return defer({ queryData });

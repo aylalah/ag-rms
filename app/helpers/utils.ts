@@ -1,3 +1,9 @@
+import {
+  unstable_composeUploadHandlers,
+  unstable_createFileUploadHandler,
+  unstable_createMemoryUploadHandler,
+} from "@remix-run/node";
+
 export const convertZodSchema = (schema: any) => {
   let convertedFormObject: {
     field: string;
@@ -9,26 +15,15 @@ export const convertZodSchema = (schema: any) => {
 
   Object.keys(schema.shape).forEach((el: any) => {
     const convertZod = schema.shape[el as keyof typeof schema.shape];
-    if (
-      el !== "id" &&
-      el !== "createdAt" &&
-      el !== "updatedAt" &&
-      el !== "isDeleted" &&
-      el !== "createdBy"
-    ) {
+    if (el !== "id" && el !== "createdAt" && el !== "updatedAt" && el !== "isDeleted" && el !== "createdBy") {
       const type =
-        convertZod._def?.innerType?._def?.typeName ||
-        convertZod._def.typeName.replace("Zod", "")?.toLowerCase();
+        convertZod._def?.innerType?._def?.typeName || convertZod._def.typeName.replace("Zod", "")?.toLowerCase();
 
       const textUpdate = type?.replace("Zod", "").toLowerCase();
 
       const obj = {
         field: el,
-        type: textUpdate?.toLowerCase().includes("string")
-          ? "text"
-          : type === "nullable"
-          ? "text"
-          : textUpdate,
+        type: textUpdate?.toLowerCase().includes("string") ? "text" : type === "nullable" ? "text" : textUpdate,
         required: !convertZod.isNullable(),
         list: null,
         value: null,
@@ -53,7 +48,6 @@ export const capitalize = (str: string) => {
 export const randomString = (length: number) => {
   const chars = "23456789abcdefghkmnpqrstuvwxyzABCDEFGHKMNPQRSTUVWXYZ@!";
   let result = "";
-  for (let i = length; i > 0; --i)
-    result += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 };

@@ -11,9 +11,7 @@ export const splitCamelCase = (str: string) => {
     .join(" ");
 };
 
-export const Title = ({ title }: any) => (
-  <p className="text-[2rem] font-bold capitalize">{title}</p>
-);
+export const Title = ({ title }: any) => <p className="text-[2rem] font-bold capitalize">{title}</p>;
 
 export const ControlJsonTextArea = ({ el, value, isRequired }: any) => {
   const JsonRef = useRef<HTMLTextAreaElement>(null);
@@ -44,9 +42,7 @@ export const ControlJsonTextArea = ({ el, value, isRequired }: any) => {
   );
 };
 
-export const ControlTextArea = ({
-  ...props
-}: React.HTMLProps<HTMLTextAreaElement>) => {
+export const ControlTextArea = ({ ...props }: React.HTMLProps<HTMLTextAreaElement>) => {
   ``;
   return (
     <textarea
@@ -59,31 +55,23 @@ export const ControlTextArea = ({
   );
 };
 
-export const ControlInput = ({
-  ...props
-}: React.HTMLProps<HTMLInputElement>) => {
+export const ControlInput = ({ ...props }: React.HTMLProps<HTMLInputElement>) => {
   return (
     <input
       {...props}
+      accept={props?.type === "file" ? "image/*" : ""}
       role="presentation"
       name={props?.placeholder}
-      readOnly={
-        props?.placeholder === "createdBy" ||
-        props?.placeholder?.includes("password")
-      }
+      readOnly={props?.placeholder === "createdBy" || props?.placeholder?.includes("password")}
       placeholder={splitCamelCase(`${props?.placeholder}`)}
       className={`w-full px-4 py-3 border  shadow rounded outline-none resize-none border-line text-[15px] ${
-        props?.placeholder === "createdBy"
-          ? "bg-gray-300 dark:bg-gray-700 dark:opacity-50"
-          : "bg-base-100"
+        props?.placeholder === "createdBy" ? "bg-gray-300 dark:bg-gray-700 dark:opacity-50" : "bg-base-100"
       }`}
     ></input>
   );
 };
 
-export const ControlBoolean = ({
-  ...props
-}: React.HTMLProps<HTMLSelectElement>) => {
+export const ControlBoolean = ({ ...props }: React.HTMLProps<HTMLSelectElement>) => {
   return (
     <div className="px-3 border rounded shadow bg-base-100 border-line">
       <select
@@ -135,10 +123,7 @@ export const ControlCheckboxes = ({ el, value }: any) => {
             className="w-4 h-4 text-[15px] border shadow outline-none resize-none bg-base-100 border-line"
             defaultChecked={value?.active?.find((x: any) => x.id === ell.id)}
           />
-          <label
-            htmlFor={ell?.id}
-            className="flex-1 text-sm font-medium capitalize cursor-pointer "
-          >
+          <label htmlFor={ell?.id} className="flex-1 text-sm font-medium capitalize cursor-pointer ">
             {ell.name}
           </label>
         </div>
@@ -156,9 +141,7 @@ export const ControlInputSelect = ({
   const navigation = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocus, setIsFocus] = useState<boolean>(false);
-  const [value, setValue] = useState<any>(
-    data?.find((el: any) => el.id === props?.defaultValue)?.name
-  );
+  const [value, setValue] = useState<any>(data?.find((el: any) => el.id === props?.defaultValue)?.name);
   const [id, setId] = useState<any>(props?.defaultValue);
   const [list, setList] = useState<any>(data);
 
@@ -175,9 +158,7 @@ export const ControlInputSelect = ({
   const filterData = (e: any) => {
     const value = e.target.value;
     searchItem(value);
-    const filter = data?.filter((el: any) =>
-      el.name.toLowerCase().includes(value.toLowerCase())
-    );
+    const filter = data?.filter((el: any) => el.name.toLowerCase().includes(value.toLowerCase()));
     setList(filter);
   };
 
@@ -187,9 +168,7 @@ export const ControlInputSelect = ({
         inputRef.current?.blur();
         //check if the input value is on the list
 
-        const check = list?.find(
-          (el: any) => el.name === inputRef.current?.value
-        );
+        const check = list?.find((el: any) => el.name === inputRef.current?.value);
         if (!check) {
           inputRef.current.value = "";
           setValue("");
@@ -217,9 +196,7 @@ export const ControlInputSelect = ({
           type="text"
           placeholder={splitCamelCase(`${props?.placeholder}`)}
           className={`w-full p-4 outline-none resize-none text-[15px] ${
-            props?.placeholder === "createdBy"
-              ? "bg-gray-300 dark:bg-gray-700 dark:opacity-50"
-              : "bg-base-100"
+            props?.placeholder === "createdBy" ? "bg-gray-300 dark:bg-gray-700 dark:opacity-50" : "bg-base-100"
           }`}
         />
 
@@ -229,13 +206,7 @@ export const ControlInputSelect = ({
           className="flex items-center justify-center w-10 h-10 text-xl cursor-pointer text-text ri-arrow-down-s-fill"
         ></i>
 
-        <input
-          {...props}
-          type="hidden"
-          name={props?.placeholder}
-          defaultValue={id}
-          onChange={() => {}}
-        />
+        <input {...props} type="hidden" name={props?.placeholder} defaultValue={id} onChange={() => {}} />
       </div>
 
       <ul

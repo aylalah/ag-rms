@@ -15,12 +15,10 @@ export default function Clients() {
   const { setQueryData, storeQueryData } = useClientStore((state) => state);
 
   useEffect(() => {
-    toast.promise(
-      queryData,
-      { pending: "Loading clients . . . " },
-      { toastId: "clients" }
-    );
-    queryData.then((res) => setQueryData(res));
+    toast.promise(queryData, { pending: "Loading clients . . . " }, { toastId: "clients" });
+    queryData.then((res) => {
+      setQueryData(res);
+    });
   }, []);
 
   return (
