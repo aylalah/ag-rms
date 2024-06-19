@@ -26,12 +26,7 @@ type FormLayoutProps = {
   Fetcher: FetcherWithComponents<any>;
 };
 
-export const FormLayout = ({
-  Fetcher,
-  data,
-  formObject,
-  ...props
-}: FormLayoutProps) => {
+export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutProps) => {
   const password = "";
   const method = data?.id ? "PATCH" : "POST";
   const title = data?.id ? "Update" : "Create";
@@ -52,12 +47,12 @@ export const FormLayout = ({
       <Fetcher.Form method={method} className="flex h-full">
         <fieldset
           disabled={isSubmitting}
-          className="grid grid-cols-4 flex-1 overflow-hidden h-[100%] gap-2"
+          className="grid lg:grid-cols-4 flex-1 overflow-auto lg:overflow-hidden h-[100%] gap-2"
         >
-          <div className="flex flex-col flex-1 h-[100%] col-span-3 gap-4 overflow-auto relative ">
+          <div className="flex flex-col flex-1 h-[100%] lg:col-span-3 gap-4 lg:overflow-auto relative ">
             <Title title={`${title} ${props?.slug}`} />
 
-            <div className="grid flex-col col-span-2 grid-cols-2 gap-4 pt-6 pr-[4em] pb-10">
+            <div className="grid flex-col col-span-2 lg:grid-cols-2 gap-4 pt-6 lg:pr-[4em] pb-10">
               {formObject?.map((el, i: number) => {
                 const field = el?.field;
                 const defaultValue = el.value;
@@ -66,39 +61,20 @@ export const FormLayout = ({
                 const list = el?.list;
 
                 return (
-                  <div
-                    key={el?.field}
-                    className="flex grid flex-col grid-cols-1 gap-1 mb-3"
-                  >
+                  <div key={el?.field} className="flex grid flex-col grid-cols-1 gap-1 mb-3">
                     <p className="text-xs font-bold uppercase text-text text-light">
                       {splitCamelCase(field)} {isRequired && "*"}
                     </p>
 
-                    {dataType === "json" && (
-                      <ControlJsonTextArea el={field} required={isRequired} />
-                    )}
+                    {dataType === "json" && <ControlJsonTextArea el={field} required={isRequired} />}
                     {dataType === "textarea" && (
-                      <ControlTextArea
-                        placeholder={field}
-                        required={isRequired}
-                        defaultValue={defaultValue}
-                      />
+                      <ControlTextArea placeholder={field} required={isRequired} defaultValue={defaultValue} />
                     )}
                     {dataType === "text" && (
-                      <ControlInput
-                        placeholder={field}
-                        required={isRequired}
-                        type="text"
-                        defaultValue={defaultValue}
-                      />
+                      <ControlInput placeholder={field} required={isRequired} type="text" defaultValue={defaultValue} />
                     )}
                     {dataType === "date" && (
-                      <ControlInput
-                        placeholder={field}
-                        required={isRequired}
-                        type="date"
-                        defaultValue={defaultValue}
-                      />
+                      <ControlInput placeholder={field} required={isRequired} type="date" defaultValue={defaultValue} />
                     )}
                     {dataType === "email" && (
                       <ControlInput
@@ -149,7 +125,7 @@ export const FormLayout = ({
             </div>
           </div>
 
-          <div className="relative flex flex-col gap-4 overflow-hidden border rounded bg-base-100 border-line">
+          <div className="relative flex flex-col gap-4 border rounded lg:overflow-hidden bg-base-100 border-line">
             <div className="flex flex-col w-full gap-4 p-8 mx-auto overflow-hidden bg-base-100">
               <div className="pt-4">
                 <p className="text-sm font-semibold opacity-60">
@@ -158,9 +134,7 @@ export const FormLayout = ({
               </div>
 
               <div className="flex gap-4 py-3 border-b border-line">
-                <button className="flex-1 p-3 font-semibold rounded shadow btn bg-secondary text-base-100">
-                  Save
-                </button>
+                <button className="flex-1 p-3 font-semibold rounded shadow btn bg-secondary text-base-100">Save</button>
                 <span
                   onClick={onDeleteClick}
                   className="flex-1 p-3 font-semibold border rounded shadow bg-surface btn text-text"
@@ -183,22 +157,14 @@ export const FormLayout = ({
       <dialog className="modal" ref={modalRef}>
         <div className="modal-box">
           <h3 className="font-semibold">Confirm Delete</h3>
-          <p className="py-2 text-sm font-normal">
-            Delete Continue with delete ?
-          </p>
+          <p className="py-2 text-sm font-normal">Delete Continue with delete ?</p>
 
           <form method="dialog" className="flex justify-end w-full gap-4 mt-2">
-            <button
-              onClick={() => onConfirmDelete(false)}
-              className="btn btn-outlined"
-            >
+            <button onClick={() => onConfirmDelete(false)} className="btn btn-outlined">
               Cancel
             </button>
 
-            <button
-              onClick={() => onConfirmDelete(true)}
-              className="btn btn-secondary"
-            >
+            <button onClick={() => onConfirmDelete(true)} className="btn btn-secondary">
               Delete
             </button>
           </form>
@@ -210,9 +176,7 @@ export const FormLayout = ({
 
 const Card = (input: { title: string; description: string }) => (
   <div>
-    <h1 className="text-[10px] font-bold uppercase opacity-70">
-      {input.title}
-    </h1>
+    <h1 className="text-[10px] font-bold uppercase opacity-70">{input.title}</h1>
     <p className="text-sm">{input.description}</p>
   </div>
 );

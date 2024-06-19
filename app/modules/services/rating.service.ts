@@ -55,10 +55,7 @@ export class RatingClass extends MainClass {
     }
   }
 
-  async one(input: {
-    id: string;
-    include?: Prisma.RatingInclude<DefaultArgs>;
-  }) {
+  async one(input: { id: string; include?: Prisma.RatingInclude<DefaultArgs> }) {
     try {
       await this.hasAccess("all");
 
@@ -95,8 +92,7 @@ export class RatingClass extends MainClass {
         },
       });
 
-      if (check)
-        throw new Error("Rating already exists for this year and client");
+      if (check) throw new Error("Rating already exists for this year and client");
 
       const result = await dbQuery.rating.create({ data });
 
@@ -156,19 +152,15 @@ export class RatingClass extends MainClass {
     try {
       const user = await appDecryptData(token);
       const endPoint = process.env.AGUSTO_SERVICES_URL;
-      const { data } = await axios.get(
-        `${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`,
-        {
-          headers: { Authorization: `Bearer ${apiToken}` },
-        }
-      );
+      const { data } = await axios.get(`${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`, {
+        headers: { Authorization: `Bearer ${apiToken}` },
+      });
 
       const unitMembers = data?.data || [];
 
       if (!unitMembers?.length || unitMembers?.length < 1)
         return {
-          error:
-            "You are not a supervisor. Please contact your supervisor to create a rating",
+          error: "You are not a supervisor. Please contact your supervisor to create a rating",
         };
 
       const objData = convertZodSchema(RatingSchema);
@@ -189,16 +181,14 @@ export class RatingClass extends MainClass {
           //last 10 years
           if (el.field === "ratingYear") {
             el.type = "object";
-            el.list = Array.from(
-              { length: 10 },
-              (_, i) => new Date().getFullYear() - i
-            ).map((el) => ({
+            el.list = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((el) => ({
               id: el,
               name: el,
             }));
           }
 
           if (el.field === "status") {
+            el.value = "ongoing";
             el.type = "object";
             el.list = Object.keys(ratingStatus?.Values).map((el) => ({
               id: el,
@@ -207,8 +197,7 @@ export class RatingClass extends MainClass {
           }
 
           if (el.field === "supervisor") {
-            el.type = "object";
-            el.list = unitMembers
+            const sup = unitMembers
               ?.map((el: any) => ({
                 employee_id: el?.employee_id,
                 id: JSON.stringify({
@@ -220,6 +209,10 @@ export class RatingClass extends MainClass {
                 name: `${el?.firstname} ${el?.lastname}`,
               }))
               .filter((el: any) => el?.employee_id === user?.employee_id);
+
+            el.value = sup?.[0]?.id || "";
+            el.type = "object";
+            el.list = sup;
           }
 
           if (el.field === "primaryAnalyst") {
@@ -279,9 +272,7 @@ export class RatingClass extends MainClass {
       const toBeRemoved = ["responses", "client"];
 
       //sort and move status to the end
-      const filteredData = dataList.filter(
-        (el) => !toBeRemoved.includes(el.field)
-      );
+      const filteredData = dataList.filter((el) => !toBeRemoved.includes(el.field));
       const status = filteredData.find((el) => el.field === "status");
       const rest = filteredData
         .filter((el) => el.field !== "status")
