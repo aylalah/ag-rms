@@ -44,10 +44,7 @@ export class ContactClass extends MainClass {
     }
   }
 
-  async one(input: {
-    id: string;
-    include?: Prisma.ContactInclude<DefaultArgs> | null | undefined;
-  }) {
+  async one(input: { id: string; include?: Prisma.ContactInclude<DefaultArgs> | null | undefined }) {
     try {
       await this.hasAccess("all");
 
@@ -91,6 +88,8 @@ export class ContactClass extends MainClass {
 
       return { createContact: "Contact successfully created" };
     } catch (error: any) {
+      if (error.code === "P2002") return { error: "Email already exists" };
+
       return { error: error.message };
     }
   }
