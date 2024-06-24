@@ -62,7 +62,7 @@ export default function Index() {
       <div className="flex py-4 bg-primary frameBg">
         <div className="container flex lg:flex-row flex-col lg:gap-[6em]">
           <div className="relative flex flex-col lg:text-left text-center justify-center flex-1 gap-6 text-white py-[10vh] lg:py-[29vh]">
-            <h1 className="text-6xl font-bold leading-[1.1em]">Agusto & Co. Rating Management System</h1>
+            <h1 className="text-6xl font-bold leading-[1.1em]">Agusto & Co.'s Rating Management System</h1>
 
             <p className="text-xl leading-[1.6em] opacity-70">
               Strengthen your creditworthiness with the Agusto Rating Management System. Our streamlined platform
