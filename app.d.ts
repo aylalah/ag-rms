@@ -1,15 +1,16 @@
 type Slug =
-  | 'departments'
-  | 'methodologies'
-  | 'questionnaires'
-  | 'industries'
-  | 'ratings'
-  | 'ratingTypes'
-  | 'clients'
-  | 'contacts';
+  | "departments"
+  | "methodologies"
+  | "questionnaires"
+  | "industries"
+  | "ratings"
+  | "ratingTypes"
+  | "clients"
+  | "contacts";
 
 type User = {
   id: string;
+  employee_id: string;
   role: string;
   firstname: string;
   lastname: string;
@@ -25,7 +26,7 @@ type User = {
 type LogDBActionProps = {
   table: string;
   user: string;
-  action: 'login' | 'create' | 'update' | 'delete';
+  action: "login" | "create" | "update" | "delete";
   prevDocs: string;
   newDocs: string;
 };

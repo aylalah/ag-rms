@@ -19,13 +19,15 @@ export class RatingClass extends MainClass {
   async all(args: AllArgs) {
     try {
       await this.hasAccess("all");
+      const unit = this.user?.unit;
+
       const { where, orderBy, page, limit, include } = args;
       const setPage = page || 1;
       const take = limit || 10;
       const skip = (setPage - 1) * take || 0;
       const industries = await dbQuery.$transaction([
         dbQuery.rating.findMany({
-          where,
+          where: { ...where, unit },
           orderBy,
           take,
           skip,
@@ -82,6 +84,7 @@ export class RatingClass extends MainClass {
     try {
       const { data } = input;
       await this.hasAccess(["admin", "hod"]);
+      const unit = this.user?.unit;
 
       //const check for existing rating with year and client
       const check = await dbQuery.rating.findFirst({
@@ -94,7 +97,7 @@ export class RatingClass extends MainClass {
 
       if (check) throw new Error("Rating already exists for this year and client");
 
-      const result = await dbQuery.rating.create({ data });
+      const result = await dbQuery.rating.create({ data: { ...data, unit } });
 
       this.LogAction({
         table: "rating",
@@ -244,7 +247,6 @@ export class RatingClass extends MainClass {
                   email: el?.corporate_email,
                   employee_id: el?.employee_id,
                 }),
-                // id: `${el?.firstname} ${el?.lastname} 123433kfjelw23`,
                 name: `${el?.firstname} ${el?.lastname}`,
                 // email: `${el?.corporate_email}`,
               }))

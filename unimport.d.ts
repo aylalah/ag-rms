@@ -145,6 +145,8 @@ declare global {
   const DateTimeWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['DateTimeWithAggregatesFilterSchema']
   const EnumRatingStatusNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['EnumRatingStatusNullableFilterSchema']
   const EnumRatingStatusNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['EnumRatingStatusNullableWithAggregatesFilterSchema']
+  const EnumReportStatusNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['EnumReportStatusNullableFilterSchema']
+  const EnumReportStatusNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['EnumReportStatusNullableWithAggregatesFilterSchema']
   const IndustryAggregateArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IndustryAggregateArgsSchema']
   const IndustryArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['IndustryArgsSchema']
   const IndustryClass: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/modules/industry/industry.service')['IndustryClass']
@@ -294,6 +296,8 @@ declare global {
   const NestedDateTimeWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedDateTimeWithAggregatesFilterSchema']
   const NestedEnumRatingStatusNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedEnumRatingStatusNullableFilterSchema']
   const NestedEnumRatingStatusNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedEnumRatingStatusNullableWithAggregatesFilterSchema']
+  const NestedEnumReportStatusNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedEnumReportStatusNullableFilterSchema']
+  const NestedEnumReportStatusNullableWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedEnumReportStatusNullableWithAggregatesFilterSchema']
   const NestedFloatFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedFloatFilterSchema']
   const NestedFloatNullableFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedFloatNullableFilterSchema']
   const NestedIntFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedIntFilterSchema']
@@ -306,6 +310,7 @@ declare global {
   const NestedStringWithAggregatesFilterSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NestedStringWithAggregatesFilterSchema']
   const NullableDateTimeFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableDateTimeFieldUpdateOperationsInputSchema']
   const NullableEnumRatingStatusFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableEnumRatingStatusFieldUpdateOperationsInputSchema']
+  const NullableEnumReportStatusFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableEnumReportStatusFieldUpdateOperationsInputSchema']
   const NullableIntFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableIntFieldUpdateOperationsInputSchema']
   const NullableStringFieldUpdateOperationsInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['NullableStringFieldUpdateOperationsInputSchema']
   const QueryModeSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['QueryModeSchema']
@@ -527,6 +532,7 @@ declare global {
   const RatingWhereUniqueInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['RatingWhereUniqueInputSchema']
   const RatingWithRelationsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['RatingWithRelationsSchema']
   const ReportClass: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/modules/services/reports.service')['ReportClass']
+  const ReportStatusSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['ReportStatusSchema']
   const ReportsAggregateArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['ReportsAggregateArgsSchema']
   const ReportsArgsSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['ReportsArgsSchema']
   const ReportsCountOrderByAggregateInputSchema: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')['ReportsCountOrderByAggregateInputSchema']
@@ -621,6 +627,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { RatingStatusType, Methodology, MethodologyOptionalDefaults, MethodologyRelations, MethodologyWithRelations, MethodologyOptionalDefaultsRelations, MethodologyOptionalDefaultsWithRelations, Questionnaire, QuestionnaireOptionalDefaults, QuestionnaireRelations, QuestionnaireWithRelations, QuestionnaireOptionalDefaultsRelations, QuestionnaireOptionalDefaultsWithRelations, Industry, IndustryOptionalDefaults, IndustryRelations, IndustryWithRelations, IndustryOptionalDefaultsRelations, IndustryOptionalDefaultsWithRelations, Reports, ReportsOptionalDefaults, ReportsRelations, ReportsWithRelations, ReportsOptionalDefaultsRelations, ReportsOptionalDefaultsWithRelations, Rating, RatingOptionalDefaults, RatingRelations, RatingWithRelations, RatingOptionalDefaultsRelations, RatingOptionalDefaultsWithRelations, RatingClassOptionalDefaults, RatingClassRelations, RatingClassWithRelations, RatingClassOptionalDefaultsRelations, RatingClassOptionalDefaultsWithRelations, Client, ClientOptionalDefaults, ClientRelations, ClientWithRelations, ClientOptionalDefaultsRelations, ClientOptionalDefaultsWithRelations, Contact, ContactOptionalDefaults, ContactRelations, ContactWithRelations, ContactOptionalDefaultsRelations, ContactOptionalDefaultsWithRelations, Log, LogOptionalDefaults } from '/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index'
+  export type { RatingStatusType, ReportStatusType, Methodology, MethodologyOptionalDefaults, MethodologyRelations, MethodologyWithRelations, MethodologyOptionalDefaultsRelations, MethodologyOptionalDefaultsWithRelations, Questionnaire, QuestionnaireOptionalDefaults, QuestionnaireRelations, QuestionnaireWithRelations, QuestionnaireOptionalDefaultsRelations, QuestionnaireOptionalDefaultsWithRelations, Industry, IndustryOptionalDefaults, IndustryRelations, IndustryWithRelations, IndustryOptionalDefaultsRelations, IndustryOptionalDefaultsWithRelations, Reports, ReportsOptionalDefaults, ReportsRelations, ReportsWithRelations, ReportsOptionalDefaultsRelations, ReportsOptionalDefaultsWithRelations, Rating, RatingOptionalDefaults, RatingRelations, RatingWithRelations, RatingOptionalDefaultsRelations, RatingOptionalDefaultsWithRelations, RatingClassOptionalDefaults, RatingClassRelations, RatingClassWithRelations, RatingClassOptionalDefaultsRelations, RatingClassOptionalDefaultsWithRelations, Client, ClientOptionalDefaults, ClientRelations, ClientWithRelations, ClientOptionalDefaultsRelations, ClientOptionalDefaultsWithRelations, Contact, ContactOptionalDefaults, ContactRelations, ContactWithRelations, ContactOptionalDefaultsRelations, ContactOptionalDefaultsWithRelations, Log, LogOptionalDefaults } from '/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index'
   import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/zodPrisma/index')
 }

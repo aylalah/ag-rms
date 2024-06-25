@@ -14,13 +14,7 @@ interface ContactFormProps {
 }
 //generate password using the randomstring function from utils.ts
 
-const ContactForm = ({
-  Fetcher,
-  clientId,
-  onClose,
-  contact,
-  show,
-}: ContactFormProps) => {
+const ContactForm = ({ Fetcher, clientId, onClose, contact, show }: ContactFormProps) => {
   //generate password using the randomstring function from utils.ts
   // const [password, setPassword] = useState("");
 
@@ -40,9 +34,7 @@ const ContactForm = ({
       <Fetcher.Form method={contact?.id ? "PATCH" : "POST"}>
         <fieldset className="flex flex-col justify-start gap-2 bg-base-100 w-[30em]  p-[3em] rounded-lg shadow">
           <header className="flex items-end justify-between gap-1 pb-4 ">
-            <p className="text-2xl font-bold">
-              {contact?.id ? "Update" : "Create"} Contact
-            </p>
+            <p className="text-2xl font-bold">{contact?.id ? "Update" : "Create"} Contact</p>
 
             <span
               className="flex items-center gap-2 transition-all cursor-pointer hover:scale-105 hover:opacity-60"
@@ -64,18 +56,9 @@ const ContactForm = ({
               />
               Can Login?
             </label>
-            <input
-              name="client"
-              type="hidden"
-              defaultValue={clientId || undefined}
-            />
+            <input name="client" type="hidden" defaultValue={clientId || undefined} />
 
-            <input
-              name="id"
-              type="hidden"
-              defaultValue={contact?.id || undefined}
-              onChange={() => ""}
-            />
+            <input name="id" type="hidden" defaultValue={contact?.id || undefined} onChange={() => ""} />
             <TextInput
               placeholder="Please enter the full name"
               type="text"
@@ -103,7 +86,7 @@ const ContactForm = ({
               />
             )}
             <TextInput
-              placeholder="Enter password"
+              placeholder="Enter phone numbers separated by commas"
               type="text"
               label="Phone Numbers"
               name="phoneNumbers"

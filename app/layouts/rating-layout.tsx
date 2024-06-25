@@ -4,6 +4,13 @@ import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
+type AnalystObj = {
+  employee_id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+};
+
 type RatingProps = {
   rating: RatingWithRelations & { primaryAnalystEmail?: string; secondaryAnalystEmail?: string };
   Fetcher: FetcherWithComponents<any>;
@@ -11,17 +18,29 @@ type RatingProps = {
   isReadOnly?: boolean;
   linkTo: string;
   isClientOnly: boolean;
+  SupervisorObject: AnalystObj;
+  PrimaryAnalystObject: AnalystObj;
+  SecondaryAnalystObject: AnalystObj;
 };
 
 const reportUploadMenu = [{ name: "Draft Report" }, { name: "Final Report" }];
 
-export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = false }: RatingProps) {
+export default function RatingLayout({
+  rating,
+  linkTo,
+  Fetcher,
+  isClientOnly = false,
+  SupervisorObject,
+  PrimaryAnalystObject,
+  SecondaryAnalystObject,
+}: RatingProps) {
   const ratingRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [reportType, setReportType] = useState<string>("");
   const [reportVersion, setReportVersion] = useState<string>("");
   const FetcherData = Fetcher?.data as { message: string; error: string };
   const isSubmitting = Fetcher.state === "submitting";
+  const [forAMI, setForAMI] = useState(false);
 
   const getVersion = (name: string) => {
     const thisReports = rating?.reportModel?.filter((el) => el.reportTitle === name);
@@ -48,13 +67,15 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
 
   useEffect(() => {
     if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: "error" });
-    if (FetcherData?.message) {
-      toast.success(FetcherData?.message, { toastId: "success" });
-      formRef.current?.reset();
-      onCloseHandler();
-    }
-  });
+    if (FetcherData?.message) toast.success(FetcherData?.message, { toastId: "success" });
+    formRef.current?.reset();
+    onCloseHandler();
+  }, [FetcherData]);
 
+  /*   useEffect(() => {
+    ratingRef.current?.showModal();
+  }, []);
+ */
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
@@ -176,19 +197,20 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
           </div>
           <div className="p-4 border rounded bg-base-100 border-accent min-h-[20vh]">
             <ul>
-              <Tr name="Report Name" version="Version" isHeader />
+              <Tr name="Report Name" version="Version" status="Status" isHeader />
               {rating?.reportModel?.map((report, i) => (
                 <Tr
-                  key={i}
+                  key={report?.id}
                   index={i + 1}
                   name={report?.reportTitle}
                   version={report?.version}
-                  link={report?.reportFileUrl}
+                  status={report?.status}
+                  link={report?.reportFileUrl || ""}
                 />
               ))}
             </ul>
 
-            {!isClientOnly && (
+            {!isClientOnly && rating?.status === "ongoing" && (
               <div className="flex justify-center">
                 <div className="flex justify-end dropdown dropdown-end">
                   <button tabIndex={1} className="mt-6 text-sm border btn btn-secondary border-secondary">
@@ -200,8 +222,8 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
                     tabIndex={1}
                     className="rounded-lg p-4 text-sm shadow-lg dropdown-content border bg-base-100 w-[18em] z-[10] mr-1"
                   >
-                    {reportUploadMenu?.map((el) => (
-                      <li key={el.name} onClick={() => onUploadHandler(el.name)}>
+                    {reportUploadMenu?.map((el, i) => (
+                      <li key={i} onClick={() => onUploadHandler(el.name)}>
                         <a href="#" className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2">
                           <i className="ri-file-text-line" />
                           {el?.name}
@@ -256,12 +278,79 @@ export default function RatingLayout({ rating, linkTo, Fetcher, isClientOnly = f
                 <h2 className="text-lg font-bold text-center uppercase text-primary">{reportType} Upload</h2>
                 <i className="text-2xl cursor-pointer ri-close-circle-line text-secondary" onClick={onCloseHandler} />
               </div>
+              <input type="hidden" required name="client" defaultValue={rating?.clientModel?.companyName} />
               <input type="hidden" required name="reportTitle" defaultValue={reportType} />
               <input type="hidden" required name="version" defaultValue={reportVersion} />
-              <input type="file" required name="file" className="w-full file-input file-input-bordered" />
+              <input type="hidden" required name="supervisorId" defaultValue={SupervisorObject?.employee_id} />
+              <input type="hidden" required name="supervisorEmail" defaultValue={SupervisorObject?.email} />
+              <input type="hidden" required name="primaryAnalystId" defaultValue={PrimaryAnalystObject?.employee_id} />
+              <input
+                type="hidden"
+                required
+                name="secondaryAnalystId"
+                defaultValue={SecondaryAnalystObject?.employee_id}
+              />
+
+              {reportType === "Final Report" && (
+                <div className="flex items-center gap-2">
+                  <input
+                    id="checkbox"
+                    type="checkbox"
+                    className="checkbox checkbox-secondary"
+                    onChange={() => setForAMI(!forAMI)}
+                  />
+                  <label htmlFor="checkbox" className="text-sm cursor-pointer hint">
+                    Upload to AMI ?
+                  </label>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="file" className="text-sm hint">
+                  {reportType} File
+                </label>
+                <input
+                  type="file"
+                  required
+                  name="file"
+                  className="w-full file-input file-input-bordered"
+                  accept="application/pdf"
+                />
+              </div>
+
+              {reportType === "Final Report" && (
+                <div>
+                  <label htmlFor="file" className="text-sm hint">
+                    Final Letter (Signed)
+                  </label>
+                  <input
+                    required
+                    type="file"
+                    name="finalLetter"
+                    className="w-full file-input file-input-bordered"
+                    accept="application/pdf"
+                  />
+                </div>
+              )}
+
+              {reportType === "Final Report" && forAMI && (
+                <div>
+                  <label htmlFor="file" className="text-sm hint">
+                    Customer Consent Document (Signed)
+                  </label>
+                  <input
+                    required
+                    type="file"
+                    name="consentLetter"
+                    className="w-full file-input file-input-bordered"
+                    accept="application/pdf"
+                  />
+                </div>
+              )}
+
               <button className="btn btn-secondary">
                 {isSubmitting && <span className="loading loading-xs"></span>}
-                Upload
+                UPLOAD
               </button>
             </fieldset>
           </Fetcher.Form>
@@ -276,11 +365,13 @@ const Tr = ({
   version,
   link,
   action,
+  status,
   isHeader,
   index,
 }: {
   name: string;
   version: string;
+  status: string;
   link?: string;
   action?: string;
   isHeader?: boolean;
@@ -289,20 +380,24 @@ const Tr = ({
   const isEvenStyle = index && index % 2 === 0;
   return (
     <li
-      className={`grid items-center grid-cols-3 text-sm ${
+      className={`grid items-center grid-cols-4 text-sm ${
         isHeader && "font-bold uppercase bg-accent"
       } border-b border-accent ${isEvenStyle && "bg-gray-100"}`}
     >
-      <div className="h-full col-span-2 px-2 py-3 border-r">{name}</div>
+      <div className="h-full col-span-2 px-2 py-3 ">{name}</div>
       <Link
         to={`${link}`}
         target="_blank"
         referrerPolicy="no-referrer"
-        className={`py-3 text-center p-x2  ${!isHeader && "link text-secondary"}`}
+        className={`py-3 text-center p-x2  border-l border-r ${!isHeader && "link text-secondary"}`}
       >
         {version}
       </Link>
-      <div></div>
+      <div
+        className={`text-sm text-center ${status === "pending" && "font-bold text-secondary underline cursor-pointer"}`}
+      >
+        {status?.charAt(0)?.toUpperCase() + status?.slice(1)}
+      </div>
     </li>
   );
 };
