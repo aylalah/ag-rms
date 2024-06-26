@@ -24,9 +24,10 @@ type FormLayoutProps = {
       }[]
     | undefined;
   Fetcher: FetcherWithComponents<any>;
+  canDelete?: boolean;
 };
 
-export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutProps) => {
+export const FormLayout = ({ Fetcher, data, formObject, canDelete = true, ...props }: FormLayoutProps) => {
   const method = data?.id ? "PATCH" : "POST";
   const title = data?.id ? "Update" : "Create";
   const isSubmitting = Fetcher?.state === "submitting";
@@ -138,12 +139,14 @@ export const FormLayout = ({ Fetcher, data, formObject, ...props }: FormLayoutPr
 
               <div className="flex gap-4 py-3 border-b border-line">
                 <button className="flex-1 p-3 font-semibold rounded shadow btn bg-secondary text-base-100">Save</button>
-                <span
-                  onClick={onDeleteClick}
-                  className="flex-1 p-3 font-semibold border rounded shadow bg-surface btn text-text"
-                >
-                  Delete Item
-                </span>
+                {canDelete && (
+                  <span
+                    onClick={onDeleteClick}
+                    className="flex-1 p-3 font-semibold border rounded shadow bg-surface btn text-text"
+                  >
+                    Delete Item
+                  </span>
+                )}
               </div>
 
               <div className="flex flex-col h-full gap-4 overflow-hidden">

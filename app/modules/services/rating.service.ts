@@ -112,13 +112,18 @@ export class RatingClass extends MainClass {
     }
   }
 
-  async update(input: { id: string; data: Prisma.RatingUpdateInput }) {
+  async update(input: { id: string; data: any }) {
     try {
       await this.hasAccess(["admin", "client", "hod"]);
       const { id, data } = input;
 
+      console.log(data);
+
       const prevDocs = await dbQuery.rating.findUnique({ where: { id } });
-      const result = await dbQuery.rating.update({ where: { id }, data });
+      const result = await dbQuery.rating.update({
+        where: { id },
+        data: { ...data },
+      });
 
       this.LogAction({
         table: "rating",
@@ -184,7 +189,7 @@ export class RatingClass extends MainClass {
           //last 10 years
           if (el.field === "ratingYear") {
             el.type = "object";
-            el.list = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((el) => ({
+            el.list = Array.from({ length: 3 }, (_, i) => new Date().getFullYear() - i).map((el) => ({
               id: el,
               name: el,
             }));
@@ -281,7 +286,8 @@ export class RatingClass extends MainClass {
         .filter((el) => el.field !== "questionnaireFiles")
         .filter((el) => el.field !== "additionalFiles")
         .filter((el) => el.field !== "requireAdditionalFiles")
-        .filter((el) => el.field !== "requireQuestionnaireFiles");
+        .filter((el) => el.field !== "requireQuestionnaireFiles")
+        .filter((el) => el.field !== "unit");
       rest.push(status as any);
 
       return { formObject: rest };

@@ -105,7 +105,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           To: primaryAnalyst,
           Cc: `${supervisor},${secondaryAnalyst}`,
 
-          Subject: "Client File Upload",
+          Subject: `${company} Client File Upload`,
           HtmlBody: `${company} just uploaded the following file${
             fileList.length > 1 ? "s" : ""
           } for ${ratingname}.<br/><br/> </n> ${fileList.toString()} </n> You can view the file${

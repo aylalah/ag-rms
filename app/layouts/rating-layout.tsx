@@ -1,5 +1,5 @@
 import { Rating } from "@helpers/zodPrisma";
-import { FetcherWithComponents, Link } from "@remix-run/react";
+import { FetcherWithComponents, Link, useNavigate } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -34,6 +34,7 @@ export default function RatingLayout({
   PrimaryAnalystObject,
   SecondaryAnalystObject,
 }: RatingProps) {
+  const navigate = useNavigate();
   const ratingRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [reportType, setReportType] = useState<string>("");
@@ -48,8 +49,6 @@ export default function RatingLayout({
   };
 
   const onUploadHandler = (name: string) => {
-    ratingRef.current?.showModal();
-
     if (name === "Draft Report") {
       const version = getVersion(name);
       setReportType(name);
@@ -58,9 +57,17 @@ export default function RatingLayout({
 
     if (name === "Final Report") {
       const version = getVersion(name);
+      if (!rating?.issueDate || !rating?.expiryDate || !rating?.ratingClass) {
+        console.log(`/app/ratings/${rating?.id}/edit-rating`);
+        window.location.href = `/app/ratings/${rating?.id}/edit-rating`;
+        //toast.error("Please fill in the required fields before uploading the final report", { toastId: "error" });
+        return;
+      }
       setReportType(name);
       setReportVersion(`v${version}.0`);
     }
+
+    ratingRef.current?.showModal();
   };
 
   const onCloseHandler = () => ratingRef.current?.close();
