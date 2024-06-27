@@ -33,7 +33,7 @@ export class RatingClass extends MainClass {
           skip,
           include: { ratingClassModel: true, ...include },
         }),
-        dbQuery.rating.count({ where }),
+        dbQuery.rating.count({ where: { ...where, unit } }),
       ]);
 
       const [docs, totalDocs] = industries;
