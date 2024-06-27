@@ -12,9 +12,9 @@ export const sendEmailService = async (mailPayload: Message) => {
       ...mailPayload,
       From: `${mailPayload.From} <${emailFrom}>`,
     });
-    // console.log("Email sent successfully");
+    console.log("Email sent successfully");
   } catch (error) {
-    console.error(error);
+    console.error("SENDING EMAIL ERROR", error);
     console.error("Cannot complete this request at the moment");
   }
 };

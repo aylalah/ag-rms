@@ -19,9 +19,7 @@ export const action = async ({ request }: LoaderFunctionArgs) => {
   if (client && token) {
     return redirectDocument("/client/ratings", {
       headers: {
-        "set-cookie": await appCookie.serialize(
-          JSON.stringify({ token, client })
-        ),
+        "set-cookie": await appCookie.serialize(JSON.stringify({ token, client })),
       },
     });
   }
@@ -36,6 +34,7 @@ export default function EmailConfirmation() {
   const Fetcher = useFetcher();
   const FetcherData = Fetcher?.data as { error: string };
   const { email } = useLoaderData<typeof loader>();
+  const isLoading = Fetcher.state === "submitting";
 
   useEffect(() => {
     if (FetcherData?.error) {
@@ -50,13 +49,12 @@ export default function EmailConfirmation() {
         <div className="flex flex-col items-center justify-center gap-4 p-8 border-b">
           <h1 className="text-2xl font-bold">2 Factor Authentication</h1>
           <div className="text-sm text-center opacity-70">
-            We have sent an email to{" "}
-            <span className="font-bold text-secondary">{email}</span>.<br />
+            We have sent an email to <span className="font-bold text-secondary">{email}</span>.<br />
             Please enter your six digit token to continue
           </div>
 
           <Fetcher.Form method="post" className="w-full">
-            <fieldset className="flex flex-col w-full gap-2">
+            <fieldset disabled={isLoading} className="flex flex-col w-full gap-2">
               <input
                 type="hidden"
                 max={6}
@@ -70,7 +68,10 @@ export default function EmailConfirmation() {
                 name="token"
                 className="w-full text-xl font-semibold text-center input input-bordered"
               />
-              <button className="w-full p-2 btn btn-secondary">Continue</button>
+              <button className="w-full gap-2 p-2 btn btn-secondary">
+                {isLoading && <span className="loading loading-xs"></span>}
+                Continue
+              </button>
             </fieldset>
           </Fetcher.Form>
         </div>
