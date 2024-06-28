@@ -12,7 +12,10 @@ type AnalystObj = {
 };
 
 type RatingProps = {
-  rating: RatingWithRelations & { primaryAnalystEmail?: string; secondaryAnalystEmail?: string };
+  rating: RatingWithRelations & {
+    primaryAnalystEmail?: string;
+    secondaryAnalystEmail?: string;
+  };
   Fetcher: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
@@ -44,7 +47,9 @@ export default function RatingLayout({
   const [forAMI, setForAMI] = useState(false);
 
   const getVersion = (name: string) => {
-    const thisReports = rating?.reportModel?.filter((el) => el.reportTitle === name);
+    const thisReports = rating?.reportModel?.filter(
+      (el) => el.reportTitle === name
+    );
     return thisReports?.length ? thisReports.length + 1 : 1;
   };
 
@@ -73,8 +78,10 @@ export default function RatingLayout({
   const onCloseHandler = () => ratingRef.current?.close();
 
   useEffect(() => {
-    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: "error" });
-    if (FetcherData?.message) toast.success(FetcherData?.message, { toastId: "success" });
+    if (FetcherData?.error)
+      toast.error(FetcherData?.error, { toastId: "error" });
+    if (FetcherData?.message)
+      toast.success(FetcherData?.message, { toastId: "success" });
     formRef.current?.reset();
     onCloseHandler();
   }, [FetcherData]);
@@ -90,7 +97,9 @@ export default function RatingLayout({
           <h1 className="text-3xl font-bold">
             {rating?.ratingYear} - {rating?.ratingTitle}
           </h1>
-          <span className={`px-4 py-1 text text-white capitalize rounded-full ${rating?.status}`}>
+          <span
+            className={`px-4 py-1 text text-white capitalize rounded-full ${rating?.status}`}
+          >
             {rating?.status}
           </span>
         </div>
@@ -152,24 +161,44 @@ export default function RatingLayout({
         <div className="flex-1">
           <div className="flex flex-col flex-1 gap-6">
             <div className="flex flex-col gap-2">
-              <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">Summary</h2>
+              <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">
+                Summary
+              </h2>
 
               <div className="grid grid-cols-2 gap-4">
-                <SummaryCard title="Rating Class" isLarge subTitle={`${rating?.ratingClassModel?.name || "-"}`} />
-                <SummaryCard title="Rating Year" isLarge subTitle={`${rating?.ratingYear || ""}`} />
+                <SummaryCard
+                  title="Rating Class"
+                  isLarge
+                  subTitle={`${rating?.ratingClassModel?.name || "-"}`}
+                />
+                <SummaryCard
+                  title="Rating Year"
+                  isLarge
+                  subTitle={`${rating?.ratingYear || ""}`}
+                />
                 <SummaryCard
                   title="Issue Date"
-                  subTitle={!rating?.issueDate ? "-" : dayjs(rating?.issueDate).format("MMMM DD, YYYY")}
+                  subTitle={
+                    !rating?.issueDate
+                      ? "-"
+                      : dayjs(rating?.issueDate).format("MMMM DD, YYYY")
+                  }
                 />
                 <SummaryCard
                   title="Expiry Date"
-                  subTitle={!rating?.expiryDate ? "-" : dayjs(rating?.expiryDate).format("MMMM DD, YYYY")}
+                  subTitle={
+                    !rating?.expiryDate
+                      ? "-"
+                      : dayjs(rating?.expiryDate).format("MMMM DD, YYYY")
+                  }
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">Contact Information</h2>
+              <h2 className="p-4 text-sm font-bold text-white uppercase bg-primary">
+                Contact Information
+              </h2>
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
                   title="Primary Analyst"
@@ -204,7 +233,12 @@ export default function RatingLayout({
           </div>
           <div className="p-4 border rounded bg-base-100 border-accent min-h-[20vh]">
             <ul>
-              <Tr name="Report Name" version="Version" status="Status" isHeader />
+              <Tr
+                name="Report Name"
+                version="Version"
+                status="Status"
+                isHeader
+              />
               {rating?.reportModel?.map((report, i) => (
                 <Tr
                   key={report?.id}
@@ -220,7 +254,10 @@ export default function RatingLayout({
             {!isClientOnly && rating?.status === "ongoing" && (
               <div className="flex justify-center">
                 <div className="flex justify-end dropdown dropdown-end">
-                  <button tabIndex={1} className="mt-6 text-sm border btn btn-secondary border-secondary">
+                  <button
+                    tabIndex={1}
+                    className="mt-6 text-sm border btn btn-secondary border-secondary"
+                  >
                     Upload Report
                     <i className="ri-arrow-down-s-line" />
                   </button>
@@ -231,7 +268,10 @@ export default function RatingLayout({
                   >
                     {reportUploadMenu?.map((el, i) => (
                       <li key={i} onClick={() => onUploadHandler(el.name)}>
-                        <a href="#" className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2">
+                        <a
+                          href="#"
+                          className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2"
+                        >
                           <i className="ri-file-text-line" />
                           {el?.name}
                         </a>
@@ -244,7 +284,9 @@ export default function RatingLayout({
           </div>
 
           <div className="p-4 mt-4 border rounded bg-primary border-accent">
-            <h2 className="text-sm font-bold text-white uppercase ">Download Resources</h2>
+            <h2 className="text-sm font-bold text-white uppercase ">
+              Download Resources
+            </h2>
           </div>
 
           <div className="border rounded border-accent">
@@ -279,18 +321,78 @@ export default function RatingLayout({
 
       {!isClientOnly && (
         <dialog ref={ratingRef} id="my_modal_2" className="modal">
-          <Fetcher.Form ref={formRef} method="patch" encType="multipart/form-data">
-            <fieldset disabled={isSubmitting} className="p-10 flex flex-col gap-6 bg-base-100 w-[30em] rounded">
+          <Fetcher.Form
+            ref={formRef}
+            method="patch"
+            encType="multipart/form-data"
+          >
+            <fieldset
+              disabled={isSubmitting}
+              className="p-10 flex flex-col gap-6 bg-base-100 w-[30em] rounded"
+            >
               <div className="flex justify-between">
-                <h2 className="text-lg font-bold text-center uppercase text-primary">{reportType} Upload</h2>
-                <i className="text-2xl cursor-pointer ri-close-circle-line text-secondary" onClick={onCloseHandler} />
+                <h2 className="text-lg font-bold text-center uppercase text-primary">
+                  {reportType} Upload
+                </h2>
+                <i
+                  className="text-2xl cursor-pointer ri-close-circle-line text-secondary"
+                  onClick={onCloseHandler}
+                />
               </div>
-              <input type="hidden" required name="client" defaultValue={rating?.clientModel?.companyName} />
-              <input type="hidden" required name="reportTitle" defaultValue={reportType} />
-              <input type="hidden" required name="version" defaultValue={reportVersion} />
-              <input type="hidden" required name="supervisorId" defaultValue={SupervisorObject?.employee_id} />
-              <input type="hidden" required name="supervisorEmail" defaultValue={SupervisorObject?.email} />
-              <input type="hidden" required name="primaryAnalystId" defaultValue={PrimaryAnalystObject?.employee_id} />
+              <input
+                type="hidden"
+                required
+                name="contacts"
+                defaultValue={JSON.stringify(rating?.contacts)}
+              />
+              <input
+                type="hidden"
+                required
+                name="client"
+                defaultValue={rating?.clientModel?.companyName}
+              />
+              <input
+                type="hidden"
+                required
+                name="year"
+                defaultValue={rating?.ratingYear}
+              />
+              <input
+                type="hidden"
+                required
+                name="title"
+                defaultValue={rating?.ratingTitle}
+              />
+              <input
+                type="hidden"
+                required
+                name="reportTitle"
+                defaultValue={reportType}
+              />
+              <input
+                type="hidden"
+                required
+                name="version"
+                defaultValue={reportVersion}
+              />
+              <input
+                type="hidden"
+                required
+                name="supervisorId"
+                defaultValue={SupervisorObject?.employee_id}
+              />
+              <input
+                type="hidden"
+                required
+                name="supervisorEmail"
+                defaultValue={SupervisorObject?.email}
+              />
+              <input
+                type="hidden"
+                required
+                name="primaryAnalystId"
+                defaultValue={PrimaryAnalystObject?.employee_id}
+              />
               <input
                 type="hidden"
                 required
@@ -306,7 +408,10 @@ export default function RatingLayout({
                     className="checkbox checkbox-secondary"
                     onChange={() => setForAMI(!forAMI)}
                   />
-                  <label htmlFor="checkbox" className="text-sm cursor-pointer hint">
+                  <label
+                    htmlFor="checkbox"
+                    className="text-sm cursor-pointer hint"
+                  >
                     Upload to AMI ?
                   </label>
                 </div>
@@ -396,12 +501,17 @@ const Tr = ({
         to={`${link}`}
         target="_blank"
         referrerPolicy="no-referrer"
-        className={`py-3 text-center p-x2  border-l border-r ${!isHeader && "link text-secondary"}`}
+        className={`py-3 text-center p-x2  border-l border-r ${
+          !isHeader && "link text-secondary"
+        }`}
       >
         {version}
       </Link>
       <div
-        className={`text-sm text-center ${status === "pending" && "font-bold text-secondary underline cursor-pointer"}`}
+        className={`text-sm text-center ${
+          status === "pending" &&
+          "font-bold text-secondary underline cursor-pointer"
+        }`}
       >
         {status?.charAt(0)?.toUpperCase() + status?.slice(1)}
       </div>
@@ -423,6 +533,12 @@ const SummaryCard = ({
   <div className="flex flex-col gap-1 px-4 py-3 shadow bg-base-100">
     <p className="text-sm font-bold capitalize opacity-60 ">{title}</p>
     {subSubTitle && <h2 className="font-medium opacity-90">{subSubTitle}</h2>}
-    <h2 className={` font-bold opacity-90 ${isLarge ? "text-[20px]" : "text-[14px]"}`}>{subTitle}</h2>
+    <h2
+      className={` font-bold opacity-90 ${
+        isLarge ? "text-[20px]" : "text-[14px]"
+      }`}
+    >
+      {subTitle}
+    </h2>
   </div>
 );

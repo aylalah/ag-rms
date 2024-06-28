@@ -44,7 +44,10 @@ export class ContactClass extends MainClass {
     }
   }
 
-  async one(input: { id: string; include?: Prisma.ContactInclude<DefaultArgs> | null | undefined }) {
+  async one(input: {
+    id: string;
+    include?: Prisma.ContactInclude<DefaultArgs> | null | undefined;
+  }) {
     try {
       await this.hasAccess("all");
 
@@ -52,7 +55,7 @@ export class ContactClass extends MainClass {
       const contact = await dbQuery.contact.findUnique({
         where: { id },
       });
-
+      console.log({ contact });
       return { contact };
     } catch (error: any) {
       return { error: error.message };
@@ -65,6 +68,7 @@ export class ContactClass extends MainClass {
 
       await this.hasAccess("all");
       const result = await dbQuery.contact.create({ data });
+      console.log({ result });
 
       this.LogAction({
         table: "contact",
@@ -82,7 +86,11 @@ export class ContactClass extends MainClass {
           From: "info@agusto.com",
           To: `${data.email}`,
           Subject: "Agusto & Co. Rating Management System ",
-          HtmlBody: `<p>Please find below your Agusto & Co RMS login credentials </p><p>Email: ${data.email} <br/> <br/> Password: ${data.password}</p><p>The Login Url is ${clientUrl}  </p>`,
+          HtmlBody: `<p>Dear Rating Client,</p> 
+          <p>You have been grated access to the <a href=${clientUrl}>Agusto & Co. Rating Management System.</a></p>
+           <p>Please see below your log in details:</p>
+           <p>Email Address: ${data.email} </p> 
+           <p> Password: ${data.password}</p>`,
         });
       }
 

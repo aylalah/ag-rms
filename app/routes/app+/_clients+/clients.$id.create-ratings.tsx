@@ -1,10 +1,20 @@
-import axios from 'axios';
-import { ActionFunctionArgs, defer, json, LoaderFunctionArgs } from '@remix-run/node';
-import { Await, useFetcher, useLoaderData, useNavigate } from '@remix-run/react';
-import { FormLayout } from '@layouts/form-layout';
-import { Suspense, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import { validateCookie } from '@helpers/cookies';
+import axios from "axios";
+import {
+  ActionFunctionArgs,
+  defer,
+  json,
+  LoaderFunctionArgs,
+} from "@remix-run/node";
+import {
+  Await,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+} from "@remix-run/react";
+import { FormLayout } from "@layouts/form-layout";
+import { Suspense, useEffect } from "react";
+import { toast } from "react-toastify";
+import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { apiToken, token } = await validateCookie(request);
@@ -44,11 +54,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   data.issueDate = data.issueDate && new Date(data.issueDate);
   data.expiryDate = data.expiryDate && new Date(data.expiryDate);
 
-  const questionnaireData = await RMSservice(token).questionnaires.one({ id: data.questionnaire });
+  const questionnaireData = await RMSservice(token).questionnaires.one({
+    id: data.questionnaire,
+  });
   const questionnairesUrl = questionnaireData?.questionnaire?.url;
-  if (!questionnairesUrl) return json({ error: 'Questionnaire not found' });
+  if (!questionnairesUrl) return json({ error: "Questionnaire not found" });
 
-  const { createRating, error } = await RMSservice(token).ratings.create({ data });
+  const { createRating, error } = await RMSservice(token).ratings.create({
+    data,
+  });
+
   return json({ message: createRating, error });
 };
 
@@ -60,19 +75,25 @@ export default function CreateRatings() {
 
   useEffect(() => {
     if (FetcherData?.message) {
-      toast.success(FetcherData?.message, { toastId: 'create-rating' });
+      toast.success(FetcherData?.message, { toastId: "create-rating" });
       navigate(-1);
       return;
     }
 
-    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: 'create-rating' });
+    if (FetcherData?.error)
+      toast.error(FetcherData?.error, { toastId: "create-rating" });
   }, [FetcherData]);
 
   useEffect(() => {
-    toast.promise(formObjectQuery, { pending: 'Loading form data' }, { toastId: 'form-object' });
+    toast.promise(
+      formObjectQuery,
+      { pending: "Loading form data" },
+      { toastId: "form-object" }
+    );
 
     formObjectQuery.then((data) => {
-      if (data?.error) toast.error(data?.error, { toastId: 'form-object-response' });
+      if (data?.error)
+        toast.error(data?.error, { toastId: "form-object-response" });
       if (data?.error) {
         setTimeout(() => window.history.back(), 3000);
       }
@@ -84,7 +105,12 @@ export default function CreateRatings() {
       <Suspense fallback={null}>
         <Await resolve={formObjectQuery}>
           {({ formObject }) => (
-            <FormLayout formObject={formObject as any} Fetcher={Fetcher} data={rating} slug="rating" />
+            <FormLayout
+              formObject={formObject as any}
+              Fetcher={Fetcher}
+              data={rating}
+              slug="rating"
+            />
           )}
         </Await>
       </Suspense>
