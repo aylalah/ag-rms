@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { defer, LoaderFunctionArgs } from "@remix-run/node";
+import { defer, json, LoaderFunctionArgs } from "@remix-run/node";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
@@ -10,7 +10,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     companyName: "asc",
   };
 
-  const queryData = RMSservice(token)
+  const queryData = await RMSservice(token)
     .clients.all({
       limit,
       page,
@@ -43,7 +43,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         searchTitle: "Search by clients, emails, industries, phone & countries ",
       };
     });
-  return defer({ queryData });
+  return json({ queryData });
 };
 
 export const ClientLoader = loader;

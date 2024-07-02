@@ -1,10 +1,8 @@
-import dayjs from 'dayjs';
-import { Await, useLoaderData } from '@remix-run/react';
-import { defer, LoaderFunctionArgs } from '@remix-run/node';
-import { ListLayout } from '@layouts/list-layout';
-import { Suspense } from 'react';
-import { toast } from 'react-toastify';
-import { validateCookie } from '@helpers/cookies';
+import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { ListLayout } from "@layouts/list-layout";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export const loader = async (ctx: LoaderFunctionArgs) => {
   return IndustryLoader(ctx);
@@ -12,25 +10,24 @@ export const loader = async (ctx: LoaderFunctionArgs) => {
 
 export default function Industries() {
   const { queryData } = useLoaderData<typeof loader>();
-  toast.promise(queryData, { pending: 'Loading industries . . . ' }, { toastId: 'industries' });
+
+  useEffect(() => {
+    if (queryData?.error) toast.error(queryData.error, { toastId: "industries" });
+  }, []);
 
   return (
     <div className="flex-1 h-full overflow-hidden">
-      <Suspense fallback={<></>}>
-        <Await resolve={queryData}>
-          {({ thead, tbody, searchTitle, meta }) => (
-            <ListLayout
-              createLink="/app/industries/create"
-              editLink="/app/industries/edit/"
-              tbody={tbody}
-              thead={thead}
-              meta={meta as any}
-              title="Industries"
-              searchTitle={searchTitle}
-            />
-          )}
-        </Await>
-      </Suspense>
+      {queryData && (
+        <ListLayout
+          createLink="/app/industries/create"
+          editLink="/app/industries/edit/"
+          tbody={queryData?.tbody}
+          thead={queryData?.thead}
+          meta={queryData?.meta as any}
+          title="Industries"
+          searchTitle={queryData?.searchTitle}
+        />
+      )}
     </div>
   );
 }

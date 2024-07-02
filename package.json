@@ -11,16 +11,16 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.600.0",
-    "@aws-sdk/lib-storage": "^3.600.0",
+    "@aws-sdk/client-s3": "^3.608.0",
+    "@aws-sdk/lib-storage": "^3.608.0",
     "@emotion/is-prop-valid": "^1.2.2",
-    "@prisma/client": "^5.15.1",
-    "@remix-run/css-bundle": "^2.9.2",
-    "@remix-run/node": "^2.9.2",
-    "@remix-run/react": "^2.9.2",
-    "@remix-run/serve": "^2.9.2",
-    "@vercel/remix": "^2.9.1",
-    "aws-sdk": "^2.1647.0",
+    "@prisma/client": "^5.16.1",
+    "@remix-run/css-bundle": "^2.10.0",
+    "@remix-run/node": "^2.10.0",
+    "@remix-run/react": "^2.10.0",
+    "@remix-run/serve": "^2.10.0",
+    "@vercel/remix": "^2.10.0",
+    "aws-sdk": "^2.1652.0",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.3",
@@ -29,7 +29,7 @@
     "daisyui": "latest",
     "dayjs": "^1.11.11",
     "framer-motion": "^11.2.12",
-    "isbot": "^5.1.10",
+    "isbot": "^5.1.11",
     "multer": "1.4.5-lts.1",
     "multer-s3": "^3.0.1",
     "numeral": "^2.0.6",
@@ -42,10 +42,10 @@
     "remix-flat-routes": "^0.6.5",
     "unimport": "^3.7.2",
     "vitest": "^1.6.0",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.9.2",
+    "@remix-run/dev": "^2.10.0",
     "@tailwindcss/typography": "^0.5.13",
     "@types/bcryptjs": "^2.4.6",
     "@types/crypto-js": "^4.2.2",
@@ -54,20 +54,20 @@
     "@types/numeral": "^2.0.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
     "autoprefixer": "^10.4.19",
-    "eslint": "^9.5.0",
+    "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "postcss": "^8.4.38",
-    "prisma": "^5.15.1",
+    "postcss": "^8.4.39",
+    "prisma": "^5.16.1",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.2",
-    "vite": "^5.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.2",
     "vite-tsconfig-paths": "^4.3.2",
     "zod-prisma-types": "^3.1.8"
   },
@@ -78,6 +78,10 @@
     "seed": "node prisma/seed.js"
   },
   "trustedDependencies": [
-    "aws-sdk"
+    "@prisma/client",
+    "@prisma/engines",
+    "aws-sdk",
+    "esbuild",
+    "prisma"
   ]
 }
