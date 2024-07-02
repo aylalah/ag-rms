@@ -52,10 +52,7 @@ export class ClientClass extends MainClass {
     }
   }
 
-  async one(input: {
-    id: string;
-    include?: Prisma.ClientInclude<DefaultArgs> | null | undefined;
-  }) {
+  async one(input: { id: string; include?: Prisma.ClientInclude<DefaultArgs> | null | undefined }) {
     try {
       await this.hasAccess("all");
 
@@ -141,10 +138,22 @@ export class ClientClass extends MainClass {
         .map((el) => {
           if (el.field === "industry") {
             el.type = "object";
-
             el.list = industry
               .sort((a: any, b: any) => a.name.localeCompare(b.name))
               .map((el) => ({ id: el.id, name: el.name }));
+          }
+
+          if (el.field === "country") {
+            el.value = "Nigeria";
+            el.type = "object";
+            el.list = [
+              { id: "Nigeria", name: "Nigeria" },
+              { id: "Ghana", name: "Ghana" },
+              { id: "Kenya", name: "Kenya" },
+              { id: "Rwanda", name: "Rwanda" },
+              { id: "Uganda", name: "Uganda" },
+              { id: "Tanzania", name: "Tanzania" },
+            ];
           }
 
           if (el.field === "password") {

@@ -1,7 +1,7 @@
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
-import { defer, LoaderFunctionArgs } from "@remix-run/node";
+import { defer, json, LoaderFunctionArgs } from "@remix-run/node";
 import { ListLayout } from "@layouts/list-layout";
 import { Suspense, useEffect, useState } from "react";
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -18,16 +18,19 @@ const options = {
     legend: { display: false },
     title: {
       display: true,
-      text: "Distribution by Industry",
+      text: "Industry Distribution Chart",
     },
     datalabels: {
-      anchor: "end" as any,
+      anchor: "center" as any,
       padding: 5,
-      borderRadius: 5,
-      backgroundColor: "#002d53",
+      height: 10,
+      width: 10,
+      borderRadius: 10,
+      //backgroundColor: "#efefef",
       color: "#efefef",
       font: {
-        size: 12,
+        size: 13,
+        weight: "bold",
       },
     },
   },
@@ -43,28 +46,13 @@ const options = {
     },
   },
 };
-const labels = ["Banks", "Funds", "Insurance", "Microfinance", "Mortgage Banks", "Municipals", "Corporate"];
-const data = {
-  labels: labels,
-  datasets: [
-    {
-      label: "My First Dataset",
-      data: [6, 5, 9.1, 9, 5, 5, 7],
-      backgroundColor: "#CE5A61",
-    },
-  ],
-};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
-
-  //total industry
-  const Industry = RMSservice(token)
-    .industries.all({ limit: 1, page: 1 })
-    .then((res) => ({ count: res?.industries?.totalDocs }));
+  const dashboardData = await RMSservice(token).general.dashboard();
 
   //total client
-  const Client = RMSservice(token)
+  const Client = await RMSservice(token)
     .clients.all({ limit: 4, page: 1, orderBy: { createdAt: "desc" } })
     .then((res) => {
       const { docs, ...meta } = res?.clients || {};
@@ -76,7 +64,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
 
   //total client
-  const Ratings = RMSservice(token)
+  const Ratings = await RMSservice(token)
     .ratings.all({ limit: 4, page: 1, include: { clientModel: true }, orderBy: { createdAt: "desc" } })
     .then((res) => {
       const { docs, ...meta } = res?.ratings || {};
@@ -91,55 +79,27 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       };
     });
 
-  //total completed ratings
-  const CompletedRatings = RMSservice(token)
-    .ratings.all({ limit: 1, page: 1, where: { status: "concluded" } })
-    .then((res) => ({ count: res?.ratings?.totalDocs }));
-
-  //total pending ratings
-  const PendingRatings = RMSservice(token)
-    .ratings.all({ limit: 1, page: 1, include: { clientModel: true }, where: { status: { not: "concluded" } } })
-    .then((res) => {
-      const { docs, ...meta } = res?.ratings || {};
-      return {
-        count: res?.ratings?.totalDocs,
-        meta,
-        data: docs?.map((doc) => ({ ...doc, companyName: doc?.clientModel?.companyName })),
-      };
-    });
-
-  return defer({ Industry, Client, Ratings, CompletedRatings, PendingRatings });
+  return json({ Client, Ratings, dashboardData });
 };
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { Industry, Client, Ratings, CompletedRatings, PendingRatings } = useLoaderData<typeof loader>();
-  const [dashboardCounts, setDashboardCounts] = useState<{
-    clients?: number;
-    industries?: number;
-    completedRatings?: number;
-    pendingRatings?: number;
-  } | null>(null);
+  const { Industry, Client, Ratings, dashboardData } = useLoaderData<typeof loader>();
 
-  useEffect(() => {
-    Industry.then((res) => setDashboardCounts((prev) => ({ ...prev, industries: res.count })));
-    Client.then((res) => setDashboardCounts((prev) => ({ ...prev, clients: res.count })));
-    CompletedRatings.then((res) => setDashboardCounts((prev) => ({ ...prev, completedRatings: res.count })));
-    PendingRatings.then((res) => setDashboardCounts((prev) => ({ ...prev, pendingRatings: res.count })));
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
       <div className="grid flex-1 w-full gap-4 lg:grid-cols-2">
         <div className="grid gap-4 lg:grid-cols-2 ">
-          <BoxChart title="Clients" subTitle={dashboardCounts?.clients || 0} bgColor="box1" />
-          <BoxChart title="Industries" subTitle={dashboardCounts?.industries || 0} bgColor="box2" />
-          <BoxChart title="Pending Ratings" subTitle={dashboardCounts?.pendingRatings || 0} bgColor="box3" />
-          <BoxChart title="Completed Ratings" subTitle={dashboardCounts?.completedRatings || 0} bgColor="box4" />
+          <BoxChart title="Clients" subTitle={dashboardData?.clients || 0} bgColor="box1" />
+          <BoxChart title="Industries" subTitle={dashboardData?.industries || 0} bgColor="box2" />
+          <BoxChart title="Pending Ratings" subTitle={dashboardData?.pendingRatings || 0} bgColor="box3" />
+          <BoxChart title="Completed Ratings" subTitle={dashboardData?.completedRatings || 0} bgColor="box4" />
         </div>
 
         <LongBoxChart>
-          <Bar options={options} data={data} />
+          <Bar options={options} data={dashboardData?.industryDistribution} />
         </LongBoxChart>
       </div>
 

@@ -178,8 +178,11 @@ export class RatingClass extends MainClass {
 
   async formObject({ apiToken, token }: { apiToken?: string; token?: string }) {
     try {
+      //const user = { employee_id: 160687 }; // christian
+      //const user = { employee_id: 220684 }; // ike
       const user = await appDecryptData(token);
       const endPoint = process.env.AGUSTO_SERVICES_URL;
+
       const { data } = await axios.get(`${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`, {
         headers: { Authorization: `Bearer ${apiToken}` },
       });
@@ -193,9 +196,11 @@ export class RatingClass extends MainClass {
 
       const objData = convertZodSchema(RatingSchema);
       const ratingStatus = RatingStatusSchema;
+
       const methodology = await dbQuery.methodology.findMany({
         select: { id: true, name: true },
       });
+
       const questionnaire = await dbQuery.questionnaire.findMany({
         select: { id: true, name: true },
       });
