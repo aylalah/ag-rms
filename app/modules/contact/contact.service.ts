@@ -87,7 +87,7 @@ export class ContactClass extends MainClass {
           To: `${data.email}`,
           Subject: "Agusto & Co. Rating Management System ",
           HtmlBody: `<p>Dear Rating Client,</p> 
-          <p>You have been grated access to the <a href=${clientUrl}>Agusto & Co. Rating Management System.</a></p>
+          <p>You have been granted access to the <a href=${clientUrl}>Agusto & Co. Rating Management System.</a></p>
            <p>Please see below your log in details:</p>
            <p>Email Address: ${data.email} </p> 
            <p> Password: ${data.password}</p>`,
