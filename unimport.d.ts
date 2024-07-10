@@ -610,6 +610,7 @@ declare global {
   const passwordPolicy: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/validation')['passwordPolicy']
   const randomString: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/utils')['randomString']
   const sendEmailService: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/email')['sendEmailService']
+  const sendEmailServiceOld: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/email')['sendEmailServiceOld']
   const settingsCookie: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/cookies')['settingsCookie']
   const splitCamelCase: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/helpers/utils')['splitCamelCase']
   const stores: typeof import('/Users/chijiokeudokporo/Workspace/rms-v1/app/stores/index')['default']

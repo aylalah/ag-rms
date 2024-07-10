@@ -44,6 +44,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const fileName = `${data.companyName?.replaceAll(" ", "-")?.toLowerCase()}.${ext}`;
     const upload = await uploadLogoToSpaces(file, fileName);
     if (upload.$metadata?.httpStatusCode === 200) data.logo = upload.Location;
+  } else {
+    delete data?.logo;
   }
 
   data.role = "client";

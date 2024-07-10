@@ -23,12 +23,9 @@ export class AuthClass extends MainClass {
 
         if (data?.status === 400) throw new Error(data?.message);
 
-        const Me = await axios.get(
-          `${endPoint}/users/getStaffByempId/${user?.employee_id.toString()}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const Me = await axios.get(`${endPoint}/users/getStaffByempId/${user?.employee_id.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         const userJWT = await this.EncryptData({
           ...user,
@@ -61,7 +58,8 @@ export class AuthClass extends MainClass {
 
       //send magic link to user email
       // <h2>Agusto & Co.s Rating Mgt System - Login Token</h2>
-      sendEmailService({
+
+      await sendEmailService({
         From: "info@agusto.com",
         To: email,
         Subject: "Agusto & Co's Rating System Login Token",
@@ -94,10 +92,7 @@ export class AuthClass extends MainClass {
         where: { magicToken: token, email },
       });
 
-      if (!user)
-        throw new Error(
-          "Wrong token or email. Please use the correct token sent to your email"
-        );
+      if (!user) throw new Error("Wrong token or email. Please use the correct token sent to your email");
       await dbQuery.contact.update({
         where: { id: user.id },
         data: { magicToken: null },

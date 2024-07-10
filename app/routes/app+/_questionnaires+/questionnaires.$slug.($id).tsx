@@ -36,7 +36,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ message: createQuestionnaire, error });
   }
 
-  if (slug === "PATCH" && id) {
+  if (method === "PATCH" && id) {
     const { updateQuestionnaire, error } = await RMSservice(token).questionnaires.update({ id, data });
     return json({ message: updateQuestionnaire, error });
   }
@@ -45,6 +45,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const { deleteQuestionnaire, error } = await RMSservice(token).questionnaires.delete({ id });
     return json({ message: deleteQuestionnaire, error });
   }
+
+  return {};
 };
 
 export default function Breeds() {

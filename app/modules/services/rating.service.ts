@@ -20,6 +20,7 @@ export class RatingClass extends MainClass {
     try {
       await this.hasAccess("all");
       const unit = this.user?.unit;
+      const whereUnit = unit === "Information Technology" ? {} : { unit };
 
       const { where, orderBy, page, limit, include } = args;
       const setPage = page || 1;
@@ -27,13 +28,13 @@ export class RatingClass extends MainClass {
       const skip = (setPage - 1) * take || 0;
       const industries = await dbQuery.$transaction([
         dbQuery.rating.findMany({
-          where: { ...where, unit },
+          where: { ...where, ...whereUnit },
           orderBy,
           take,
           skip,
           include: { ratingClassModel: true, ...include },
         }),
-        dbQuery.rating.count({ where: { ...where, unit } }),
+        dbQuery.rating.count({ where: { ...where, ...whereUnit } }),
       ]);
 
       const [docs, totalDocs] = industries;
@@ -57,10 +58,7 @@ export class RatingClass extends MainClass {
     }
   }
 
-  async one(input: {
-    id: string;
-    include?: Prisma.RatingInclude<DefaultArgs>;
-  }) {
+  async one(input: { id: string; include?: Prisma.RatingInclude<DefaultArgs> }) {
     try {
       await this.hasAccess("all");
 
@@ -99,8 +97,7 @@ export class RatingClass extends MainClass {
         },
       });
 
-      if (check)
-        throw new Error("Rating already exists for this year and client");
+      if (check) throw new Error("Rating already exists for this year and client");
 
       const result = await dbQuery.rating.create({
         data: { ...data, unit },
@@ -185,21 +182,18 @@ export class RatingClass extends MainClass {
       //const user = { employee_id: 160687 }; // christian
       //const user = { employee_id: 220684 }; // ike
       const user = await appDecryptData(token);
+      const unit = user?.unit;
       const endPoint = process.env.AGUSTO_SERVICES_URL;
 
-      const { data } = await axios.get(
-        `${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`,
-        {
-          headers: { Authorization: `Bearer ${apiToken}` },
-        }
-      );
+      const { data } = await axios.get(`${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`, {
+        headers: { Authorization: `Bearer ${apiToken}` },
+      });
 
       const unitMembers = data?.data || [];
 
       if (!unitMembers?.length || unitMembers?.length < 1)
         return {
-          error:
-            "You are not a supervisor. Please contact your supervisor to create a rating",
+          error: "You are not a supervisor. Please contact your supervisor to create a rating",
         };
 
       const objData = convertZodSchema(RatingSchema);
@@ -207,10 +201,12 @@ export class RatingClass extends MainClass {
 
       const methodology = await dbQuery.methodology.findMany({
         select: { id: true, name: true },
+        where: { unit },
       });
 
       const questionnaire = await dbQuery.questionnaire.findMany({
         select: { id: true, name: true },
+        where: { unit },
       });
       const ratingClass = await dbQuery.ratingClass.findMany({
         select: { id: true, name: true },
@@ -222,10 +218,7 @@ export class RatingClass extends MainClass {
           //last 10 years
           if (el.field === "ratingYear") {
             el.type = "object";
-            el.list = Array.from(
-              { length: 3 },
-              (_, i) => new Date().getFullYear() - i
-            ).map((el) => ({
+            el.list = Array.from({ length: 3 }, (_, i) => new Date().getFullYear() - i).map((el) => ({
               id: el,
               name: el,
             }));
@@ -315,9 +308,7 @@ export class RatingClass extends MainClass {
       const toBeRemoved = ["responses", "client"];
 
       //sort and move status to the end
-      const filteredData = dataList.filter(
-        (el) => !toBeRemoved.includes(el.field)
-      );
+      const filteredData = dataList.filter((el) => !toBeRemoved.includes(el.field));
       const status = filteredData.find((el) => el.field === "status");
       const rest = filteredData
         .filter((el) => el.field !== "status")
