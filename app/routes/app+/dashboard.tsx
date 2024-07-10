@@ -1,7 +1,7 @@
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
-import { defer, json, LoaderFunctionArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { ListLayout } from "@layouts/list-layout";
 import { Suspense, useEffect, useState } from "react";
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -84,7 +84,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { Industry, Client, Ratings, dashboardData } = useLoaderData<typeof loader>();
+  const { Client, Ratings, dashboardData } = useLoaderData<typeof loader>();
 
   useEffect(() => {}, []);
 
@@ -99,7 +99,9 @@ export default function Dashboard() {
         </div>
 
         <LongBoxChart>
-          <Bar options={options} data={dashboardData?.industryDistribution} />
+          {dashboardData?.industryDistribution && (
+            <Bar options={options as any} data={dashboardData?.industryDistribution} />
+          )}
         </LongBoxChart>
       </div>
 

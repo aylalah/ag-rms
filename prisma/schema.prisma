@@ -33,6 +33,7 @@ model Methodology {
   name        String   @unique
   url         String
   ratingModel Rating[]
+  unit        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -42,6 +43,7 @@ model Questionnaire {
   name        String   @unique
   url         String
   ratingModel Rating[]
+  unit        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
