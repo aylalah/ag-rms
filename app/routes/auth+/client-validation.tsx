@@ -14,7 +14,7 @@ export const action = async ({ request }: LoaderFunctionArgs) => {
     email: string;
     token: string;
   };
-  const { client, token, error } = await RMSservice().auth.magicLinkLogin(body);
+  const { client, token, error } = await RMSservice().auth.magicLinkLogin(body as any);
 
   if (client && token) {
     return redirectDocument("/client/ratings", {

@@ -17,10 +17,10 @@ import { toast } from "react-toastify";
 import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { apiToken, token } = await validateCookie(request);
+  const { apiToken, token, user } = await validateCookie(request);
 
   const formObjectQuery = RMSservice(apiToken)
-    .ratings.formObject({ apiToken, token })
+    .ratings.formObject({ apiToken, token, user })
     .then((data) => {
       const { formObject, error } = data;
       return { formObject, error };

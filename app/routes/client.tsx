@@ -59,7 +59,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
     });
 
-  const result = await RMSservice(token).clients.one({ id: client.client });
+  const result = await RMSservice(token).clients.one({ id: client?.id });
 
   return json({ client: result.client });
 };

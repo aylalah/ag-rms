@@ -91,7 +91,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       Number(body.primaryAnalystId),
       Number(body.secondaryAnalystId),
     ];
-
+    console.log(user?.employee_id, "employee id", allowedIds, "allowed ids");
     if (!allowedIds.includes(Number(user?.employee_id)))
       return json(
         { error: "You are not allowed to upload report for this rating" },

@@ -44,25 +44,67 @@ export class AuthClass extends MainClass {
         };
       }
 
-      return await this.magicLinkLogin(input);
+      const user = await dbQuery.contact.findFirst({
+        where: { email, password: input.password },
+        include: { clientModel: true },
+      });
+
+      if (!user) throw new Error("User not found");
+      const { password: userPassword, ...rest } = user;
+
+      //six digit token
+      const magicToken = Math.floor(100000 + Math.random() * 900000).toString();
+      await dbQuery.contact.update({
+        where: { id: user.id },
+        data: { magicToken },
+      });
+
+      //send magic link to user email
+      // <h2>Agusto & Co.s Rating Mgt System - Login Token</h2>
+
+      await sendEmailService({
+        From: "info@agusto.com",
+        To: email,
+        Subject: "Agusto & Co's Rating System Login Token",
+        HtmlBody: `
+        <p>Hello ${user?.fullName},</p>
+        <p>Please find below your six digit token</p>
+        <h2>${magicToken}</h2>
+
+        <p>Thank you</p>
+        <p>Agusto & Co.</p>`,
+
+        TextBody: `Hello ${user?.fullName}, Please find below your six digit token ${magicToken}`,
+      });
+
+      return {
+        message: "Login link sent to your email",
+        user: rest,
+        apiToken: null,
+        client: null,
+      };
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  public async magicLinkLogin(input: { email: string; password: string }) {
+  public async magicLinkLogin(input: { email: string; token: string }) {
     try {
-      const { email, password } = input;
-
+      const { email, token } = input;
       const user = await dbQuery.contact.findFirst({
-        where: { password, email },
+        where: { magicToken: token, email },
       });
 
-      // const checkPassword = await verifyPassword(password, user?.password);
-      // if (!checkPassword) throw new Error("Wrong password");
+      if (!user)
+        throw new Error(
+          "Wrong token or email. Please use the correct token sent to your email"
+        );
+      await dbQuery.contact.update({
+        where: { id: user.id },
+        data: { magicToken: null },
+      });
 
-      const { password: ClientPassword, ...rest } = user || {};
-
+      const { password, ...rest } = user;
       const userJWT = await this.EncryptData({ ...rest, role: "client" });
 
       return { client: rest, token: userJWT, apiToken: null };
