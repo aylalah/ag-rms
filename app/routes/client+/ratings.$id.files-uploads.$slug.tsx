@@ -1,3 +1,4 @@
+import { uploadClientStreamToSpace } from "@helpers/upload-file";
 import {
   ActionFunctionArgs,
   json,
@@ -85,7 +86,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             };
             const fileName = fileData?.name;
             const name = `${id}/${fileName?.replace(/\s/g, "-")}`.toLowerCase();
-            const upload = await uploadStreamToSpaces(file, name);
+            // const upload = await uploadStreamToSpaces(file, name);
+            // const upload = await uploadClientStreamToSpacesfile, name);
+            const upload = await uploadClientStreamToSpace(file, name);
 
             if (upload?.$metadata?.httpStatusCode === 200) {
               return {

@@ -6,9 +6,12 @@
     { "name": "components", "path": "./app/components" },
     { "name": "ui", "path": "./app/ui" },
     { "name": "modules", "path": "./app/modules" },
-    { "name": "routes", "path": "./app/routes" },
+    { "name": "routes", "path": "./app/routes" }
   ],
   "settings": {
     "cSpell.words": ["agustoportals", "firstname", "lastname"],
-  },
+    "search.exclude": {
+      "**/*.code-search": false
+    }
+  }
 }

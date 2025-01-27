@@ -52,7 +52,10 @@ export class ClientClass extends MainClass {
     }
   }
 
-  async one(input: { id: string; include?: Prisma.ClientInclude<DefaultArgs> | null | undefined }) {
+  async one(input: {
+    id: string;
+    include?: Prisma.ClientInclude<DefaultArgs> | null | undefined;
+  }) {
     try {
       await this.hasAccess("all");
 
@@ -71,7 +74,8 @@ export class ClientClass extends MainClass {
   async create(input: { data: Prisma.ClientCreateInput }) {
     try {
       const { data } = input;
-      await this.hasAccess(["admin", "hod"]);
+      // await this.hasAccess(["admin", "hod"]);
+      await this.hasAccess("all");
       const result = await dbQuery.client.create({ data });
 
       this.LogAction({
@@ -89,7 +93,8 @@ export class ClientClass extends MainClass {
 
   async update(input: { id: string; data: Prisma.ClientUpdateInput }) {
     try {
-      await this.hasAccess(["admin", "hod"]);
+      // await this.hasAccess(["admin", "hod"]);
+      await this.hasAccess("all");
       const { id, data } = input;
 
       const prevDocs = await dbQuery.client.findUnique({ where: { id } });

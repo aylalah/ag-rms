@@ -286,37 +286,35 @@ export class RatingClass extends MainClass {
 
           if (el.field === "primaryAnalyst") {
             el.type = "object";
-            el.list = unitMembers
-              ?.map((el: any) => ({
+            el.list = unitMembers?.map((el: any) => ({
+              employee_id: el?.employee_id,
+              id: JSON.stringify({
+                firstname: el?.firstname,
+                lastname: el?.lastname,
+                email: el?.corporate_email,
                 employee_id: el?.employee_id,
-                id: JSON.stringify({
-                  firstname: el?.firstname,
-                  lastname: el?.lastname,
-                  email: el?.corporate_email,
-                  employee_id: el?.employee_id,
-                }),
-                // id: `${el?.firstname} ${el?.lastname}`,
-                name: `${el?.firstname} ${el?.lastname}`,
-                // email: `${el?.corporate_email}`,
-              }))
-              .filter((el: any) => el?.employee_id !== user?.employee_id);
+              }),
+              // id: `${el?.firstname} ${el?.lastname}`,
+              name: `${el?.firstname} ${el?.lastname}`,
+              // email: `${el?.corporate_email}`,
+            }));
+            // .filter((el: any) => el?.employee_id !== user?.employee_id);
           }
 
           if (el.field === "secondaryAnalyst") {
             el.type = "object";
-            el.list = unitMembers
-              ?.map((el: any) => ({
+            el.list = unitMembers?.map((el: any) => ({
+              employee_id: el?.employee_id,
+              id: JSON.stringify({
+                firstname: el?.firstname,
+                lastname: el?.lastname,
+                email: el?.corporate_email,
                 employee_id: el?.employee_id,
-                id: JSON.stringify({
-                  firstname: el?.firstname,
-                  lastname: el?.lastname,
-                  email: el?.corporate_email,
-                  employee_id: el?.employee_id,
-                }),
-                name: `${el?.firstname} ${el?.lastname}`,
-                // email: `${el?.corporate_email}`,
-              }))
-              .filter((el: any) => el?.employee_id !== user?.employee_id);
+              }),
+              name: `${el?.firstname} ${el?.lastname}`,
+              // email: `${el?.corporate_email}`,
+            }));
+            // .filter((el: any) => el?.employee_id !== user?.employee_id);
           }
 
           if (el.field === "methodology") {
