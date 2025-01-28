@@ -254,7 +254,7 @@ export default function ClientEdit() {
                       <td className="px-2">{index + 1}</td>
                       <td>{rating?.primaryAnalyst || "-"}</td>
                       <td>{rating?.secondaryAnalyst || "-"}</td>
-                      <td>{rating?.ratingScore || "-"}</td>
+                      {/* <td>{rating?.ratingScore || "-"}</td> */}
                       <td>{rating?.ratingClassModel?.name || "-"}</td>
                       <td className="p-3">{rating.ratingYear || "-"}</td>
                       <td>
