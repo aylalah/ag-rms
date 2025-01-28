@@ -614,6 +614,7 @@ declare global {
   const settingsCookie: typeof import('C:/Users/adeola/workspace/rating-ms/rms-v1/app/helpers/cookies')['settingsCookie']
   const splitCamelCase: typeof import('C:/Users/adeola/workspace/rating-ms/rms-v1/app/helpers/utils')['splitCamelCase']
   const stores: typeof import('C:/Users/adeola/workspace/rating-ms/rms-v1/app/stores/index')['default']
+  const uploadClientStreamToSpace: typeof import('C:/Users/adeola/workspace/rating-ms/rms-v1/app/helpers/upload-file')['uploadClientStreamToSpace']
   const uploadFileHandler: typeof import('C:/Users/adeola/workspace/rating-ms/rms-v1/app/helpers/upload-file')['uploadFileHandler']
   const uploadLogoToSpaces: typeof import('C:/Users/adeola/workspace/rating-ms/rms-v1/app/helpers/upload-file')['uploadLogoToSpaces']
   const uploadStreamToSpaces: typeof import('C:/Users/adeola/workspace/rating-ms/rms-v1/app/helpers/upload-file')['uploadStreamToSpaces']

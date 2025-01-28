@@ -112,6 +112,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           From: "info@agusto.com",
           To: primaryAnalyst,
           Cc: `${supervisor},${secondaryAnalyst}`,
+          Cc: `${secondaryAnalyst}`,
 
           Subject: `${company} File Upload`,
           HtmlBody: `

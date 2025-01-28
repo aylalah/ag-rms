@@ -201,10 +201,13 @@ export class RatingClass extends MainClass {
       const endPoint = process.env.AGUSTO_SERVICES_URL;
 
       let unitMembers = [];
+      // let initialUnitMembers = [];
+      // let unitMembers = [];
+      // let finalUnitMembers = [];
 
       if (
         user?.isAdmin !== true ||
-        (user?.isAdmin === true && user?.unit == "Corporate and Municpals")
+        (user?.isAdmin === true && user?.unit.includes("Corporate"))
       ) {
         const { data } = await axios.get(
           `${endPoint}/users/getStaffBySupervisor/${user?.supervisor.toString()}`,
@@ -220,9 +223,17 @@ export class RatingClass extends MainClass {
             headers: { Authorization: `Bearer ${apiToken}` },
           }
         );
+        // initialUnitMembers = data?.data || [];
         unitMembers = data?.data || [];
       }
       console.log(unitMembers, "unitMembers");
+
+      if (unit?.includes("Corporate")) {
+        unitMembers = unitMembers?.filter(
+          (el: any) =>
+            el?.unit.includes("Corporate") || el?.unit.includes("Executive")
+        );
+      }
 
       const objData = convertZodSchema(RatingSchema);
       const ratingStatus = RatingStatusSchema;

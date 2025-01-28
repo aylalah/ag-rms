@@ -21,9 +21,9 @@ type RatingProps = {
   isReadOnly?: boolean;
   linkTo: string;
   isClientOnly: boolean;
-  SupervisorObject?: AnalystObj;
-  PrimaryAnalystObject?: AnalystObj;
-  SecondaryAnalystObject?: AnalystObj;
+  SupervisorObject: AnalystObj;
+  PrimaryAnalystObject: AnalystObj;
+  SecondaryAnalystObject: AnalystObj;
 };
 
 const reportUploadMenu = [{ name: "Draft Report" }, { name: "Final Report" }];
@@ -62,7 +62,12 @@ export default function RatingLayout({
 
     if (name === "Final Report") {
       const version = getVersion(name);
-      if (!rating?.issueDate || !rating?.expiryDate || !rating?.ratingClass) {
+      if (
+        !rating?.issueDate ||
+        !rating?.expiryDate ||
+        !rating?.ratingClass ||
+        rating?.status === "ongoing"
+      ) {
         console.log(`/app/ratings/${rating?.id}/edit-rating`);
         window.location.href = `/app/ratings/${rating?.id}/edit-rating`;
         //toast.error("Please fill in the required fields before uploading the final report", { toastId: "error" });
@@ -399,8 +404,8 @@ export default function RatingLayout({
                 name="secondaryAnalystId"
                 defaultValue={SecondaryAnalystObject?.employee_id}
               />
-              {/* We still have  to work on the upload to AMI feature, we need to upload to payload
-              {/* {reportType === "Final Report" && (
+
+              {reportType === "Final Report" && (
                 <div className="flex items-center gap-2">
                   <input
                     id="checkbox"
@@ -415,7 +420,7 @@ export default function RatingLayout({
                     Upload to AMI ?
                   </label>
                 </div>
-              )} */}
+              )}
 
               <div>
                 <label htmlFor="file" className="text-sm hint">

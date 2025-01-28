@@ -118,21 +118,25 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     if (file?.size > 0) {
       let fileName = `${id}-${reportTitle}.${version}`;
-      const upload = await uploadStreamToSpaces(file,fileName,version)
+      const upload = await uploadStreamToSpaces(file, fileName, version);
       if (upload?.$metadata?.httpStatusCode === 200)
         data.reportFileUrl = upload?.Location as any;
     }
 
     if (finalLetter > 0) {
       let fileName = `${id}-${reportTitle}-letter.${version}`;
-      const upload = await uploadStreamToSpaces(finalLetter, fileName,version)
+      const upload = await uploadStreamToSpaces(finalLetter, fileName, version);
       if (upload?.$metadata?.httpStatusCode === 200)
         data.finalLetterUrl = upload?.Location as any;
     }
 
     if (consentLetter > 0) {
       let fileName = `${id}-${reportTitle}-consent-letter.${version}`;
-      const upload = await uploadStreamToSpaces(consentLetter, fileName,version)
+      const upload = await uploadStreamToSpaces(
+        consentLetter,
+        fileName,
+        version
+      );
       if (upload?.$metadata?.httpStatusCode === 200)
         data.consentLetterUrl = upload?.Location as any;
     }
@@ -177,11 +181,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           To: body.supervisorEmail,
           Subject: "Draft Rating Report Uploaded",
           HtmlBody: `<p>Dear Team Lead,</p>
-          <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
+           <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
 
-          <p>Kind Regards </p>
-           <p>Agusto RMS Team</p>
-          `,
+           <p>Kind Regards </p>
+            <p>Agusto RMS Team</p>
+           `,
         });
         // notify client
         contacts?.forEach((el: any) => {
