@@ -49,7 +49,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   if (!data?.ratingClass) delete data.ratingClass;
 
   data.client = id;
-  // data.ratingScore = Number(data.ratingScore);
+   data.ratingScore = Number(data.ratingScore);
   data.ratingYear = Number(data.ratingYear);
   data.issueDate = data.issueDate && new Date(data.issueDate);
   data.expiryDate = data.expiryDate && new Date(data.expiryDate);
