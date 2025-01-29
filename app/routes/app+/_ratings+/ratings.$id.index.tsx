@@ -103,6 +103,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const consentLetter = body?.consentLetter;
     const reportTitle = body?.reportTitle;
     const version = body?.version;
+    const status = body?.status;
     const data = {
       reportFileUrl: null,
       finalLetterUrl: null,
@@ -110,7 +111,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       reportTitle,
       version,
       rating: id,
-      status: "sent",
+      status,
     };
     const contacts = JSON.parse(body?.contacts as any);
     const year = body?.year;
@@ -141,8 +142,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         data.consentLetterUrl = upload?.Location as any;
     }
 
-    if (reportTitle?.toLowerCase().includes("final")) data.status = "sent";
+    if (status === "concluded") {
+      data.status = "sent";
+      if (reportTitle?.toLowerCase().includes("final")) data.status = "sent";
+      const { updateRating, error } = await RMSservice(token).ratings.update({
+        id: id,
+        data: {status: "concluded"},
+      });
 
+    }else{
+      data.status = "sent";
+    }
+    if (reportTitle?.toLowerCase().includes("final")) data.status = "sent";
     const { CreateReport, error } = await RMSservice(token).report.create({
       data,
     });
