@@ -147,10 +147,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       if (reportTitle?.toLowerCase().includes("final")) data.status = "sent";
       const { updateRating, error } = await RMSservice(token).ratings.update({
         id: id,
-        data: {status: "concluded"},
+        data: { status: "concluded" },
       });
-
-    }else{
+    } else {
       data.status = "sent";
     }
     if (reportTitle?.toLowerCase().includes("final")) data.status = "sent";
@@ -167,8 +166,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           HtmlBody: `<p>Dear Team Lead,</p>
           <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
 
-         <p>Kind Regards </p>
-         <p>Agusto RMS Team</p>
+          <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
           `,
         });
         //notify client
@@ -180,8 +179,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             HtmlBody: `<p>Dear Client<p>
             <p> The final rating report for ${title} has been uploaded on the Agusto RMS portal.</p>
 
-            <p>Kind Regards </p>
-            <p>Agusto RMS Team</p>
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
 
             `,
           });
@@ -194,8 +193,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           HtmlBody: `<p>Dear Team Lead,</p>
            <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
 
-           <p>Kind Regards </p>
-            <p>Agusto RMS Team</p>
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
            `,
         });
         // notify client
@@ -215,8 +214,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             </ul>
             <p> Please let us have your comments on the draft report no later than one week after the draft is sent out</p>
             
-            <p>Kind Regards </p>
-            <p>Agusto RMS Team</p>`,
+             <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>`,
           });
         });
       }

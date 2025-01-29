@@ -15,6 +15,7 @@ export default function LoginForm({
 }) {
   const isSubmitting = Fetcher.state === "submitting";
   const { setLoader } = useAppStore.general((state) => state);
+  const [showPassword, setShowPassword] = useState(false);
   const checkRef = useRef<HTMLInputElement>(null);
   const [canSubmit, setCanSubmit] = useState(false);
 
@@ -44,12 +45,33 @@ export default function LoginForm({
             type="email"
             placeholder="Enter you email address"
           />
-          <TextInput
+          {/* <TextInput
             defaultValue={password}
             name="password"
             type="password"
             placeholder="Enter your password"
-          />
+          /> */}
+          <div className="relative w-full">
+            <TextInput
+              defaultValue={password}
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              className="relative"
+              // className="w-full p-2 border rounded"
+            />
+
+            {/* Toggle Button (Using Remix Icon) */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[45%] text-gray-500"
+            >
+              <i
+                className={showPassword ? "ri-eye-line" : "ri-eye-off-line"}
+              ></i>
+            </button>
+          </div>
           <div className="flex items-center py-4">
             {/* <a href="/auth/forgot-password" className="text-xs">
               Forgot Password?

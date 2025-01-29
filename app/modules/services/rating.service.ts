@@ -114,7 +114,9 @@ export class RatingClass extends MainClass {
       contacts.forEach((el) => {
         const HtmlBody = `<p>Dear Agusto Rating Client,</p>
         <p>A new rating program has been created for you on the Agusto Rating Management System.</p> 
-        <p>Please log in to the <a href="https://arms.agusto.com">portal</a> to access our rating methodology and information gathering questionnaire</p>`;
+        <p>Please log in to the <a href="https://arms.agusto.com">portal</a> to access our rating methodology and information gathering questionnaire</p>
+         <p>Best Regards,</p>
+          <p>Agusto & Co RMS Team</p>`;
 
         sendEmailService({
           From: "info@agusto.com",

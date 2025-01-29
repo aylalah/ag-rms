@@ -20,7 +20,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       include: { clientModel: true, ratingClassModel: true },
       where: {
         AND: [
-          { NOT: [{ status: { equals: "concluded" } }] },
+          // { NOT: [{ status: { equals: "concluded" } }] },
           { clientModel: { companyName: { contains: search } } },
           { clientModel: { id: { equals: client?.client } } },
         ],
@@ -73,7 +73,7 @@ export default function Ratings() {
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden ">
       <aside className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <p className="text-[2rem] font-bold capitalize">Ongoing Ratings</p>
+          <p className="text-[2rem] font-bold capitalize"> Ratings</p>
         </div>
         <div className="flex items-center justify-end flex-1 gap-2"></div>
       </aside>

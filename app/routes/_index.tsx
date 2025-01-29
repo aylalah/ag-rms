@@ -29,7 +29,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const { token, user, error, apiToken, client, message } =
       await RMSservice().auth.login(body);
 
-    console.log(token, user, error, apiToken, client, message);
+    // console.log(token, user, error, apiToken, client, message);
 
     if (client && token) {
       return redirectDocument("/client/ratings", {

@@ -110,10 +110,16 @@ export default function RatingLayout({
 
         {isClientOnly ? (
           <div className="dropdown dropdown-hover dropdown-end">
-            <Link tabIndex={0} to="#" className="text-base btn btn-secondary">
+            {/* <Link tabIndex={0} to="#" className="text-base btn btn-secondary">
               Upload Files
               <i className="ri-arrow-down-s-line" />
-            </Link>
+            </Link> */}
+            {rating?.status === "ongoing" && (
+              <Link tabIndex={0} to="#" className="text-base btn btn-secondary">
+                Upload Files
+                <i className="ri-arrow-down-s-line" />
+              </Link>
+            )}
 
             <ul
               tabIndex={0}

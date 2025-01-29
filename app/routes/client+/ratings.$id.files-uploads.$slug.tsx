@@ -112,16 +112,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           From: "info@agusto.com",
           To: primaryAnalyst,
           Cc: `${supervisor},${secondaryAnalyst}`,
-          Cc: `${secondaryAnalyst}`,
 
           Subject: `${company} File Upload`,
           HtmlBody: `
-          <p> Dear Analyst,</p>
+          <p> Dear ${primaryAnalyst},</p>
           <p>${company} has uploaded the following file${
             fileList.length > 1 ? "s" : ""
           } for the ${ratingname} on the Agusto & Co. RMS.</p>
            <p> </n> ${fileList.toString()} </n></p>
-           <p>Please log in to the <a href="${appUrl}">RMS</a> to view and dowload the information submitted.</p>`,
+           <p>Please log in to the <a href="${appUrl}">RMS</a> to view and dowload the information submitted.</p>
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>`,
         });
 
         return json({ saveQuery: saveFiles });
