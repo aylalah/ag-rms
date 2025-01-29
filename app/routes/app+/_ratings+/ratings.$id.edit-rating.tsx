@@ -111,7 +111,7 @@ export default function CreateRatings() {
   }, []);
 
   useEffect(() => {
-    toast.success("Update rating class,staus, issue date, and expiry date", {
+    toast.success("Update rating class, issue date, and expiry date", {
       toastId: "update-rating",
     });
   }, []);

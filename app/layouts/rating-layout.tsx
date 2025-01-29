@@ -449,7 +449,7 @@ export default function RatingLayout({
                 </div>
               )}
 
-              {reportType === "Final Report" && forAMI && (
+              {/* {reportType === "Final Report" && forAMI && (
                 <div>
                   <label htmlFor="file" className="text-sm hint">
                     Customer Consent Document (Signed)
@@ -462,7 +462,7 @@ export default function RatingLayout({
                     accept="application/pdf"
                   />
                 </div>
-              )}
+              )} */}
 
               <button className="btn btn-secondary">
                 {isSubmitting && <span className="loading loading-xs"></span>}
