@@ -464,6 +464,24 @@ export default function RatingLayout({
                 </div>
               )}
 
+              {reportType === "Final Report" && (
+                <div>
+                  <label htmlFor="status" className="text-sm hint">
+                    Status
+                  </label>
+                  <select
+                    required
+                    name="status"
+                    className="w-full select select-bordered"
+                    defaultValue={rating?.status}
+                  >
+                    <option value="ongoing">Ongoing</option>
+                    <option value="concluded">Concluded</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+              )}
+
               <button className="btn btn-secondary">
                 {isSubmitting && <span className="loading loading-xs"></span>}
                 UPLOAD
