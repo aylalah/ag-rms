@@ -235,6 +235,14 @@ export class RatingClass extends MainClass {
           (el: any) =>
             el?.unit.includes("Corporate") || el?.unit.includes("Executive")
         );
+      } else {
+        const getFirstWord = (str: any) => {
+          return str.split(/[\s.]+/)[0]; // Extracts the first word
+        };
+
+        unitMembers = unitMembers?.filter((el: any) =>
+          el?.unit.includes(getFirstWord(unit))
+        );
       }
 
       const objData = convertZodSchema(RatingSchema);
