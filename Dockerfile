@@ -1,5 +1,7 @@
 # build environment
-FROM node:20.17 as builder
+FROM --platform=linux/amd64 node:20.17.0-alpine as base
+
+FROM base as builder
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATHsss
