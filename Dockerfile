@@ -35,4 +35,4 @@ COPY --from=builder /home/node/app/build ./build
 EXPOSE 80
 
 # Start the application
-CMD ["node", "dist/server.js"]
+CMD ["npm", "run", "start"]
