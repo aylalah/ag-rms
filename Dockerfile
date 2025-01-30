@@ -6,10 +6,10 @@ WORKDIR /app
 
 # Step 3: Install dependencies
 # Copy package.json and package-lock.json to optimize layer caching
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 # Step 4: Install dependencies for both production and development
-RUN npm install --frozen-lockfile
+RUN npm install
 
 # Step 5: Copy the rest of the app files
 COPY . .
@@ -27,7 +27,7 @@ WORKDIR /app
 COPY --from=base /app /app
 
 # Step 10: Install production dependencies only
-RUN npm install --frozen-lockfile --only=production
+RUN npm install --only=production
 
 # Step 11: Expose the port your app will run on
 EXPOSE 3000
