@@ -3,14 +3,13 @@ FROM --platform=linux/amd64 node:20.17.0-alpine as base
 # Build Stage
 FROM base as builder
 WORKDIR /home/node/app
-
-COPY package*.json yarn.lock ./
+COPY package*.json ./
 RUN yarn install
 
 # Copy rest of the application
 COPY . .
 
-# Ensure dist folder exists before building
+# Ensure dist folder exists befozzzzzzre building
 RUN mkdir -p /home/node/app/dist
 
 # Build the application
