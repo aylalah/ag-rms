@@ -9,13 +9,13 @@ WORKDIR /app
 COPY package.json ./
 
 # Step 4: Install dependencies for both production and development
-RUN npm install --frozen-lockfile
+RUN bun install
 
 # Step 5: Copy the rest of the app files
 COPY . .
 
 # Step 6: Build the app (runs the Remix build script)
-RUN npm run build
+RUN bun build
 
 # Step 7: Create a production image by using a smaller runtime image
 FROM node:20-alpine AS production
@@ -27,7 +27,7 @@ WORKDIR /app
 COPY --from=base /app /app
 
 # Step 10: Install production dependencies only
-RUN npm install --frozen-lockfile --only=production
+RUN npm install --only=production
 
 # Step 11: Expose the port your app will run on
 EXPOSE 3000
