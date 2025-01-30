@@ -24,8 +24,8 @@ ENV NODE_ENV=production
 ENV PAYLOAD_CONFIG_PATH=dist/payload.config.js
 
 WORKDIR /home/node/app
-COPY package*.json yarn.lock ./
-RUN yarn install --production
+COPY package*.json  ./
+RUN yarn install
 
 # Ensure dist and build exist before copying
 COPY --from=builder /home/node/app/dist ./dist
