@@ -1,12 +1,26 @@
-# Build Stage
-FROM node:18 AS builder
-WORKDIR /home/node/app
-COPY package.json package-lock.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+FROM --platform=linux/amd64 node:20.17.0-alpine as base
 
-# Production Stage
-FROM node:18
+FROM base as builder
+
 WORKDIR /home/node/app
+COPY package*.json ./
+
+COPY . .
+RUN yarn install
+RUN yarn build
+
+FROM base as runtime
+
+ENV NODE_ENV=production
+ENV PAYLOAD_CONFIG_PATH=dist/payload.config.js
+
+WORKDIR /home/node/app
+COPY package*.json  ./
+
+RUN yarn install --production
 COPY --from=builder /home/node/app/dist ./dist
+COPY --from=builder /home/node/app/build ./build
+
+EXPOSE 3000
+
+CMD ["node", "dist/server.js"]
