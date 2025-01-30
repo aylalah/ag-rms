@@ -9,13 +9,13 @@ WORKDIR /app
 COPY package.json ./
 
 # Step 4: Install dependencies for both production and development
-RUN bun install
+RUN yarn install
 
 # Step 5: Copy the rest of the app files
 COPY . .
 
 # Step 6: Build the app (runs the Remix build script)
-RUN bun build
+RUN yarn build
 
 # Step 7: Create a production image by using a smaller runtime image
 FROM node:20-alpine AS production
