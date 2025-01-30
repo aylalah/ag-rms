@@ -1,34 +1,38 @@
-# Step 1: Use an official Node.js runtime as the base image
-FROM node:20-alpine AS base
+FROM --platform=linux/amd64 node:20.17.0-alpine as base
 
-# Step 2: Set the working directory inside the container
-WORKDIR /app
-
-# Step 3: Install dependencies
-# Copy package.json and package-lock.json to optimize layer caching
-COPY package.json ./
-
-# Step 4: Install dependencies for both production and development
+# Build Stage
+FROM base as builder
+WORKDIR /home/node/app
+COPY package*.json ./
 RUN yarn install
 
-# Step 5: Copy the rest of the app files
+# Copy rest of the application
 COPY . .
 
-# Step 6: Build the app (runs the Remix build script)
+# Ensure dist folder exists befozzzzzzre building
+RUN mkdir -p /home/node/app/dist
+
+# Build the application
 RUN yarn build
 
-# Step 7: Create a production image by using a smaller runtime image
-FROM node:20-alpine AS production
+# Debugging step: List contents
+RUN ls -l /home/node/app/dist
 
-# Step 8: Set the working directory for the production container
-WORKDIR /app
+# Runtime Stage
+FROM base as runtime
+ENV NODE_ENV=production
+ENV PAYLOAD_CONFIG_PATH=dist/payload.config.js
 
-# Step 9: Copy only the necessary files from the build stage
-COPY --from=base /app /app
+WORKDIR /home/node/app
+COPY package*.json  ./
+RUN yarn install --production
 
-# Step 10: Install production dependencies only
-RUN npm install --only=production
-EXPOSE 3000
+# Ensure dist and build exist before copying
+COPY --from=builder /home/node/app/dist ./dist
+COPY --from=builder /home/node/app/build ./build
 
-CMD ["npm", "run", "start"]
+# Expose the application port
+EXPOSE 80
 
+# Start the application
+CMD ["npm", "run", "build"]
