@@ -1,6 +1,5 @@
 FROM --platform=linux/amd64 node:20.17.0-alpine as base
 
-# Build Stage
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
