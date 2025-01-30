@@ -1,11 +1,9 @@
-# Base image
 FROM --platform=linux/amd64 node:20.17.0-alpine as base
 
 # Build Stage
 FROM base as builder
 WORKDIR /home/node/app
 
-# Copy package files and install dependencies
 COPY package*.json yarn.lock ./
 RUN yarn install
 
