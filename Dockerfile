@@ -1,5 +1,5 @@
 # build environment
-FROM node:20.17.0 as builder
+FROM node:20.17 as builder
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATHsss
