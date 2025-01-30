@@ -34,7 +34,7 @@ COPY --from=builder /home/node/app/build ./build
 FROM nginx:1.13.9-alpine
 RUN rm -rf /etc/nginx/conf.d
 RUN mkdir -p /etc/nginx/conf.d
-COPY --from=builder /home/node/app/build /usr/share/nginx/html
+COPY --from=builder /home/node/app/dist /usr/share/nginx/html
 COPY ./default.conf /etc/nginx/conf.d/
 
 # Expose the application port
