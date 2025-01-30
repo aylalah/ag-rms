@@ -28,10 +28,7 @@ COPY --from=base /app /app
 
 # Step 10: Install production dependencies only
 RUN npm install --only=production
-
-# Step 11: Expose the port your app will run on
 EXPOSE 3000
 
-# Step 12: Start the app (using your Remix start script)
 CMD ["npm", "run", "start"]
 
