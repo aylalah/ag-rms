@@ -1,7 +1,4 @@
-FROM --platform=linux/amd64 node:20.17.0-alpine as base
-
-# Build Stage
-FROM base as builder
+FROM node:14.15 as builder
 
 RUN mkdir -p /home/node/app/dist
 WORKDIR /home/node/app/dist
