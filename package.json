@@ -3,7 +3,6 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
-  "main": "dist/server.js",
   "scripts": {
     "dev": "remix vite:dev",
     "build": "prisma generate && remix vite:build",

@@ -32,7 +32,5 @@ COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/build ./build
 
 # Expose the application port
-EXPOSE 3000
-
-# Start the application
-CMD ["node", "dist/server.js"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
