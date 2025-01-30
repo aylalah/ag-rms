@@ -64,12 +64,12 @@ const SettingsLinks = [
     group: "admin",
   },
 
-  {
-    name: "logs",
-    to: "/app/questionnaires",
-    icon: "ri-list-check-2",
-    group: "admin",
-  },
+  // {
+  //   name: "logs",
+  //   to: "/app/questionnaires",
+  //   icon: "ri-list-check-2",
+  //   group: "admin",
+  // },
 
   {
     name: "logout",

@@ -1,6 +1,17 @@
 import axios from "axios";
-import { ActionFunctionArgs, defer, json, LoaderFunctionArgs, redirectDocument } from "@remix-run/node";
-import { Await, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import {
+  ActionFunctionArgs,
+  defer,
+  json,
+  LoaderFunctionArgs,
+  redirectDocument,
+} from "@remix-run/node";
+import {
+  Await,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+} from "@remix-run/react";
 import { FormLayout } from "@layouts/form-layout";
 import { Suspense, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -9,7 +20,9 @@ import { validateCookie } from "@helpers/cookies";
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { apiToken, token } = await validateCookie(request);
   const ratingId = params.id as string;
-  const { rating, error } = await RMSservice(token).ratings.one({ id: ratingId });
+  const { rating, error } = await RMSservice(token).ratings.one({
+    id: ratingId,
+  });
 
   const formObjectQuery = RMSservice(apiToken)
     .ratings.formObject({ apiToken, token })
@@ -26,7 +39,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         .filter((el) => el?.field !== "questionnaire")
         .filter((el) => el?.field !== "status");
 
-      return { error, formObject: editedFormObject?.map((el) => ({ ...el, required: true })) };
+      return {
+        error,
+        formObject: editedFormObject?.map((el) => ({ ...el, required: true })),
+      };
     });
 
   return defer({ rating, formObjectQuery });
@@ -51,7 +67,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   data.issueDate = data.issueDate && new Date(data.issueDate);
   data.expiryDate = data.expiryDate && new Date(data.expiryDate);
 
-  const { updateRating, error } = await RMSservice(token).ratings.update({ id: ratingId, data });
+  const { updateRating, error } = await RMSservice(token).ratings.update({
+    id: ratingId,
+    data,
+  });
   if (updateRating) throw redirectDocument(`/app/ratings/${ratingId}`);
 
   console.log({ updateRating, error });
@@ -71,14 +90,20 @@ export default function CreateRatings() {
       return;
     }
 
-    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: "create-rating" });
+    if (FetcherData?.error)
+      toast.error(FetcherData?.error, { toastId: "create-rating" });
   }, [FetcherData]);
 
   useEffect(() => {
-    toast.promise(formObjectQuery, { pending: "Loading form data" }, { toastId: "form-object" });
+    toast.promise(
+      formObjectQuery,
+      { pending: "Loading form data" },
+      { toastId: "form-object" }
+    );
 
     formObjectQuery.then((data) => {
-      if (data?.error) toast.error(data?.error, { toastId: "form-object-response" });
+      if (data?.error)
+        toast.error(data?.error, { toastId: "form-object-response" });
       if (data?.error) {
         setTimeout(() => window.history.back(), 3000);
       }
@@ -86,7 +111,9 @@ export default function CreateRatings() {
   }, []);
 
   useEffect(() => {
-    toast.success("Update rating class, score, issue date, and expiry date", { toastId: "update-rating" });
+    toast.success("Update rating class, issue date, and expiry date", {
+      toastId: "update-rating",
+    });
   }, []);
 
   return (

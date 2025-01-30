@@ -13,6 +13,12 @@ export class AuthClass extends MainClass {
       const { email, password } = input;
       const isAgustoMail = email.includes("@agusto.com");
       const endPoint = process.env.AGUSTO_SERVICES_URL;
+      if (!email) {
+        throw new Error("Please enter your email");
+      }
+      if (!password) {
+        throw new Error("Please enter your password");
+      }
 
       if (isAgustoMail) {
         const { data } = await axios.post(`${endPoint}/auth/login`, {
@@ -23,9 +29,12 @@ export class AuthClass extends MainClass {
 
         if (data?.status === 400) throw new Error(data?.message);
 
-        const Me = await axios.get(`${endPoint}/users/getStaffByempId/${user?.employee_id.toString()}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const Me = await axios.get(
+          `${endPoint}/users/getStaffByempId/${user?.employee_id.toString()}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         const userJWT = await this.EncryptData({
           ...user,
@@ -41,69 +50,47 @@ export class AuthClass extends MainClass {
         };
       }
 
-      const user = await dbQuery.contact.findFirst({
-        where: { email, password: input.password },
-        include: { clientModel: true },
-      });
-
-      if (!user) throw new Error("User not found");
-      const { password: userPassword, ...rest } = user;
-
-      //six digit token
-      const magicToken = Math.floor(100000 + Math.random() * 900000).toString();
-      await dbQuery.contact.update({
-        where: { id: user.id },
-        data: { magicToken },
-      });
-
-      //send magic link to user email
-      // <h2>Agusto & Co.s Rating Mgt System - Login Token</h2>
-
-      await sendEmailService({
-        From: "info@agusto.com",
-        To: email,
-        Subject: "Agusto & Co's Rating System Login Token",
-        HtmlBody: `
-        <p>Hello ${user?.fullName},</p>
-        <p>Please find below your six digit token</p>
-        <h2>${magicToken}</h2>
-
-        <p>Thank you</p>
-        <p>Agusto & Co.</p>`,
-
-        TextBody: `Hello ${user?.fullName}, Please find below your six digit token ${magicToken}`,
-      });
-
-      return {
-        message: "Login link sent to your email",
-        user: rest,
-        apiToken: null,
-        client: null,
-      };
+      return await this.magicLinkLogin(input);
     } catch (error: any) {
       return { error: error.message };
     }
   }
 
-  public async magicLinkLogin(input: { email: string; token: string }) {
+  public async magicLinkLogin(input: { email: string; password: string }) {
     try {
-      const { email, token } = input;
+      const { email, password } = input;
+
+      // Find user by email only
       const user = await dbQuery.contact.findFirst({
-        where: { magicToken: token, email },
+        where: { email },
       });
 
-      if (!user) throw new Error("Wrong token or email. Please use the correct token sent to your email");
-      await dbQuery.contact.update({
-        where: { id: user.id },
-        data: { magicToken: null },
-      });
+      // If user doesn't exist, throw an error
+      if (!user) {
+        throw new Error("Invalid email or password");
+      }
 
-      const { password, ...rest } = user;
+      // If user is not found, return an error
+      if (!user || !user.password) {
+        throw new Error("Invalid email or password");
+      }
+      // Log passwords to debug
+      console.log("Entered Password:", password);
+      console.log("Stored Hash:", user.password);
+      // Verify password
+      const isPasswordValid = verifyPassword(password, user.password as string);
+      if (!isPasswordValid) {
+        throw new Error("Invalid email or password");
+      }
+
+      // Remove password before returning the user object
+      const { password: _, ...rest } = user;
+
       const userJWT = await this.EncryptData({ ...rest, role: "client" });
 
       return { client: rest, token: userJWT, apiToken: null };
     } catch (error: any) {
-      return { error: error?.message };
+      throw new Error(error?.message || "Something went wrong");
     }
   }
 }

@@ -20,31 +20,50 @@ const whyUs = [
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const fd = await request.formData();
-    const body = Object.fromEntries(fd) as { email: string; password: string; terms?: string };
-    if (!body?.terms) return json({ error: "Please accept our terms and conditions to continue." });
+    const body = Object.fromEntries(fd) as {
+      email: string;
+      password: string;
+      terms?: string;
+    };
 
-    const { token, user, error, apiToken, client, message } = await RMSservice().auth.login(body);
+    const { token, user, error, apiToken, client, message } =
+      await RMSservice().auth.login(body);
 
-    if (message) {
-      return redirectDocument(`/auth/client-validation?email=${body.email}`, {
-        headers: { "set-cookie": await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
+    // console.log(token, user, error, apiToken, client, message);
+
+    if (client && token) {
+      return redirectDocument("/client/ratings", {
+        headers: {
+          "set-cookie": await appCookie.serialize(
+            JSON.stringify({ token, client })
+          ),
+        },
       });
     }
 
     if (token && user) {
       return redirectDocument("/app/dashboard", {
-        headers: { "set-cookie": await appCookie.serialize(JSON.stringify({ token, apiToken, user })) },
+        headers: {
+          "set-cookie": await appCookie.serialize(
+            JSON.stringify({ token, apiToken, user })
+          ),
+        },
       });
     }
 
     if (client && token) {
       return redirectDocument("/client/dashboard", {
-        headers: { "set-cookie": await appCookie.serialize(JSON.stringify({ token, client })) },
+        headers: {
+          "set-cookie": await appCookie.serialize(
+            JSON.stringify({ token, client })
+          ),
+        },
       });
     }
 
     return json({ error });
   } catch (error) {
+    console.log(error);
     return { error: "Unable to login at this time. Please try again later." };
   }
 };
@@ -54,7 +73,8 @@ export default function Index() {
   const fetcherData = Fetcher.data as { error: string };
 
   useEffect(() => {
-    if (fetcherData?.error) toast.error(fetcherData?.error, { toastId: "login-error" });
+    if (fetcherData?.error)
+      toast.error(fetcherData?.error, { toastId: "login-error" });
   }, [fetcherData]);
 
   return (
@@ -62,11 +82,14 @@ export default function Index() {
       <div className="flex py-4 bg-primary frameBg">
         <div className="container flex lg:flex-row flex-col lg:gap-[6em]">
           <div className="relative flex flex-col lg:text-left text-center justify-center flex-1 gap-6 text-white py-[10vh] lg:py-[29vh]">
-            <h1 className="text-6xl font-bold leading-[1.1em]">Agusto & Co.'s Rating Management System</h1>
+            <h1 className="text-6xl font-bold leading-[1.1em]">
+              Agusto & Co.'s Rating Management System
+            </h1>
 
             <p className="text-xl leading-[1.6em] opacity-70">
-              Strengthen your creditworthiness with the Agusto Rating Management System. Our streamlined platform
-              simplifies data collection, ensuring a transparent and efficient rating process for informed
+              Strengthen your creditworthiness with the Agusto Rating Management
+              System. Our streamlined platform simplifies data collection,
+              ensuring a transparent and efficient rating process for informed
               decision-making.
             </p>
           </div>
@@ -85,15 +108,19 @@ export default function Index() {
         <div className="flex flex-col flex-1 gap-6">
           <h1 className="text-3xl font-bold">About Agusto & Co.</h1>
           <p className="text-lg">
-            Agusto & Co. is a foremost research house and an expert voice on the major economies, industries and
-            businesses operating in sub-Saharan Africa. Our database on sub-Saharan African economies spans more than 25
-            years and across the high-level macroeconomic information to the granular individual company ratios.
+            Agusto & Co. is a foremost research house and an expert voice on the
+            major economies, industries and businesses operating in sub-Saharan
+            Africa. Our database on sub-Saharan African economies spans more
+            than 25 years and across the high-level macroeconomic information to
+            the granular individual company ratios.
           </p>
 
           <p className="text-lg">
-            For over 25 years, we have employed our unique research methodology and wealth of experience in sub-Saharan
-            Africa to deliver considered perspectives on more than 50 industries including Banking, Oil & Gas, Real
-            Estate, Food & Beverage, Construction, Building Materials and Telecommunications.{" "}
+            For over 25 years, we have employed our unique research methodology
+            and wealth of experience in sub-Saharan Africa to deliver considered
+            perspectives on more than 50 industries including Banking, Oil &
+            Gas, Real Estate, Food & Beverage, Construction, Building Materials
+            and Telecommunications.{" "}
           </p>
         </div>
       </div>
@@ -101,7 +128,9 @@ export default function Index() {
       <div className="frameBg2">
         <div className=" flex py-[6em] bg opacity-95">
           <div className="container flex flex-col gap-6">
-            <h3 className="text-3xl font-bold text-base-100">Why Agusto & Co. </h3>
+            <h3 className="text-3xl font-bold text-base-100">
+              Why Agusto & Co.{" "}
+            </h3>
 
             <div className="flex flex-col gap-3 text-lg text-base-100 opacity-70 ">
               {whyUs.map((el) => (

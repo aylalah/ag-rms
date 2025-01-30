@@ -35,8 +35,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         error,
         rating: {
           ...rating,
-
-          contacts: rating?.clientModel?.contactModel.map((el) => ({
+          contacts: rating?.clientModel?.contactModel?.map((el: any) => ({
             id: el?.id,
             name: el?.fullName,
             email: el?.email,
@@ -104,6 +103,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const consentLetter = body?.consentLetter;
     const reportTitle = body?.reportTitle;
     const version = body?.version;
+    const status = body?.status;
     const data = {
       reportFileUrl: null,
       finalLetterUrl: null,
@@ -111,7 +111,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       reportTitle,
       version,
       rating: id,
-      status: "sent",
+      status,
     };
     const contacts = JSON.parse(body?.contacts as any);
     const year = body?.year;
@@ -119,48 +119,91 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     if (file?.size > 0) {
       let fileName = `${id}-${reportTitle}.${version}`;
-      const upload = await uploadStreamToSpaces(file, fileName);
+      const upload = await uploadStreamToSpaces(file, fileName, version);
       if (upload?.$metadata?.httpStatusCode === 200)
         data.reportFileUrl = upload?.Location as any;
     }
 
     if (finalLetter > 0) {
       let fileName = `${id}-${reportTitle}-letter.${version}`;
-      const upload = await uploadStreamToSpaces(finalLetter, fileName);
+      const upload = await uploadStreamToSpaces(finalLetter, fileName, version);
       if (upload?.$metadata?.httpStatusCode === 200)
         data.finalLetterUrl = upload?.Location as any;
     }
 
     if (consentLetter > 0) {
       let fileName = `${id}-${reportTitle}-consent-letter.${version}`;
-      const upload = await uploadStreamToSpaces(consentLetter, fileName);
+      const upload = await uploadStreamToSpaces(
+        consentLetter,
+        fileName,
+        version
+      );
       if (upload?.$metadata?.httpStatusCode === 200)
         data.consentLetterUrl = upload?.Location as any;
     }
 
-    if (reportTitle?.toLowerCase().includes("final")) data.status = "pending";
-
+    if (status === "concluded") {
+      data.status = "sent";
+      if (reportTitle?.toLowerCase().includes("final")) data.status = "sent";
+      const { updateRating, error } = await RMSservice(token).ratings.update({
+        id: id,
+        data: { status: "concluded" },
+      });
+    } else {
+      data.status = "sent";
+    }
+    if (reportTitle?.toLowerCase().includes("final")) data.status = "sent";
     const { CreateReport, error } = await RMSservice(token).report.create({
       data,
     });
 
     if (CreateReport) {
-      if (data?.status === "pending") {
+      if (reportTitle?.toLowerCase().includes("final")) {
         sendEmailService({
           From: "info@agusto.com",
           To: body.supervisorEmail,
           Subject: "Final Rating Report Uploaded",
           HtmlBody: `<p>Dear Team Lead,</p>
-          <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal for your review and approval.</p>
+          <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
+
+          <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
           `,
         });
+        //notify client
+        contacts.forEach((el: any) => {
+          sendEmailService({
+            From: "info@agusto.com",
+            To: el?.email,
+            Subject: "Final Rating Report Uploaded",
+            HtmlBody: `<p>Dear Client<p>
+            <p> The final rating report for ${title} has been uploaded on the Agusto RMS portal.</p>
+
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
+
+            `,
+          });
+        });
       } else {
-        contacts?.forEach((el) => {
+        sendEmailService({
+          From: "info@agusto.com",
+          To: body.supervisorEmail,
+          Subject: "Draft Rating Report Uploaded",
+          HtmlBody: `<p>Dear Team Lead,</p>
+           <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
+
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
+           `,
+        });
+        // notify client
+        contacts?.forEach((el: any) => {
           sendEmailService({
             From: "info@agusto.com",
             To: el?.email,
             Subject: "Draft Rating Report Uploaded",
-            HtmlBody: `<p>Dear Agusto & Co. Rating Client</p>
+            HtmlBody: `<p>Dear Client,</p>
             <p>The draft report for the ${year} rating of ${title} has been uploaded on the Agusto Rating Management System. Please log in to the portal
             and review the document for any:</p>
             <ul>
@@ -169,7 +212,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             <li>Opinions that we have expressed that you disagree with, stating your reason(s) for disagreement</li>
 
             </ul>
-            <p> Please let us have your comments on the draft report no later than one week after the draft is sent out</p>`,
+            <p> Please let us have your comments on the draft report no later than one week after the draft is sent out</p>
+            
+             <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>`,
           });
         });
       }

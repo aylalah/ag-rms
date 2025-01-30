@@ -8,20 +8,19 @@ import { FetcherWithComponents, useFetcher } from "@remix-run/react";
 const email = "";
 const password = "";
 
-export default function LoginForm({
+export default function NewLoginForm({
   Fetcher,
 }: {
   Fetcher: FetcherWithComponents<any>;
 }) {
   const isSubmitting = Fetcher.state === "submitting";
   const { setLoader } = useAppStore.general((state) => state);
-  const [showPassword, setShowPassword] = useState(false);
   const checkRef = useRef<HTMLInputElement>(null);
   const [canSubmit, setCanSubmit] = useState(false);
 
-  const onCheck = () => {
-    setCanSubmit(checkRef?.current?.checked as any);
-  };
+  // const onCheck = () => {
+  //   setCanSubmit(checkRef?.current?.checked as any);
+  // };
 
   useEffect(() => setLoader(isSubmitting), [isSubmitting]);
 
@@ -45,34 +44,30 @@ export default function LoginForm({
             type="email"
             placeholder="Enter you email address"
           />
-          {/* <TextInput
+          <TextInput
             defaultValue={password}
             name="password"
             type="password"
             placeholder="Enter your password"
-          /> */}
-          <div className="relative w-full">
-            <TextInput
-              defaultValue={password}
-              name="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              className="relative"
-              // className="w-full p-2 border rounded"
-            />
-
-            {/* Toggle Button (Using Remix Icon) */}
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-[45%] text-gray-500"
-            >
-              <i
-                className={showPassword ? "ri-eye-line" : "ri-eye-off-line"}
-              ></i>
-            </button>
-          </div>
+          />
           <div className="flex items-center py-4">
+            {/* <div className="flex items-center gap-2 text-sm opacity-80">
+              <input
+                ref={checkRef}
+                onChange={onCheck}
+                type="checkbox"
+                id="terms"
+                name="terms"
+                className="cursor-pointer checkbox checkbox-sm"
+              />
+              <label htmlFor="terms" className="cursor-pointer">
+                I have read and agree to the{" "}
+                <a href="https://www.agusto.com/code-of-conduct" className="font-bold text-secondary">
+                  Terms of Service
+                </a>
+              </label>
+            </div> */}
+
             {/* <a href="/auth/forgot-password" className="text-xs">
               Forgot Password?
             </a> */}

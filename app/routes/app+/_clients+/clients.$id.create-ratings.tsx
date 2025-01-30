@@ -17,10 +17,10 @@ import { toast } from "react-toastify";
 import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { apiToken, token } = await validateCookie(request);
+  const { apiToken, token, user } = await validateCookie(request);
 
   const formObjectQuery = RMSservice(apiToken)
-    .ratings.formObject({ apiToken, token })
+    .ratings.formObject({ apiToken, token, user })
     .then((data) => {
       const { formObject, error } = data;
       return { formObject, error };
@@ -49,7 +49,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   if (!data?.ratingClass) delete data.ratingClass;
 
   data.client = id;
-  data.ratingScore = Number(data.ratingScore);
+   data.ratingScore = Number(data.ratingScore);
   data.ratingYear = Number(data.ratingYear);
   data.issueDate = data.issueDate && new Date(data.issueDate);
   data.expiryDate = data.expiryDate && new Date(data.expiryDate);

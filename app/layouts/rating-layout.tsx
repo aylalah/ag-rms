@@ -75,6 +75,10 @@ export default function RatingLayout({
     ratingRef.current?.showModal();
   };
 
+  if (reportType?.includes("Final")) {
+    //update rating status to concluded
+  }
+
   const onCloseHandler = () => ratingRef.current?.close();
 
   useEffect(() => {
@@ -106,10 +110,16 @@ export default function RatingLayout({
 
         {isClientOnly ? (
           <div className="dropdown dropdown-hover dropdown-end">
-            <Link tabIndex={0} to="#" className="text-base btn btn-secondary">
+            {/* <Link tabIndex={0} to="#" className="text-base btn btn-secondary">
               Upload Files
               <i className="ri-arrow-down-s-line" />
-            </Link>
+            </Link> */}
+            {rating?.status === "ongoing" && (
+              <Link tabIndex={0} to="#" className="text-base btn btn-secondary">
+                Upload Files
+                <i className="ri-arrow-down-s-line" />
+              </Link>
+            )}
 
             <ul
               tabIndex={0}
@@ -399,7 +409,7 @@ export default function RatingLayout({
                 name="secondaryAnalystId"
                 defaultValue={SecondaryAnalystObject?.employee_id}
               />
-
+              {/* //we still need to fix the upload to ami feature
               {reportType === "Final Report" && (
                 <div className="flex items-center gap-2">
                   <input
@@ -415,7 +425,7 @@ export default function RatingLayout({
                     Upload to AMI ?
                   </label>
                 </div>
-              )}
+              )} */}
 
               <div>
                 <label htmlFor="file" className="text-sm hint">
@@ -445,7 +455,7 @@ export default function RatingLayout({
                 </div>
               )}
 
-              {reportType === "Final Report" && forAMI && (
+              {/* {reportType === "Final Report" && forAMI && (
                 <div>
                   <label htmlFor="file" className="text-sm hint">
                     Customer Consent Document (Signed)
@@ -457,6 +467,24 @@ export default function RatingLayout({
                     className="w-full file-input file-input-bordered"
                     accept="application/pdf"
                   />
+                </div>
+              )} */}
+
+              {reportType === "Final Report" && (
+                <div>
+                  <label htmlFor="status" className="text-sm hint">
+                    Status
+                  </label>
+                  <select
+                    required
+                    name="status"
+                    className="w-full select select-bordered"
+                    defaultValue={rating?.status}
+                  >
+                    <option value="ongoing">Ongoing</option>
+                    <option value="concluded">Concluded</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
                 </div>
               )}
 

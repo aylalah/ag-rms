@@ -1,3 +1,4 @@
+import { uploadClientStreamToSpace } from "@helpers/upload-file";
 import {
   ActionFunctionArgs,
   json,
@@ -85,7 +86,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             };
             const fileName = fileData?.name;
             const name = `${id}/${fileName?.replace(/\s/g, "-")}`.toLowerCase();
-            const upload = await uploadStreamToSpaces(file, name);
+            // const upload = await uploadStreamToSpaces(file, name);
+            // const upload = await uploadClientStreamToSpacesfile, name);
+            const upload = await uploadClientStreamToSpace(file, name);
 
             if (upload?.$metadata?.httpStatusCode === 200) {
               return {
@@ -112,12 +115,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
           Subject: `${company} File Upload`,
           HtmlBody: `
-          <p> Dear Analyst,</p>
+          <p> Dear ${primaryAnalyst},</p>
           <p>${company} has uploaded the following file${
             fileList.length > 1 ? "s" : ""
           } for the ${ratingname} on the Agusto & Co. RMS.</p>
            <p> </n> ${fileList.toString()} </n></p>
-           <p>Please log in to the <a href="${appUrl}">RMS</a> to view and dowload the information submitted.</p>`,
+           <p>Please log in to the <a href="${appUrl}">RMS</a> to view and dowload the information submitted.</p>
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>`,
         });
 
         return json({ saveQuery: saveFiles });
