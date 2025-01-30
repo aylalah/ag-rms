@@ -455,6 +455,20 @@ export default function RatingLayout({
                 </div>
               )}
 
+              {/* {reportType === "Final Report" && forAMI && (
+                <div>
+                  <label htmlFor="file" className="text-sm hint">
+                    Customer Consent Document (Signed)
+                  </label>
+                  <input
+                    required
+                    type="file"
+                    name="consentLetter"
+                    className="w-full file-input file-input-bordered"
+                    accept="application/pdf"
+                  />
+                </div>
+              )} */}
               {reportType === "Final Report" && (
                 <div>
                   <label htmlFor="status" className="text-sm hint">
