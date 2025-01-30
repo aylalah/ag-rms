@@ -208,7 +208,7 @@ const ContactForm = ({
             />
 
             {/* Show password field only if the email has changed or it's a new contact */}
-            {showPasswordField && (
+            {showPasswordField && canLogin && (
               <TextInput
                 placeholder="Enter new password"
                 type="text"

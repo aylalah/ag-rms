@@ -110,6 +110,7 @@ export default function ClientEdit() {
   const FetcherData = Fetcher.data as { message: string; error: string };
   const [showForm, setShowForm] = useState(false);
   const [selectedContact, setSelectedContact] = useState({} as any);
+  const [contact, setContact] = useState({} as any);
 
   const onNewContact = () => {
     setSelectedContact({} as any);
@@ -145,7 +146,7 @@ export default function ClientEdit() {
       { pending: "Loading client data", error: "Failed to load form object" },
       { toastId: "form-object" }
     );
-  }, []);
+  }, [ratingQuery, navigate]);
 
   useEffect(() => {
     if (FetcherData?.message) {
@@ -238,7 +239,7 @@ export default function ClientEdit() {
                     <th className="w-[2em] px-2">#</th>
                     <th>Primary Analyst</th>
                     <th>Secondary Analyst</th>
-                     <th>Rating Score</th>
+                    <th>Rating Score</th>
                     <th>Rating Class</th>
                     <th className="p-3">Rating Year</th>
                     <th>Status</th>
