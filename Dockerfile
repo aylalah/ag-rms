@@ -13,7 +13,7 @@ COPY . .
 RUN mkdir -p /home/node/app/dist
 
 # Build the application
-RUN yarn build
+RUN yarn dev
 
 # Debugging step: List contents
 RUN ls -l /home/node/app/dist
@@ -35,4 +35,4 @@ COPY --from=builder /home/node/app/build ./build
 EXPOSE 80
 
 # Start the application
-CMD ["npm", "run", "build"]
+CMD ["npm", "run", "dev"]
