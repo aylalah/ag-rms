@@ -106,7 +106,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { Client, Ratings, dashboardData } = useLoaderData<typeof loader>();
-  console.log(dashboardData);
 
   useEffect(() => {}, []);
 
