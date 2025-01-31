@@ -51,15 +51,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       });
     }
 
-    if (client && token) {
-      return redirectDocument("/client/dashboard", {
-        headers: {
-          "set-cookie": await appCookie.serialize(
-            JSON.stringify({ token, client })
-          ),
-        },
-      });
-    }
+    // if (client && token) {
+    //   return redirectDocument("/client/dashboard", {
+    //     headers: {
+    //       "set-cookie": await appCookie.serialize(
+    //         JSON.stringify({ token, client })
+    //       ),
+    //     },
+    //   });
+    // }
 
     return json({ error });
   } catch (error) {

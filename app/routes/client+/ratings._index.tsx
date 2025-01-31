@@ -22,7 +22,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         AND: [
           // { NOT: [{ status: { equals: "concluded" } }] },
           { clientModel: { companyName: { contains: search } } },
-          { clientModel: { id: { equals: client?.client } } },
+          { clientModel: { id: { equals: client?.id } } },
         ],
       },
     })

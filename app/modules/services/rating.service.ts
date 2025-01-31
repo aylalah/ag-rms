@@ -196,7 +196,6 @@ export class RatingClass extends MainClass {
       //const user = { employee_id: 220684 }; // ike
       // const user = await appDecryptData(token);
 
-      console.log(user, "getting user");
       const unit = user?.unit;
       const endPoint = process.env.AGUSTO_SERVICES_URL;
 
@@ -226,7 +225,6 @@ export class RatingClass extends MainClass {
         // initialUnitMembers = data?.data || [];
         unitMembers = data?.data || [];
       }
-      console.log(unitMembers, "unitMembers");
 
       if (unit?.includes("Corporate")) {
         unitMembers = unitMembers?.filter(

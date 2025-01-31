@@ -16,8 +16,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     })
     .then((res) => {
       const { ratings, error } = res || {};
+      console.log(res, "ratings");
       const { docs, ...meta } = ratings || {};
-      const thead = ["ratingClass", "ratingYear", "issueDate", "expiryDate"];
+      const thead = ["ratingScore", "ratingYear", "issueDate", "expiryDate"];
       const tbody = docs?.map((rating) => ({
         ...rating,
         createdAt: dayjs(rating.createdAt).format("MMMM DD, YYYY"),
