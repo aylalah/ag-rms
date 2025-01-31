@@ -58,6 +58,7 @@ export class RatingClass extends MainClass {
     }
   }
 
+
   async one(input: {
     id: string;
     include?: Prisma.RatingInclude<DefaultArgs>;
