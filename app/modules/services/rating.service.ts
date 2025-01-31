@@ -114,9 +114,7 @@ export class RatingClass extends MainClass {
       contacts.forEach((el) => {
         const HtmlBody = `<p>Dear Agusto Rating Client,</p>
         <p>A new rating program has been created for you on the Agusto Rating Management System.</p> 
-        <p>Please log in to the <a href="https://arms.agusto.com">portal</a> to access our rating methodology and information gathering questionnaire</p>
-         <p>Best Regards,</p>
-          <p>Agusto & Co RMS Team</p>`;
+        <p>Please log in to the <a href="https://arms.agusto.com">portal</a> to access our rating methodology and information gathering questionnaire</p>`;
 
         sendEmailService({
           From: "info@agusto.com",
@@ -232,14 +230,6 @@ export class RatingClass extends MainClass {
         unitMembers = unitMembers?.filter(
           (el: any) =>
             el?.unit.includes("Corporate") || el?.unit.includes("Executive")
-        );
-      } else {
-        const getFirstWord = (str: any) => {
-          return str.split(/[\s.]+/)[0]; // Extracts the first word
-        };
-
-        unitMembers = unitMembers?.filter((el: any) =>
-          el?.unit.includes(getFirstWord(unit))
         );
       }
 

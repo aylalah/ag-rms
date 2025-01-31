@@ -469,7 +469,7 @@ export default function RatingLayout({
                   />
                 </div>
               )} */}
-
+              
               {reportType === "Final Report" && (
                 <div>
                   <label htmlFor="status" className="text-sm hint">

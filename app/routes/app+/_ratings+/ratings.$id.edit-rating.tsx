@@ -63,7 +63,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const fd = await request.formData();
   const data = Object.fromEntries(fd.entries()) as any;
 
-  data.ratingScore = Number(data.ratingScore);
+  // data.ratingScore = Number(data.ratingScore);
+  data.ratingScore = data.ratingScore;
   data.issueDate = data.issueDate && new Date(data.issueDate);
   data.expiryDate = data.expiryDate && new Date(data.expiryDate);
 
