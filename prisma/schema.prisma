@@ -73,7 +73,7 @@ model Reports {
 model Rating {
   id                        String        @id @default(auto()) @map("_id") @db.ObjectId
   ratingTitle               String        @default("Issuer Rating")
-  ratingScore               Int?
+  ratingScore               String?
   unit                      String?
   ratingClass               String?       @db.ObjectId
   ratingClassModel          RatingClass?  @relation(fields: [ratingClass], references: [id])
