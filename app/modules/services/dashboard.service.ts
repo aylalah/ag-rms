@@ -1,5 +1,21 @@
+interface DashboardData {
+  clients: number;
+  industries: number;
+  pendingRatings: number;
+  completedRatings: number;
+  industryDistribution: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      backgroundColor: string;
+    }[];
+  };
+  error?: string; // Add the error property here
+}
+
 export class GeneralClass extends MainClass {
-  async dashboard() {
+  async dashboard(): Promise<DashboardData> {
     try {
       //this.hasAccess("all");
       const result = await dbQuery.$transaction([
@@ -47,7 +63,17 @@ export class GeneralClass extends MainClass {
         industryDistribution: chartData,
       };
     } catch (error: any) {
-      return { error: error?.message };
+      // return { error: error?.message };
+      console.error("Error in dashboard:", error?.message);
+      return {
+        // Return a DashboardData object with the error property
+        clients: 0,
+        industries: 0,
+        pendingRatings: 0,
+        completedRatings: 0,
+        industryDistribution: { labels: [], datasets: [] },
+        error: error?.message || "An error occurred",
+      };
     }
   }
 }
