@@ -13,6 +13,15 @@ import numeral from "numeral";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
+// const allowFileTypes = [
+//   "image/png",
+//   "image/jpeg",
+//   "image/jpg",
+//   "application/pdf",
+//   "application/zip",
+//   "application/rar",
+//   "text/csv",
+// ];
 const allowFileTypes = [
   "image/png",
   "image/jpeg",
@@ -21,8 +30,16 @@ const allowFileTypes = [
   "application/zip",
   "application/rar",
   "text/csv",
+  // Word documents
+  "application/msword", // .doc
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  // Google Docs (treated as generic office documents)
+  "application/vnd.google-apps.document",
+  // Excel files
+  "application/vnd.ms-excel", // .xls
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.google-apps.spreadsheet", // Google Sheets
 ];
-
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
 
@@ -317,9 +334,9 @@ export default function Dragger() {
   }, [FetcherData]);
 
   return (
-    <div className="flex flex-col flex-1 h-[98%] gap-10 overflow-hidden border-b-2 ">
+    <div className="flex flex-col min-h-screen gap-10 overflow-auto border-b-2 ">
       <div
-        className="border-dashed flex flex-col items-center justify-center h-[17em]  overflow-hidden transition-all border bg-[#07354f10] rounded-xl border-primary"
+        className="border-dashed flex flex-col items-center justify-center h-[15em]  overflow-hidden transition-all border bg-[#07354f10] rounded-xl border-primary"
         ref={dragRef}
         id="drop_zone"
         onDrop={onDrop}
@@ -346,13 +363,14 @@ export default function Dragger() {
           <input
             onChange={onChangeFileInput}
             type="file"
-            accept="application/pdf"
+            // accept="application/pdf"
+            accept={allowFileTypes.join(" , ")}
             className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 w-full overflow-hidden">
+      <div className="flex flex-col flex-grow w-full overflow-auto">
         <h2 className="flex justify-between p-4 pr-6 font-semibold text-white capitalize bg-primary">
           <span>
             {fileList?.length} File{fileList?.length > 1 ? "s" : ""}

@@ -112,11 +112,11 @@ export default function App() {
         </ul>
       </div>
 
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden overflow-y-auto">
         <Outlet />
       </div>
 
-      <footer className="flex items-center justify-between py-4 text-xs font-bold ">
+      <footer className="flex items-center justify-between py-4 text-xs font-bold mt-auto ">
         <div className="opacity-40">
           {" "}
           &copy; Copyright Agusto & Co.{dayjs().format("YYYY")}.{" "}
