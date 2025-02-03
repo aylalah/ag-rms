@@ -247,6 +247,7 @@ export class RatingClass extends MainClass {
       });
       const ratingClass = await dbQuery.ratingClass.findMany({
         select: { id: true, name: true },
+        orderBy: { name: "asc" },
       });
 
       const dataList = objData
