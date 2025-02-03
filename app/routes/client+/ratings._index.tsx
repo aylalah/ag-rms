@@ -44,7 +44,7 @@ export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
   const { setQueryData, storeQueryData } = useRatingStore((state) => state);
   const [meta, setMeta] = useState<any>({});
-  console.log(storeQueryData);
+
   const onSearch = () => {};
 
   const onNext = () => {};
