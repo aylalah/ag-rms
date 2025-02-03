@@ -17,10 +17,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       orderBy: sort as any,
       where: {
         OR: [
-          { companyName: { contains: search } },
-          { industryModel: { name: { contains: search } } },
-          { country: { contains: search } },
-          { companyPhoneNumbers: { contains: search } },
+          { companyName: { contains: search, mode: "insensitive" } },
+          {
+            industryModel: { name: { contains: search, mode: "insensitive" } },
+          },
+          { country: { contains: search, mode: "insensitive" } },
+          { companyPhoneNumbers: { contains: search, mode: "insensitive" } },
         ],
       },
       include: { industryModel: true },
@@ -40,7 +42,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         tbody,
         meta,
         error,
-        searchTitle: "Search by clients, emails, industries, phone & countries ",
+        searchTitle:
+          "Search by clients, emails, industries, phone & countries ",
       };
     });
   return json({ queryData });
