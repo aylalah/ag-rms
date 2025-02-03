@@ -177,9 +177,9 @@ export default function RatingLayout({
 
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
-                  title="Rating Class"
+                  title="Rating Score"
                   isLarge
-                  subTitle={`${rating?.ratingClassModel?.name || "-"}`}
+                  subTitle={`${rating?.ratingScore || "-"}`}
                 />
                 <SummaryCard
                   title="Rating Year"
@@ -469,7 +469,7 @@ export default function RatingLayout({
                   />
                 </div>
               )} */}
-              
+
               {reportType === "Final Report" && (
                 <div>
                   <label htmlFor="status" className="text-sm hint">

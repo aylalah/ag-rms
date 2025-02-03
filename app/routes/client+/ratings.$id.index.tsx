@@ -10,14 +10,23 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     .then((res) => {
       const { rating, error } = res || {};
       const PrimaryAnalystObject = JSON.parse(rating?.primaryAnalyst as any);
-      const SecondaryAnalystObject = JSON.parse(rating?.secondaryAnalyst as any);
+      const SecondaryAnalystObject = JSON.parse(
+        rating?.secondaryAnalyst as any
+      );
 
       return {
         error,
         rating: {
           ...rating,
-          primaryAnalyst: PrimaryAnalystObject?.firstname + " " + PrimaryAnalystObject?.lastname,
-          secondaryAnalyst: SecondaryAnalystObject?.firstname + " " + SecondaryAnalystObject?.lastname,
+          ratingScore: rating?.ratingScore,
+          primaryAnalyst:
+            PrimaryAnalystObject?.firstname +
+            " " +
+            PrimaryAnalystObject?.lastname,
+          secondaryAnalyst:
+            SecondaryAnalystObject?.firstname +
+            " " +
+            SecondaryAnalystObject?.lastname,
           primaryAnalystEmail: PrimaryAnalystObject?.email,
           secondaryAnalystEmail: SecondaryAnalystObject?.email,
         },
@@ -29,7 +38,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     { name: "Draft Report", version: "2.0", link: "" },
     { name: "Final Report", version: "1.0", link: "" },
   ];
-
   return json({ rating, reports, error });
 };
 

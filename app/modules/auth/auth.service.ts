@@ -3,14 +3,13 @@ import { appEncryptData } from "@helpers/validation";
 import { dbQuery } from "@helpers/prisma";
 import { MainClass } from "@modules/services/main.service";
 
-
 interface AuthResponse {
   token?: any;
   user?: User;
   error?: string;
   apiToken?: string | null;
-  client?: any | null; 
-  message?: string; 
+  client?: any | null;
+  message?: string;
 }
 
 export class AuthClass extends MainClass {
@@ -27,11 +26,18 @@ export class AuthClass extends MainClass {
       const isAgustoMail = email.includes("@agusto.com");
       const endPoint = process.env.AGUSTO_SERVICES_URL;
 
+      // if (!navigator.onLine) {
+      //   return {
+      //     error:
+      //       "No internet connection. Please check your network and try again.",
+      //   };
+      // }
+
       if (!email) {
-        return { error: "Please enter your email" }; 
+        return { error: "Please enter your email" };
       }
       if (!password) {
-        return { error: "Please enter your password" }; 
+        return { error: "Please enter your password" };
       }
 
       if (isAgustoMail) {
@@ -49,7 +55,7 @@ export class AuthClass extends MainClass {
           }
 
           const Me = await axios.get(
-            `${endPoint}/users/getStaffByempId/${user?.employee_id?.toString()}`, 
+            `${endPoint}/users/getStaffByempId/${user?.employee_id?.toString()}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -68,14 +74,13 @@ export class AuthClass extends MainClass {
             client: null,
           };
         } catch (agustoApiError: any) {
-          
           return { error: agustoApiError.message }; // Handle Agusto API errors specifically
         }
       }
 
       return await this.magicLinkLogin(input);
     } catch (error: any) {
-      return { error: error.message }; 
+      return { error: error.message };
     }
   }
 
@@ -104,7 +109,7 @@ export class AuthClass extends MainClass {
       // console.log("Entered Password:", password);
       // console.log("Stored Hash:", user.password);
       // Verify password
-      const isPasswordValid = verifyPassword(password, user.password as string); 
+      const isPasswordValid = verifyPassword(password, user.password as string);
       if (!isPasswordValid) {
         return { error: "Invalid email or password" }; // Consistent object structure
       }
