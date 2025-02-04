@@ -56,7 +56,7 @@ export class ContactClass extends MainClass {
       const contact = await dbQuery.contact.findUnique({
         where: { id },
       });
-      console.log({ contact });
+      // console.log({ contact });
       return { contact };
     } catch (error: any) {
       return { error: error.message };

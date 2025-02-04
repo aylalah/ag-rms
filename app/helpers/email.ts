@@ -16,10 +16,10 @@ export const sendEmailService = async (mailPayload: Message) => {
       ...mailPayload,
       From: `"Agusto & Co. RMS " <${emailFrom}>`,
     });
-    console.log("Email sent successfully");
+    // console.log("Email sent successfully");
   } catch (error) {
     console.error("SENDING EMAIL ERROR", error);
-    console.error("Cannot complete this request at the moment");
+    // console.error("Cannot complete this request at the moment");
   }
 };
 
@@ -43,9 +43,9 @@ export const sendEmailServiceOld = async (mailPayload: Message) => {
       text: mailPayload.TextBody,
       replyTo: "itteam@agusto.com",
     });
-    console.log("Email sent successfully", info);
+    // console.log("Email sent successfully", info);
   } catch (error: any) {
-    console.error("SENDING EMAIL ERROR", error);
+    // console.error("SENDING EMAIL ERROR", error);
     return error?.message;
   }
 };

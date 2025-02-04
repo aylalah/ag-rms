@@ -63,7 +63,7 @@ export default function RatingLayout({
     if (name === "Final Report") {
       const version = getVersion(name);
       if (!rating?.issueDate || !rating?.expiryDate || !rating?.ratingClass) {
-        console.log(`/app/ratings/${rating?.id}/edit-rating`);
+        // console.log(`/app/ratings/${rating?.id}/edit-rating`);
         window.location.href = `/app/ratings/${rating?.id}/edit-rating`;
         //toast.error("Please fill in the required fields before uploading the final report", { toastId: "error" });
         return;

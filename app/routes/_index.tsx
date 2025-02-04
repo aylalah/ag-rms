@@ -63,7 +63,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     return json({ error });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return { error: "Unable to login at this time. Please try again later." };
   }
 };

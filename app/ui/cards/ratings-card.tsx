@@ -3,7 +3,6 @@ import { Link } from "@remix-run/react";
 import { RatingWithRelations } from "@helpers/zodPrisma";
 
 export default function RatingsCard({ el }: { el: RatingWithRelations }) {
-  console.log(el, "el");
   return (
     <Link
       to={`${el?.id}`}

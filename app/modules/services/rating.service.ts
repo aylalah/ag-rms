@@ -143,7 +143,7 @@ export class RatingClass extends MainClass {
       await this.hasAccess("all");
       const { id, data } = input;
 
-      console.log(data);
+      // console.log(data);
 
       const prevDocs = await dbQuery.rating.findUnique({ where: { id } });
       const result = await dbQuery.rating.update({
