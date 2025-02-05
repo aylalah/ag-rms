@@ -3,6 +3,7 @@ import {
   ActionFunctionArgs,
   json,
   LoaderFunctionArgs,
+  redirect,
   unstable_composeUploadHandlers,
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
@@ -42,6 +43,10 @@ const allowFileTypes = [
 ];
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
+  if (!client || !token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
 
   //get the companyName from client
 
@@ -60,7 +65,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { token, client } = await validateCookie(request);
-
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const method = request.method;
   const id = params.id || "testing";
   const slug = params.slug as "questionnaire-docs" | "additional-docs";
@@ -91,6 +99,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         const supervisor = files.supervisor as string;
         const primaryAnalyst = files.primaryAnalyst as string;
         const secondaryAnalyst = files.secondaryAnalyst as string;
+        const primaryAnalystName = files.primaryAnalystName as string;
 
         if (Object.keys(files).length < 1) return json({});
 
@@ -132,7 +141,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
           Subject: `${company} File Upload`,
           HtmlBody: `
-          <p> Dear ${primaryAnalyst},</p>
+          <p> Dear ${primaryAnalystName},</p>
           <p>${company} has uploaded the following file${
             fileList.length > 1 ? "s" : ""
           } for the ${ratingname} on the Agusto & Co. RMS.</p>
@@ -274,6 +283,8 @@ export default function Dragger() {
       "secondaryAnalyst",
       SecondaryAnalystObject?.email as string
     );
+    formData.append("primaryAnalystName", PrimaryAnalystObject?.firstname);
+    formData.append("secondaryAnalystName", SecondaryAnalystObject?.firstname);
 
     Fetcher.submit(formData, {
       method: "POST",

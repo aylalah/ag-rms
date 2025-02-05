@@ -4,6 +4,7 @@ import {
   defer,
   json,
   LoaderFunctionArgs,
+  redirect,
 } from "@remix-run/node";
 import {
   Await,
@@ -18,6 +19,12 @@ import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { apiToken, token, user } = await validateCookie(request);
+
+  if (!token || !user) {
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+  }
 
   const formObjectQuery = RMSservice(apiToken)
     .ratings.formObject({ apiToken, token, user })

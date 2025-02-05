@@ -1,13 +1,19 @@
 import dayjs from "dayjs";
 import RatingsCard from "@ui/cards/ratings-card";
 import { useLoaderData } from "@remix-run/react";
-import { defer, LoaderFunctionArgs } from "@remix-run/node";
+import { defer, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
+
+  if (!client || !token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+
   const search = new URL(request.url).searchParams.get("search") || "";
   const page = Number(new URL(request.url).searchParams.get("page")) || 1;
   const limit = Number(new URL(request.url).searchParams.get("limit")) || 15;

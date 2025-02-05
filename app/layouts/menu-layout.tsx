@@ -21,6 +21,8 @@ export default function MenuLayout({
   settings: IRouteGroup;
 }) {
   const { user, client } = useAppStore.user((state) => state);
+  console.log(client, "client");
+  console.log(user, "user");
 
   return (
     <div className="flex flex-1 h-screen pl-0 bg-primary">

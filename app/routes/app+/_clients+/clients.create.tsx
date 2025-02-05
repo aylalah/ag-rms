@@ -2,6 +2,7 @@ import {
   ActionFunctionArgs,
   json,
   LoaderFunctionArgs,
+  redirect,
   unstable_composeUploadHandlers,
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
@@ -15,9 +16,17 @@ import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+
   const result = (await RMSservice().clients.formObject()) as any;
 
-  const logoIndex = result?.formObject?.findIndex((el: any) => el.field === "logo");
+  const logoIndex = result?.formObject?.findIndex(
+    (el: any) => el.field === "logo"
+  );
   if (logoIndex) result.formObject[logoIndex].type = "file";
   return { client: null, formObject: result?.formObject };
 };
@@ -41,7 +50,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const file = data?.logo;
   if (file.size > 0) {
     const ext = file.type.split("/")[1];
-    const fileName = `${data.companyName?.replaceAll(" ", "-")?.toLowerCase()}.${ext}`;
+    const fileName = `${data.companyName
+      ?.replaceAll(" ", "-")
+      ?.toLowerCase()}.${ext}`;
     const upload = await uploadLogoToSpaces(file, fileName);
     if (upload.$metadata?.httpStatusCode === 200) data.logo = upload.Location;
   } else {
@@ -71,12 +82,18 @@ export default function Breeds() {
       return;
     }
 
-    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: "create-rating" });
+    if (FetcherData?.error)
+      toast.error(FetcherData?.error, { toastId: "create-rating" });
   }, [FetcherData]);
 
   return (
     <div className="h-full pb-10 overflow-hidden">
-      <FormLayout formObject={FormData as any} Fetcher={Fetcher} data={client} slug="client" />
+      <FormLayout
+        formObject={FormData as any}
+        Fetcher={Fetcher}
+        data={client}
+        slug="client"
+      />
     </div>
   );
 }

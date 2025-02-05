@@ -98,8 +98,8 @@ export default function RatingLayout({
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
         <div className="flex flex-col items-start">
-          <h1 className="text-3xl font-bold">
-            {rating?.ratingYear} - {rating?.ratingTitle}
+          <h1 className="text-3xl font-bold capitalize">
+            {rating?.ratingTitle}
           </h1>
           <span
             className={`px-4 py-1 text text-white capitalize rounded-full ${rating?.status}`}

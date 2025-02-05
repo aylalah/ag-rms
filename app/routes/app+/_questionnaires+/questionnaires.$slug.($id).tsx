@@ -1,4 +1,9 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { FormLayout } from "@layouts/form-layout";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
@@ -7,6 +12,12 @@ import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+
   const { slug, id } = params;
   const { formObject } = await RMSservice(token).questionnaires.formObject();
 
@@ -16,11 +27,16 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     const res = await RMSservice(token).questionnaires.one({ id });
     const formattedFormObject = formObject?.map((el) => {
       const field = el?.field;
-      const defaultValue = res?.questionnaire?.[field as keyof typeof res.questionnaire];
+      const defaultValue =
+        res?.questionnaire?.[field as keyof typeof res.questionnaire];
       return { ...el, value: defaultValue };
     });
 
-    return json({ questionnaire: res?.questionnaire, error: res?.error, formObject: formattedFormObject });
+    return json({
+      questionnaire: res?.questionnaire,
+      error: res?.error,
+      formObject: formattedFormObject,
+    });
   }
 };
 
@@ -32,17 +48,23 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const data = Object.fromEntries(fd.entries()) as any;
 
   if (slug === "create") {
-    const { createQuestionnaire, error } = await RMSservice(token).questionnaires.create({ data });
+    const { createQuestionnaire, error } = await RMSservice(
+      token
+    ).questionnaires.create({ data });
     return json({ message: createQuestionnaire, error });
   }
 
   if (method === "PATCH" && id) {
-    const { updateQuestionnaire, error } = await RMSservice(token).questionnaires.update({ id, data });
+    const { updateQuestionnaire, error } = await RMSservice(
+      token
+    ).questionnaires.update({ id, data });
     return json({ message: updateQuestionnaire, error });
   }
 
   if (method === "DELETE" && id) {
-    const { deleteQuestionnaire, error } = await RMSservice(token).questionnaires.delete({ id });
+    const { deleteQuestionnaire, error } = await RMSservice(
+      token
+    ).questionnaires.delete({ id });
     return json({ message: deleteQuestionnaire, error });
   }
 
@@ -62,12 +84,18 @@ export default function Breeds() {
       return;
     }
 
-    if (FetcherData?.error) toast.error(FetcherData?.error, { toastId: "create-rating" });
+    if (FetcherData?.error)
+      toast.error(FetcherData?.error, { toastId: "create-rating" });
   }, [FetcherData]);
 
   return (
     <div className="h-full pb-10 overflow-hidden">
-      <FormLayout formObject={formObject as any} Fetcher={Fetcher} data={questionnaire} slug="questionnaire" />
+      <FormLayout
+        formObject={formObject as any}
+        Fetcher={Fetcher}
+        data={questionnaire}
+        slug="questionnaire"
+      />
     </div>
   );
 }

@@ -1,6 +1,11 @@
 import ContactCard from "@ui/cards/contact-card";
 import ContactForm from "@ui/forms/contact-form";
-import { ActionFunctionArgs, defer, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  defer,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { Contact } from "@helpers/zodPrisma";
 import { Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { toast } from "react-toastify";
@@ -9,6 +14,11 @@ import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+
   const id = params?.id as string;
 
   const ratingQuery = RMSservice(token)

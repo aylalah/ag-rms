@@ -1,8 +1,14 @@
 import dayjs from "dayjs";
-import { defer, json, LoaderFunctionArgs } from "@remix-run/node";
+import { defer, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  //need to still centralize this token check
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+    
   const search = new URL(request.url).searchParams.get("search") || "";
   const page = Number(new URL(request.url).searchParams.get("page")) || 1;
   const limit = Number(new URL(request.url).searchParams.get("limit")) || 15;

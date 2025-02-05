@@ -4,6 +4,7 @@ import {
   ActionFunctionArgs,
   json,
   LoaderFunctionArgs,
+  redirect,
   unstable_composeUploadHandlers,
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
@@ -15,6 +16,11 @@ import { useEffect } from "react";
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
   const { token } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
 
   const { rating, error } = await RMSservice(token)
     .ratings.one({ id })
@@ -77,6 +83,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const method = request.method;
   const id = params.id as string;
   const { token, user } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
 
   if (method === "PATCH") {
     const formData = await unstable_parseMultipartFormData(
