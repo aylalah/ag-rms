@@ -31,6 +31,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     // console.log(token, user, error, apiToken, client, message);
 
+
     if (client && token) {
       return redirectDocument("/client/ratings", {
         headers: {
