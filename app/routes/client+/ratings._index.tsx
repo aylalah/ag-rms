@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import RatingsCard from "@ui/cards/ratings-card";
 import { useLoaderData } from "@remix-run/react";
 import { defer, LoaderFunctionArgs, redirect } from "@remix-run/node";
@@ -32,10 +34,29 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     })
     .then((res) => {
       const { ratings, error } = res || {};
-
+      // console.log(ratings, "ratings");
+      const currentDate = dayjs();
+      const liveRatings = ratings?.docs?.filter((rating) => {
+        const expiryDate = dayjs(rating.expiryDate); // Parse the expiryDate using dayjs
+        return dayjs(expiryDate).isSameOrAfter(currentDate, "day");
+      });
+      console.log(liveRatings, "liveRatings");
       const { docs, ...meta } = ratings || {};
+      console.log(meta, "meta");
+
       const thead = ["ratingScore", "ratingYear", "issueDate", "expiryDate"];
-      const tbody = docs?.map((rating) => ({
+
+      const today = dayjs();
+
+      const filteredDocs = docs?.filter((rating) => {
+        if (rating.status === "concluded") {
+          const expiryDate = dayjs(rating.expiryDate);
+          return expiryDate.isSameOrAfter(today);
+        }
+        return true; // Include ratings with other statuses
+      });
+
+      const tbody = filteredDocs?.map((rating) => ({
         ...rating,
         createdAt: dayjs(rating.createdAt).format("MMMM DD, YYYY"),
         updatedAt: dayjs(rating.updatedAt).format("MMMM DD, YYYY"),
@@ -49,6 +70,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
   const { setQueryData, storeQueryData } = useRatingStore((state) => state);
+
+  console.log(storeQueryData, "storeQueryData");
   const [meta, setMeta] = useState<any>({});
 
   const onSearch = () => {};
