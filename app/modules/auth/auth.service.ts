@@ -77,7 +77,7 @@ export class AuthClass extends MainClass {
           return { error: agustoApiError.message }; // Handle Agusto API errors specifically
         }
       }
-
+      
       return await this.magicLinkLogin(input);
     } catch (error: any) {
       return { error: error.message };
@@ -115,7 +115,7 @@ export class AuthClass extends MainClass {
 
       const userJWT = await this.EncryptData({ ...rest, role: "client" });
 
-      return { client: rest , token: userJWT, apiToken: null };
+      return { client: rest as Contact, token: userJWT, apiToken: null };
     } catch (error: any) {
       return { error: error?.message || "Something went wrong" }; // Consistent error return
     }

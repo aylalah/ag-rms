@@ -21,8 +21,6 @@ export default function MenuLayout({
   settings: IRouteGroup;
 }) {
   const { user, client } = useAppStore.user((state) => state);
-  console.log(client, "client");
-  console.log(user, "user");
 
   return (
     <div className="flex flex-1 h-screen pl-0 bg-primary">
@@ -59,9 +57,11 @@ export default function MenuLayout({
                   role="button"
                   className="flex items-center gap-2 py-4 text-sm text-white capitalize cursor-pointer"
                 >
-                  {client?.id && <p>{client?.companyName}</p>}
+                  {client?.id && (
+                    <p className="capitalize">{client?.companyName}</p>
+                  )}
                   {user?.id && (
-                    <p>
+                    <p className="capitalize">
                       {user?.firstname} {user?.lastname}
                     </p>
                   )}
@@ -90,7 +90,9 @@ export default function MenuLayout({
               <div
                 className="flex w-10 h-10 bg-cover rounded-full bg-base-100"
                 style={{
-                  backgroundImage: `url(${user?.image || client?.logo})`,
+                  backgroundImage: `url(${
+                    user?.image || client?.logo || "/images/avatar.webp"
+                  })`,
                 }}
               ></div>
             </div>

@@ -39,7 +39,7 @@ export const validateAcceptedCookie = async (request: Request) => {
 export const validateCookie = async (request: Request) => {
   let token = "" as string;
   let user = null as User | null;
-  let client = null as Client | null;
+  let client = null as Contact | null;
   let apiToken = "" as string;
 
   try {
