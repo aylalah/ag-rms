@@ -47,21 +47,27 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         client: {
           ...client,
           ratingModel: client?.ratingModel?.map((el: any) => {
-            const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
+            // const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
 
-            const SecondaryAnalystObject = JSON.parse(
-              el?.secondaryAnalyst as any
-            );
+            // const SecondaryAnalystObject = JSON.parse(
+            //   el?.secondaryAnalyst as any
+            // );
+            const PrimaryAnalystObject = el?.primaryAnalyst
+              ? JSON.parse(el.primaryAnalyst)
+              : null;
+            const SecondaryAnalystObject = el?.secondaryAnalyst
+              ? JSON.parse(el.secondaryAnalyst)
+              : null;
+
             return {
               ...el,
-              primaryAnalyst:
-                PrimaryAnalystObject?.firstname +
-                " " +
-                PrimaryAnalystObject?.lastname,
-              secondaryAnalyst:
-                SecondaryAnalystObject?.firstname +
-                " " +
-                SecondaryAnalystObject?.lastname,
+              primaryAnalyst: PrimaryAnalystObject
+                ? `${PrimaryAnalystObject.firstname} ${PrimaryAnalystObject.lastname}`
+                : "-",
+
+              secondaryAnalyst: SecondaryAnalystObject
+                ? `${SecondaryAnalystObject.firstname} ${SecondaryAnalystObject.lastname}`
+                : "-",
             };
           }),
         },

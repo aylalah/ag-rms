@@ -18,12 +18,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       limit,
       page,
       include: { clientModel: true, ratingClassModel: true },
-      where: { clientModel: { companyName: { contains: search } } },
+      where: {
+        clientModel: { companyName: { contains: search, mode: "insensitive" } },
+      },
     })
     .then((res) => {
       const { ratings, error } = res || {};
 
       const { docs, ...meta } = ratings || {};
+
       const thead = ["ratingScore", "ratingYear", "issueDate", "expiryDate"];
       const tbody = docs?.map((rating) => ({
         ...rating,

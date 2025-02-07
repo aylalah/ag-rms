@@ -8,7 +8,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
     });
-    
+
   const search = new URL(request.url).searchParams.get("search") || "";
   const page = Number(new URL(request.url).searchParams.get("page")) || 1;
   const limit = Number(new URL(request.url).searchParams.get("limit")) || 15;
@@ -36,6 +36,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .then((res) => {
       const { clients, error } = res || {};
       const { docs, ...meta } = clients || {};
+
       const thead = ["companyName", "industry", "country", "createdAt"];
       const tbody = docs?.map((client) => ({
         ...client,
@@ -48,8 +49,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         tbody,
         meta,
         error,
-        searchTitle:
-          "Search by clients, emails, industries, phone & countries ",
+        searchTitle: "Search by company name, industry and country ",
       };
     });
   return json({ queryData });

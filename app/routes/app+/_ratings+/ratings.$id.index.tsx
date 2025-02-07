@@ -48,14 +48,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
           })),
           year: rating?.ratingYear,
           title: rating?.ratingTitle,
-          primaryAnalyst:
-            PrimaryAnalystObject?.firstname +
-            " " +
-            PrimaryAnalystObject?.lastname,
-          secondaryAnalyst:
-            SecondaryAnalystObject?.firstname +
-            " " +
-            SecondaryAnalystObject?.lastname,
+          primaryAnalyst: PrimaryAnalystObject
+            ? `${PrimaryAnalystObject.firstname} ${PrimaryAnalystObject.lastname}`
+            : "-",
+          secondaryAnalyst: SecondaryAnalystObject
+            ? `${SecondaryAnalystObject.firstname} ${SecondaryAnalystObject.lastname}`
+            : "-",
           primaryAnalystEmail: PrimaryAnalystObject?.email,
           secondaryAnalystEmail: SecondaryAnalystObject?.email,
           SupervisorObject,

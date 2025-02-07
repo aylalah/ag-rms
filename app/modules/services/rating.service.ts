@@ -190,7 +190,7 @@ export class RatingClass extends MainClass {
   }: {
     apiToken?: string;
     token?: string;
-    user: any;
+    user:any;
   }) {
     try {
       //const user = { employee_id: 160687 }; // christian

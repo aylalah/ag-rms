@@ -22,8 +22,8 @@ type RatingProps = {
   linkTo: string;
   isClientOnly: boolean;
   SupervisorObject: AnalystObj;
-  PrimaryAnalystObject: AnalystObj;
-  SecondaryAnalystObject: AnalystObj;
+  PrimaryAnalystObject?: AnalystObj;
+  SecondaryAnalystObject?: AnalystObj;
 };
 
 const reportUploadMenu = [{ name: "Draft Report" }, { name: "Final Report" }];
@@ -212,7 +212,9 @@ export default function RatingLayout({
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
                   title="Primary Analyst"
+                  // {...(rating?.primaryAnalyst && {subTitle: rating.primaryAnalyst})}
                   subTitle={rating?.primaryAnalyst || "-"}
+                  // {...(rating?.primaryAnalystEmail && { subSubTitle: rating.primaryAnalystEmail })}
                   subSubTitle={rating?.primaryAnalystEmail || "-"}
                 />
 
@@ -220,6 +222,9 @@ export default function RatingLayout({
                   title="Secondary Analyst"
                   subTitle={rating?.secondaryAnalyst || "-"}
                   subSubTitle={rating?.secondaryAnalystEmail || "-"}
+                  // {...(rating?.primaryAnalystEmail && {
+                  //   subSubTitle: rating.primaryAnalystEmail,
+                  // })}
                 />
 
                 <div className="col-span-2 ">
@@ -554,7 +559,7 @@ const SummaryCard = ({
   isLarge,
 }: {
   title: string;
-  subTitle: string;
+  subTitle?: string;
   subSubTitle?: string;
   isLarge?: boolean;
 }) => (
