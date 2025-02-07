@@ -95,7 +95,7 @@ export default function Ratings() {
         <div className="flex-1">
           <input
             name="search"
-            placeholder="Search by"
+            placeholder="Search by company name"
             className="w-full p-3 outline-none bg-surface "
             onChange={onSearch}
           />

@@ -2,11 +2,13 @@ import dayjs from "dayjs";
 
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import RatingsCard from "@ui/cards/ratings-card";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { defer, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { validateCookie } from "@helpers/cookies";
+
+dayjs.extend(isSameOrAfter);
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
@@ -27,22 +29,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       include: { clientModel: true, ratingClassModel: true },
       where: {
         AND: [
-          { clientModel: { companyName: { contains: search } } },
+          { ratingTitle: { contains: search, mode: "insensitive" } },
           { clientModel: { id: { equals: client?.client } } },
         ],
       },
     })
     .then((res) => {
       const { ratings, error } = res || {};
-      // console.log(ratings, "ratings");
-      const currentDate = dayjs();
-      const liveRatings = ratings?.docs?.filter((rating) => {
-        const expiryDate = dayjs(rating.expiryDate); // Parse the expiryDate using dayjs
-        return dayjs(expiryDate).isSameOrAfter(currentDate, "day");
-      });
-      console.log(liveRatings, "liveRatings");
+
       const { docs, ...meta } = ratings || {};
-      console.log(meta, "meta");
 
       const thead = ["ratingScore", "ratingYear", "issueDate", "expiryDate"];
 
@@ -69,18 +64,56 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
+  console.log(queryData, "queryData");
   const { setQueryData, storeQueryData } = useRatingStore((state) => state);
 
   console.log(storeQueryData, "storeQueryData");
+
   const [meta, setMeta] = useState<any>({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const onSearch = () => {};
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearch = e.target.value;
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      if (newSearch) {
+        params.set("search", newSearch);
+      } else {
+        params.delete("search");
+      }
+      return params;
+    });
+  };
 
-  const onNext = () => {};
+  const onNext = () => {
+    const currentPage = Number(searchParams.get("page")) || 1;
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set("page", (currentPage + 1).toString());
+      return params;
+    });
+  };
 
-  const onPrev = () => {};
+  const onPrev = () => {
+    const currentPage = Number(searchParams.get("page")) || 1;
+    if (currentPage > 1) {
+      setSearchParams((prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", (currentPage - 1).toString());
+        return params;
+      });
+    }
+  };
 
-  const onChangePerPage = () => {};
+  const onChangePerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLimit = event.target.value;
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set("limit", newLimit);
+      params.set("page", "1"); // Reset to page 1 when limit changes
+      return params;
+    });
+  };
 
   useEffect(() => {
     queryData.then((res) => {
@@ -95,7 +128,7 @@ export default function Ratings() {
       { toastId: "ratings" }
     );
     queryData.then((res) => setQueryData(res));
-  }, []);
+  }, [queryData]);
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden ">
@@ -110,7 +143,7 @@ export default function Ratings() {
         <div className="flex-1">
           <input
             name="search"
-            placeholder="Search by"
+            placeholder="Search by rating name"
             className="w-full p-3 outline-none bg-surface "
             onChange={onSearch}
           />
