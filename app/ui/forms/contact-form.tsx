@@ -135,6 +135,7 @@ const ContactForm = ({
   show,
 }: ContactFormProps) => {
   const [email, setEmail] = useState(contact?.email || ""); // Track email changes
+  const [password, setPassword] = useState(contact?.password || ""); // Track password changes
   const [canLogin, setCanLogin] = useState(contact?.canLogin || false);
   const [showPasswordField, setShowPasswordField] = useState(false); // Show password field only when needed
 
@@ -145,6 +146,9 @@ const ContactForm = ({
     return () => removeEventListener("keydown", (e) => e.key === "Escape");
   }, []);
 
+  useEffect(() => {
+    setPassword(randomString(10));
+  }, [email]);
   return (
     <div className="h-screen w-full flex justify-center items-center bg-[#0009] absolute top-0 left-0 z-10">
       <Fetcher.Form method={contact?.id ? "PATCH" : "POST"}>
@@ -207,14 +211,14 @@ const ContactForm = ({
               }}
             />
 
-            {/* Show password field only if the email has changed or it's a new contact */}
-            {showPasswordField && canLogin && (
+            {/*The password will change only if the email has changed or it's a new contact */}
+            {canLogin && (
               <TextInput
                 placeholder="Enter new password"
                 type="text"
                 label="Password"
                 name="password"
-                defaultValue={randomString(10)}
+                defaultValue={password}
                 readOnly
               />
             )}

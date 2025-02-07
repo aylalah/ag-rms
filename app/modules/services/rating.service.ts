@@ -108,19 +108,22 @@ export class RatingClass extends MainClass {
         data: { ...data, unit },
         include: { clientModel: true },
       });
+
       const contacts = await dbQuery.contact.findMany({
         where: { client: result.clientModel.id },
       });
 
       contacts.forEach((el) => {
-        const HtmlBody = `<p>Dear Agusto Rating Client,</p>
+        const HtmlBody = `<p>Dear Client,</p>
         <p>A new rating program has been created for you on the Agusto Rating Management System.</p> 
-        <p>Please log in to the <a href="https://arms.agusto.com">portal</a> to access our rating methodology and information gathering questionnaire</p>`;
+        <p>Please log in to the <a href="https://arms.agusto.com">portal</a> to access our rating methodology and information gathering questionnaire</p>
+        <p>Best Regards,</p>
+        <p>Agusto & Co RMS Team</p>`;
 
         sendEmailService({
           From: "info@agusto.com",
           To: `${el.email}`,
-          Subject: "Agusto & Co. Rating Management System ",
+          Subject: `New Rating - ${result.ratingTitle} `,
           HtmlBody,
         });
       });
@@ -143,8 +146,6 @@ export class RatingClass extends MainClass {
       // await this.hasAccess(["admin", "client", "hod"]);
       await this.hasAccess("all");
       const { id, data } = input;
-
-      console.log(data);
 
       const prevDocs = await dbQuery.rating.findUnique({ where: { id } });
       const result = await dbQuery.rating.update({
@@ -190,7 +191,7 @@ export class RatingClass extends MainClass {
   }: {
     apiToken?: string;
     token?: string;
-    user: any;
+    user:any;
   }) {
     try {
       //const user = { employee_id: 160687 }; // christian

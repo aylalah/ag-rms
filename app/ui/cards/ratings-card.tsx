@@ -3,7 +3,6 @@ import { Link } from "@remix-run/react";
 import { RatingWithRelations } from "@helpers/zodPrisma";
 
 export default function RatingsCard({ el }: { el: RatingWithRelations }) {
-  console.log(el, "el");
   return (
     <Link
       to={`${el?.id}`}
@@ -17,8 +16,10 @@ export default function RatingsCard({ el }: { el: RatingWithRelations }) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <p className="flex-1 font-semibold">{el?.clientModel?.companyName}</p>
-        <p className="flex-1 opacity-60">{el?.ratingTitle}</p>
+        <p className="flex-1 font-semibold capitalize">
+          {el?.clientModel?.companyName}
+        </p>
+        <p className="flex-1 opacity-60 capitalize">{el?.ratingTitle}</p>
         <p className="text-sm opacity-60">
           {!el?.issueDate
             ? "Issue Date"

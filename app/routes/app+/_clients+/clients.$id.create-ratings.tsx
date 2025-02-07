@@ -4,6 +4,7 @@ import {
   defer,
   json,
   LoaderFunctionArgs,
+  redirect,
 } from "@remix-run/node";
 import {
   Await,
@@ -12,12 +13,18 @@ import {
   useNavigate,
 } from "@remix-run/react";
 import { FormLayout } from "@layouts/form-layout";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { apiToken, token, user } = await validateCookie(request);
+
+  if (!token || !user) {
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+  }
 
   const formObjectQuery = RMSservice(apiToken)
     .ratings.formObject({ apiToken, token, user })
@@ -73,6 +80,8 @@ export default function CreateRatings() {
   const { rating, formObjectQuery } = useLoaderData<typeof loader>();
   const Fetcher = useFetcher();
   const FetcherData = Fetcher?.data as { message: string; error: string };
+  const [updatedFormObject, setUpdatedFormObject] = useState<any>(null);
+  console.log(formObjectQuery, "formObjectQuery");
 
   useEffect(() => {
     if (FetcherData?.message) {
@@ -98,6 +107,11 @@ export default function CreateRatings() {
       if (data?.error) {
         setTimeout(() => window.history.back(), 3000);
       }
+      const updatedData = data?.formObject?.map((el) =>
+        el.field === "primaryAnalyst" ? { ...el, required: true } : el
+      );
+
+      setUpdatedFormObject(updatedData);
     });
   }, []);
 
@@ -107,7 +121,8 @@ export default function CreateRatings() {
         <Await resolve={formObjectQuery}>
           {({ formObject }) => (
             <FormLayout
-              formObject={formObject as any}
+              // formObject={formObject as any}
+              formObject={updatedFormObject || (formObject as any)}
               Fetcher={Fetcher}
               data={rating}
               slug="rating"

@@ -16,6 +16,10 @@ import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const { id } = params;
   const { formObject } = await RMSservice(token).clients.formObject();
 
@@ -25,12 +29,18 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       const field = el?.field;
       const defaultValue = res?.client?.[field as keyof typeof res.client];
       return { ...el, value: defaultValue };
-    });
+    }) as any;
 
-    const logoIndex = formattedFormObject?.findIndex((el: any) => el.field === "logo");
+    const logoIndex = formattedFormObject?.findIndex(
+      (el: any) => el.field === "logo"
+    );
     if (logoIndex) formattedFormObject[logoIndex].type = "file";
 
-    return json({ client: res?.client, error: res?.error, formObject: formattedFormObject });
+    return json({
+      client: res?.client,
+      error: res?.error,
+      formObject: formattedFormObject,
+    });
   }
 
   throw redirect("/app/clients");
@@ -58,19 +68,26 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     if (file.size > 0) {
       const ext = file.type.split("/")[1];
-      const fileName = `${data.companyName?.replaceAll(" ", "-")?.toLowerCase()}.${ext}`;
+      const fileName = `${data.companyName
+        ?.replaceAll(" ", "-")
+        ?.toLowerCase()}.${ext}`;
       const upload = await uploadLogoToSpaces(file, fileName);
       if (upload.$metadata?.httpStatusCode === 200) data.logo = upload.Location;
     } else {
       delete data?.logo;
     }
 
-    const { updateClient, error } = await RMSservice(token).clients.update({ id, data });
+    const { updateClient, error } = await RMSservice(token).clients.update({
+      id,
+      data,
+    });
     return json({ message: updateClient, error });
   }
 
   if (method === "DELETE" && id) {
-    const { deleteClient, error } = await RMSservice(token).clients.delete({ id });
+    const { deleteClient, error } = await RMSservice(token).clients.delete({
+      id,
+    });
     return json({ message: deleteClient, error });
   }
 };
@@ -92,7 +109,12 @@ export default function Breeds() {
 
   return (
     <div className="h-full pb-10 overflow-hidden">
-      <FormLayout formObject={formObject as any} Fetcher={Fetcher} data={client} slug="client" />
+      <FormLayout
+        formObject={formObject as any}
+        Fetcher={Fetcher}
+        data={client}
+        slug="client"
+      />
     </div>
   );
 }

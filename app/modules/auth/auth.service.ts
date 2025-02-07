@@ -77,7 +77,7 @@ export class AuthClass extends MainClass {
           return { error: agustoApiError.message }; // Handle Agusto API errors specifically
         }
       }
-
+      
       return await this.magicLinkLogin(input);
     } catch (error: any) {
       return { error: error.message };
@@ -105,12 +105,8 @@ export class AuthClass extends MainClass {
       if (!user || !user.password) {
         return { error: "Invalid email or password" }; // Consistent object structure
       }
-      // // Log passwords to debug
-      // console.log("Entered Password:", password);
-      // console.log("Stored Hash:", user.password);
-      // Verify password
-      const isPasswordValid = verifyPassword(password, user.password as string);
-      if (!isPasswordValid) {
+
+      if (user.password !== password) {
         return { error: "Invalid email or password" }; // Consistent object structure
       }
 
@@ -119,7 +115,7 @@ export class AuthClass extends MainClass {
 
       const userJWT = await this.EncryptData({ ...rest, role: "client" });
 
-      return { client: rest, token: userJWT, apiToken: null };
+      return { client: rest as Contact, token: userJWT, apiToken: null };
     } catch (error: any) {
       return { error: error?.message || "Something went wrong" }; // Consistent error return
     }

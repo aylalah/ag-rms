@@ -51,12 +51,11 @@ export class ContactClass extends MainClass {
   }) {
     try {
       await this.hasAccess("all");
-
       const { id, include } = input;
       const contact = await dbQuery.contact.findUnique({
         where: { id },
       });
-      console.log({ contact });
+
       return { contact };
     } catch (error: any) {
       return { error: error.message };
@@ -68,18 +67,18 @@ export class ContactClass extends MainClass {
       const { data } = input;
 
       await this.hasAccess("all");
-
+      //removing the hashing function, and storing the password as it is
       // const hashedPassword = hashPassword(data.password as string);
-      const hashedPassword =
-        typeof data.password === "string" && data.password.trim() !== ""
-          ? hashPassword(data.password)
-          : null;
+      // const hashedPassword =
+      //   typeof data.password === "string" && data.password.trim() !== ""
+      //     ? hashPassword(data.password)
+      //     : null;
 
       // const result = await dbQuery.contact.create({ data });
       const result = await dbQuery.contact.create({
         data: {
           ...data,
-          password: hashedPassword, // Store hashed password instead of plain text
+          password: data.password, // Store hashed password instead of plain text
         },
       });
 
@@ -98,8 +97,8 @@ export class ContactClass extends MainClass {
         sendEmailService({
           From: "info@agusto.com",
           To: `${data.email}`,
-          Subject: "Agusto & Co. Rating Management System ",
-          HtmlBody: `<p>Dear Rating Client,</p> 
+          Subject: "Login Details For Agusto & Co. RMS ",
+          HtmlBody: `<p>Dear Client,</p> 
           <p>You have been granted access to the <a href=${clientUrl}>Agusto & Co. Rating Management System.</a></p>
            <p>Please see below your log in details:</p>
            <p>Email Address: ${data.email} </p> 
@@ -159,15 +158,17 @@ export class ContactClass extends MainClass {
     try {
       await this.hasAccess("all");
       const { id, data } = input;
-      let originalPassword: string | undefined;
+      // let originalPassword: string | undefined;
 
-      if (typeof data.password === "string" && data.password.trim() !== "") {
-        originalPassword = data.password; // Store the plain password before hashing
-        data.password = hashPassword(data.password);
-      }
+      // if (typeof data.password === "string" && data.password.trim() !== "") {
+      //   originalPassword = data.password; // Store the plain password before hashing
+      //   data.password = hashPassword(data.password);
+      // }
 
       const prevDocs = await dbQuery.contact.findUnique({ where: { id } });
       const result = await dbQuery.contact.update({ where: { id }, data });
+
+      if (!prevDocs) return { error: "Contact not found" };
 
       this.LogAction({
         table: "contact",
@@ -179,18 +180,26 @@ export class ContactClass extends MainClass {
 
       const clientUrl = process.env.ROOT_URL;
 
-      // Only send email if client login is enabled
-      if (result.canLogin && originalPassword) {
-        // Use the stored plain password
+      const isNonSensitiveField =
+        data.fullName !== prevDocs.fullName ||
+        data.phoneNumbers !== prevDocs.phoneNumbers;
+
+      // Determine which email and password  to send
+      const emailToSend = data.email ?? prevDocs.email; // Use new email if updated, else keep old one
+      const passwordToSend = data.password ?? prevDocs.password;
+
+      // Only send email if client login is enabled and internal user is not updating phone numbers or full name
+      if (!isNonSensitiveField && result.canLogin && data.password) {
+        // Use the stored password
         sendEmailService({
           From: "info@agusto.com",
           To: `${data.email}`,
           Subject: "Agusto & Co. Rating Management System ",
-          HtmlBody: `<p>Dear Rating Client,</p> 
+          HtmlBody: `<p>Dear Client,</p> 
           <p>Your access to the <a href=${clientUrl}>Agusto & Co. Rating Management System has been updated.</a></p>
           <p>Please see below your new login details:</p>
-          <p>Email Address: ${data.email} </p> 
-          <p> Password: ${originalPassword}</p>
+          <p>Email Address: ${emailToSend} </p>
+          <p> Password: ${passwordToSend}</p>
            <p>Best Regards,</p>
            <p>Agusto & Co RMS Team</p>`, // Send plain password, NOT hashed one
         });

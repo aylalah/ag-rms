@@ -9,7 +9,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { ListLayout } from "@layouts/list-layout";
 import { Suspense, useEffect, useState } from "react";
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -65,6 +65,12 @@ const options = {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+    
   const dashboardData = await RMSservice(token).general.dashboard();
 
   //total client

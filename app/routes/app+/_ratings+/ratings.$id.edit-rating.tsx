@@ -4,6 +4,7 @@ import {
   defer,
   json,
   LoaderFunctionArgs,
+  redirect,
   redirectDocument,
 } from "@remix-run/node";
 import {
@@ -18,18 +19,22 @@ import { toast } from "react-toastify";
 import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { apiToken, token } = await validateCookie(request);
+  const { apiToken, token, user } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const ratingId = params.id as string;
   const { rating, error } = await RMSservice(token).ratings.one({
     id: ratingId,
   });
 
   const formObjectQuery = RMSservice(apiToken)
-    .ratings.formObject({ apiToken, token })
+    .ratings.formObject({ apiToken, token, user })
     .then((data) => {
       const { formObject, error } = data;
 
-      const editedFormObject = formObject
+      /* const editedFormObject = formObject
         ?.filter((el) => el?.field !== "ratingTitle")
         .filter((el) => el?.field !== "ratingYear")
         .filter((el) => el?.field !== "supervisor")
@@ -39,6 +44,47 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         .filter((el) => el?.field !== "questionnaire")
         .filter((el) => el?.field !== "status");
 
+      return {
+        error,
+        formObject: editedFormObject?.map((el) => ({ ...el, required: true })),
+      };*/
+      const editedFormObject = formObject?.filter((el) => {
+        const alwaysExclude = [
+          "ratingTitle",
+          "ratingYear",
+          "supervisor",
+          "methodology",
+          "questionnaire",
+          "status",
+        ];
+
+        // Only exclude primaryAnalyst and secondaryAnalyst if they already have values
+        if (el.field === "primaryAnalyst" && rating?.primaryAnalyst !== null) {
+          return false; // Remove from edit form
+        }
+
+        // if (
+        //   el.field === "secondaryAnalyst" &&
+        //   rating?.secondaryAnalyst !== null
+        // ) {
+        //   return false; // Remove from edit form
+        // }
+        if (
+          el.field === "secondaryAnalyst" &&
+          rating?.secondaryAnalyst !== null &&
+          rating?.secondaryAnalyst !== ""
+        ) {
+          return false; // Exclude from edit form only if it has a value
+        }
+
+        if (el.field === "ratingClass" && rating?.ratingClass !== null) {
+          return false; // Remove from edit form
+        }
+
+        return !alwaysExclude.includes(el.field);
+      });
+
+      // Ensure all remaining fields are required
       return {
         error,
         formObject: editedFormObject?.map((el) => ({ ...el, required: true })),
@@ -59,8 +105,13 @@ interface IResponse {
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { token } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const ratingId = params.id as string;
   const fd = await request.formData();
+
   const data = Object.fromEntries(fd.entries()) as any;
 
   // data.ratingScore = Number(data.ratingScore);
@@ -74,7 +125,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   });
   if (updateRating) throw redirectDocument(`/app/ratings/${ratingId}`);
 
-  console.log({ updateRating, error });
+  // console.log({ updateRating, error });
   return { error, message: updateRating };
 };
 

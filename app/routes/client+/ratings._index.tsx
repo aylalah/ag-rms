@@ -1,13 +1,23 @@
 import dayjs from "dayjs";
+
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import RatingsCard from "@ui/cards/ratings-card";
-import { useLoaderData } from "@remix-run/react";
-import { defer, LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
+import { defer, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { validateCookie } from "@helpers/cookies";
 
+dayjs.extend(isSameOrAfter);
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
+
+  if (!client || !token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+
   const search = new URL(request.url).searchParams.get("search") || "";
   const page = Number(new URL(request.url).searchParams.get("page")) || 1;
   const limit = Number(new URL(request.url).searchParams.get("limit")) || 15;
@@ -19,7 +29,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       include: { clientModel: true, ratingClassModel: true },
       where: {
         AND: [
-          { clientModel: { companyName: { contains: search } } },
+          { ratingTitle: { contains: search, mode: "insensitive" } },
           { clientModel: { id: { equals: client?.client } } },
         ],
       },
@@ -28,8 +38,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       const { ratings, error } = res || {};
 
       const { docs, ...meta } = ratings || {};
+
       const thead = ["ratingScore", "ratingYear", "issueDate", "expiryDate"];
-      const tbody = docs?.map((rating) => ({
+
+      const today = dayjs();
+
+      const filteredDocs = docs?.filter((rating) => {
+        if (rating.status === "concluded") {
+          const expiryDate = dayjs(rating.expiryDate);
+          return expiryDate.isSameOrAfter(today);
+        }
+        return true; // Include ratings with other statuses
+      });
+
+      const tbody = filteredDocs?.map((rating) => ({
         ...rating,
         createdAt: dayjs(rating.createdAt).format("MMMM DD, YYYY"),
         updatedAt: dayjs(rating.updatedAt).format("MMMM DD, YYYY"),
@@ -42,16 +64,56 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
+  console.log(queryData, "queryData");
   const { setQueryData, storeQueryData } = useRatingStore((state) => state);
+
+  console.log(storeQueryData, "storeQueryData");
+
   const [meta, setMeta] = useState<any>({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const onSearch = () => {};
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearch = e.target.value;
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      if (newSearch) {
+        params.set("search", newSearch);
+      } else {
+        params.delete("search");
+      }
+      return params;
+    });
+  };
 
-  const onNext = () => {};
+  const onNext = () => {
+    const currentPage = Number(searchParams.get("page")) || 1;
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set("page", (currentPage + 1).toString());
+      return params;
+    });
+  };
 
-  const onPrev = () => {};
+  const onPrev = () => {
+    const currentPage = Number(searchParams.get("page")) || 1;
+    if (currentPage > 1) {
+      setSearchParams((prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", (currentPage - 1).toString());
+        return params;
+      });
+    }
+  };
 
-  const onChangePerPage = () => {};
+  const onChangePerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLimit = event.target.value;
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set("limit", newLimit);
+      params.set("page", "1"); // Reset to page 1 when limit changes
+      return params;
+    });
+  };
 
   useEffect(() => {
     queryData.then((res) => {
@@ -66,7 +128,7 @@ export default function Ratings() {
       { toastId: "ratings" }
     );
     queryData.then((res) => setQueryData(res));
-  }, []);
+  }, [queryData]);
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden ">
@@ -81,7 +143,7 @@ export default function Ratings() {
         <div className="flex-1">
           <input
             name="search"
-            placeholder="Search by"
+            placeholder="Search by rating name"
             className="w-full p-3 outline-none bg-surface "
             onChange={onSearch}
           />

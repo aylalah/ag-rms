@@ -1,6 +1,11 @@
 import ContactCard from "@ui/cards/contact-card";
 import ContactForm from "@ui/forms/contact-form";
-import { ActionFunctionArgs, defer, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  defer,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { Contact } from "@helpers/zodPrisma";
 import { Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { toast } from "react-toastify";
@@ -9,6 +14,11 @@ import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+
   const id = params?.id as string;
 
   const ratingQuery = RMSservice(token)
@@ -37,21 +47,27 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         client: {
           ...client,
           ratingModel: client?.ratingModel?.map((el: any) => {
-            const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
+            // const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
 
-            const SecondaryAnalystObject = JSON.parse(
-              el?.secondaryAnalyst as any
-            );
+            // const SecondaryAnalystObject = JSON.parse(
+            //   el?.secondaryAnalyst as any
+            // );
+            const PrimaryAnalystObject = el?.primaryAnalyst
+              ? JSON.parse(el.primaryAnalyst)
+              : null;
+            const SecondaryAnalystObject = el?.secondaryAnalyst
+              ? JSON.parse(el.secondaryAnalyst)
+              : null;
+
             return {
               ...el,
-              primaryAnalyst:
-                PrimaryAnalystObject?.firstname +
-                " " +
-                PrimaryAnalystObject?.lastname,
-              secondaryAnalyst:
-                SecondaryAnalystObject?.firstname +
-                " " +
-                SecondaryAnalystObject?.lastname,
+              primaryAnalyst: PrimaryAnalystObject
+                ? `${PrimaryAnalystObject.firstname} ${PrimaryAnalystObject.lastname}`
+                : "-",
+
+              secondaryAnalyst: SecondaryAnalystObject
+                ? `${SecondaryAnalystObject.firstname} ${SecondaryAnalystObject.lastname}`
+                : "-",
             };
           }),
         },

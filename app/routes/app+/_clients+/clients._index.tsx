@@ -13,9 +13,10 @@ export default function Clients() {
   const { setQueryData, storeQueryData } = useClientStore((state) => state);
 
   useEffect(() => {
-    if (queryData?.error) toast.error("Error loading clients", { toastId: "clients" });
+    if (queryData?.error)
+      toast.error("Error loading clients", { toastId: "clients" });
     setQueryData(queryData);
-  }, []);
+  }, [queryData]);
 
   return (
     <div className="flex-1 h-full overflow-hidden">

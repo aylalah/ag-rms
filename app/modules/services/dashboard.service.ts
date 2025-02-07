@@ -64,7 +64,7 @@ export class GeneralClass extends MainClass {
       };
     } catch (error: any) {
       // return { error: error?.message };
-      console.error("Error in dashboard:", error?.message);
+      // console.error("Error in dashboard:", error?.message);
       return {
         // Return a DashboardData object with the error property
         clients: 0,

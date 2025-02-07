@@ -1,4 +1,9 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { Link, NavLink, useFetcher, useLoaderData } from "@remix-run/react";
 import numeral from "numeral";
 import dayjs from "dayjs";
@@ -7,6 +12,10 @@ import { toast } from "react-toastify";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const id = params.id || "testing";
   const slug = params.slug as "questionnaire-docs" | "additional-docs";
   const { rating, error } = await RMSservice(token).ratings.one({ id });
@@ -25,6 +34,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { token } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const id = params?.id as string;
   const fd = await request.formData();
   const body = Object.fromEntries(fd) as any;
@@ -54,12 +67,19 @@ const tabs = [
 ];
 
 const acceptOptions = {
-  "questionnaire-docs": [{ name: "Disable Questionnaire Upload" }, { name: "Enable Questionnaire Upload" }],
-  "additional-docs": [{ name: "Disable Additional Docs Upload" }, { name: "Enable Additional Docs Upload" }],
+  "questionnaire-docs": [
+    { name: "Disable Questionnaire Upload" },
+    { name: "Enable Questionnaire Upload" },
+  ],
+  "additional-docs": [
+    { name: "Disable Additional Docs Upload" },
+    { name: "Enable Additional Docs Upload" },
+  ],
 };
 
 export default function UploadedFiles() {
-  const { rating, error, slug, id, ratingFiles } = useLoaderData<typeof loader>();
+  const { rating, error, slug, id, ratingFiles } =
+    useLoaderData<typeof loader>();
   const [allFiles, setAllFiles] = useState<FileProp[] | null>([]);
   const Fetcher = useFetcher();
   const FetcherData = Fetcher.data as { updateRating: boolean; error: string };
@@ -72,31 +92,41 @@ export default function UploadedFiles() {
   const onSearch = (value: string) => {
     if (!value) return setAllFiles(ratingFiles as any);
     const rawFiles = (ratingFiles as any as FileProp[]) || [];
-    const filtered = rawFiles.filter((el) => el.name.toLowerCase().includes(value.toLowerCase()));
+    const filtered = rawFiles.filter((el) =>
+      el.name.toLowerCase().includes(value.toLowerCase())
+    );
     setAllFiles(filtered as any);
   };
 
   const onAcceptAction = (value: string) => {
     if (value === "Disable Questionnaire Upload") {
-      const confirm = window.confirm("Are you sure you want to accept this questionnaire?");
+      const confirm = window.confirm(
+        "Are you sure you want to accept this questionnaire?"
+      );
       if (!confirm) return;
       Fetcher.submit({ requireQuestionnaireFiles: false }, { method: "patch" });
     }
 
     if (value === "Enable Questionnaire Upload") {
-      const confirm = window.confirm("Are you sure you want to request questionnaire info?");
+      const confirm = window.confirm(
+        "Are you sure you want to request questionnaire info?"
+      );
       if (!confirm) return;
       Fetcher.submit({ requireQuestionnaireFiles: true }, { method: "patch" });
     }
 
     if (value === "Disable Additional Docs Upload") {
-      const confirm = window.confirm("Are you sure you want to accept this additional info?");
+      const confirm = window.confirm(
+        "Are you sure you want to accept this additional info?"
+      );
       if (!confirm) return;
       Fetcher.submit({ requireAdditionalFiles: false }, { method: "patch" });
     }
 
     if (value === "Enable Additional Docs Upload") {
-      const confirm = window.confirm("Are you sure you want to request additional info?");
+      const confirm = window.confirm(
+        "Are you sure you want to request additional info?"
+      );
       if (!confirm) return;
       Fetcher.submit({ requireAdditionalFiles: true }, { method: "patch" });
     }
@@ -116,11 +146,17 @@ export default function UploadedFiles() {
       <div className="flex items-end justify-between w-full pt-2 ">
         <div className="flex justify-start flex-1 bg-base-100">
           <div className="dropdown dropdown-hover">
-            <button tabIndex={1} className="flex w-[9em] btn rounded-none btn-secondary">
+            <button
+              tabIndex={1}
+              className="flex w-[9em] btn rounded-none btn-secondary"
+            >
               <span>Info Type</span> <i className="ri-arrow-down-s-line" />
             </button>
 
-            <ul tabIndex={1} className="py-4 shadow-xl dropdown-content w-[15em] bg-base-100 z-[10]">
+            <ul
+              tabIndex={1}
+              className="py-4 shadow-xl dropdown-content w-[15em] bg-base-100 z-[10]"
+            >
               {tabs.map((el) => (
                 <li>
                   <a
@@ -146,15 +182,20 @@ export default function UploadedFiles() {
 
       <div className="flex items-center justify-between py-3">
         <div>
-          <span className="font-bold capitalize text-primary">{slug?.replace("-docs", "")} Upload Status : </span>
-          {!rating?.requireQuestionnaireFiles && slug === "questionnaire-docs" ? (
+          <span className="font-bold capitalize text-primary">
+            {slug?.replace("-docs", "")} Upload Status :{" "}
+          </span>
+          {!rating?.requireQuestionnaireFiles &&
+          slug === "questionnaire-docs" ? (
             <span className="font-bold">Disabled</span>
           ) : !rating?.requireAdditionalFiles && slug === "additional-docs" ? (
             <span className="font-bold">Disabled</span>
           ) : (
             <span className="font-bold">Enabled</span>
           )}
-          <p className="text-sm opacity-70">Click "Action" button to Enable/Disable file uploads</p>
+          <p className="text-sm opacity-70">
+            Click "Action" button to Enable/Disable file uploads
+          </p>
         </div>
 
         <div>
@@ -163,7 +204,10 @@ export default function UploadedFiles() {
               Action <i className="ri-arrow-down-s-line" />
             </button>
 
-            <ul tabIndex={1} className="py-4 shadow-xl dropdown-content w-[16em] bg-base-100">
+            <ul
+              tabIndex={1}
+              className="py-4 shadow-xl dropdown-content w-[16em] bg-base-100"
+            >
               {acceptOptions[slug]?.map((el) => (
                 <li key={el?.name}>
                   <button
@@ -193,15 +237,27 @@ export default function UploadedFiles() {
 
           <tbody>
             {allFiles?.map((el, i) => (
-              <tr className="text-[15px] text-left border-b bg-base-100" key={el.id}>
+              <tr
+                className="text-[15px] text-left border-b bg-base-100"
+                key={el.id}
+              >
                 <td className="text-center">{i + 1}</td>
                 <td className="p-3">
-                  <Link to={el?.url} target="_blank" referrerPolicy="no-referrer" className="capitalize link">
+                  <Link
+                    to={el?.url}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="capitalize link"
+                  >
                     {removeExtension(el.name)}
                   </Link>
                 </td>
-                <td className="p-3">{numeral(el.size / 10000).format("0, 00.00")} KB</td>
-                <td className="p-3">{dayjs(el.date).format("MMMM DD, YYYY")}</td>
+                <td className="p-3">
+                  {numeral(el.size / 10000).format("0, 00.00")} KB
+                </td>
+                <td className="p-3">
+                  {dayjs(el.date).format("MMMM DD, YYYY")}
+                </td>
               </tr>
             ))}
           </tbody>
