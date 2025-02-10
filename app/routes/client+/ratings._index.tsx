@@ -38,6 +38,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       const { ratings, error } = res || {};
 
       const { docs, ...meta } = ratings || {};
+      console.log(docs, "this is client ratings page ");
 
       const thead = ["ratingScore", "ratingYear", "issueDate", "expiryDate"];
 
