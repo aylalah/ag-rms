@@ -82,7 +82,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const method = request.method;
   const id = params.id as string;
   const { token, user } = await validateCookie(request);
-  console.log(user, "user");
+
   if (!token)
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
@@ -166,7 +166,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const { CreateReport, error } = await RMSservice(token).report.create({
       data,
     });
-    // console.log(body, "body");
+
     if (CreateReport) {
       if (reportTitle?.toLowerCase().includes("final")) {
         sendEmail({
@@ -183,7 +183,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         //notify client
         contacts.forEach((el: any) => {
           sendEmail({
-            to: el?.fullName,
+            to: el?.name,
             email: el?.email,
             subject: "Final Rating Report Uploaded",
             html: `<p>Dear Client<p>
@@ -210,7 +210,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         // notify client
         contacts?.forEach((el: any) => {
           sendEmail({
-            to: el?.fullName,
+            to: el?.name,
             email: el?.email,
             subject: "Draft Rating Report Uploaded",
             html: `<p>Dear Client,</p>
