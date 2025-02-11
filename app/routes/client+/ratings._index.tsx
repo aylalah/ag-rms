@@ -38,7 +38,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       const { ratings, error } = res || {};
 
       const { docs, ...meta } = ratings || {};
-      console.log(docs, "this is client ratings page ");
 
       const thead = ["ratingScore", "ratingYear", "issueDate", "expiryDate"];
 
@@ -65,11 +64,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
-  console.log(queryData, "queryData");
   const { setQueryData, storeQueryData } = useRatingStore((state) => state);
-
-  console.log(storeQueryData, "storeQueryData");
-
   const [meta, setMeta] = useState<any>({});
   const [searchParams, setSearchParams] = useSearchParams();
 

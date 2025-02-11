@@ -66,16 +66,9 @@ export class ContactClass extends MainClass {
   async create(input: { data: Prisma.ContactCreateInput }) {
     try {
       const { data } = input;
-      console.log(data);
-      await this.hasAccess("all");
-      //removing the hashing function, and storing the password as it is
-      // const hashedPassword = hashPassword(data.password as string);
-      // const hashedPassword =
-      //   typeof data.password === "string" && data.password.trim() !== ""
-      //     ? hashPassword(data.password)
-      //     : null;
 
-      // const result = await dbQuery.contact.create({ data });
+      await this.hasAccess("all");
+
       const result = await dbQuery.contact.create({
         data: {
           ...data,
