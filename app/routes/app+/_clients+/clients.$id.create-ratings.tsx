@@ -81,7 +81,7 @@ export default function CreateRatings() {
   const Fetcher = useFetcher();
   const FetcherData = Fetcher?.data as { message: string; error: string };
   const [updatedFormObject, setUpdatedFormObject] = useState<any>(null);
-  console.log(formObjectQuery, "formObjectQuery");
+  // console.log(formObjectQuery, "formObjectQuery");
 
   useEffect(() => {
     if (FetcherData?.message) {

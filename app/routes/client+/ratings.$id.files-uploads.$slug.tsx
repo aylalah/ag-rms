@@ -135,16 +135,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           .map((el, index) => `${index + 1}. ${el?.name} <br/> <br/>`)
           .join("\n");
 
-        sendEmailService({
-          From: "info@agusto.com",
-          To: primaryAnalyst,
-          // Cc: `${supervisor},${secondaryAnalyst}`,
-          Cc: secondaryAnalyst
-            ? `${supervisor},${secondaryAnalyst}`
-            : `${supervisor}`,
+        const ccEmails = secondaryAnalyst
+          ? [supervisor, secondaryAnalyst]
+          : [supervisor];
 
-          Subject: `${company} File Upload`,
-          HtmlBody: `
+        sendEmail({
+          to: primaryAnalyst,
+          cc: ccEmails,
+          email: primaryAnalyst,
+          subject: `${company} File Upload`,
+          html: `
           <p> Dear ${primaryAnalystName},</p>
           <p>${company} has uploaded the following file${
             fileList.length > 1 ? "s" : ""

@@ -64,11 +64,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Ratings() {
   const { queryData } = useLoaderData<typeof loader>();
-  console.log(queryData, "queryData");
   const { setQueryData, storeQueryData } = useRatingStore((state) => state);
-
-  console.log(storeQueryData, "storeQueryData");
-
   const [meta, setMeta] = useState<any>({});
   const [searchParams, setSearchParams] = useSearchParams();
 

@@ -53,6 +53,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
           "ratingTitle",
           "ratingYear",
           "supervisor",
+          "secondaryAnalyst",
           "methodology",
           "questionnaire",
           "status",
@@ -65,17 +66,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
         // if (
         //   el.field === "secondaryAnalyst" &&
-        //   rating?.secondaryAnalyst !== null
+        //   rating?.secondaryAnalyst !== null &&
+        //   rating?.secondaryAnalyst !== ""
         // ) {
-        //   return false; // Remove from edit form
+        //   return false; // Exclude from edit form only if it has a value
         // }
-        if (
-          el.field === "secondaryAnalyst" &&
-          rating?.secondaryAnalyst !== null &&
-          rating?.secondaryAnalyst !== ""
-        ) {
-          return false; // Exclude from edit form only if it has a value
-        }
 
         if (el.field === "ratingClass" && rating?.ratingClass !== null) {
           return false; // Remove from edit form
