@@ -604,6 +604,7 @@ declare global {
   const hashPassword: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/validation')['hashPassword']
   const passwordPolicy: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/validation')['passwordPolicy']
   const randomString: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/utils')['randomString']
+  const sendEmail: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/email')['sendEmail']
   const sendEmailService: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/email')['sendEmailService']
   const sendEmailServiceOld: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/email')['sendEmailServiceOld']
   const settingsCookie: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/cookies')['settingsCookie']

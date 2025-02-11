@@ -49,3 +49,48 @@ export const sendEmailServiceOld = async (mailPayload: Message) => {
     return error?.message;
   }
 };
+
+const EMAIL_URL = process.env.AGUSTO_EMAIL_SERVICE_URL;
+
+const API_KEY = process.env.AGUSTO_EMAIL_SERVICE_API_KEY;
+
+export async function sendEmail({
+  to,
+  email,
+  subject,
+  html,
+  cc = [],
+}: {
+  to: string;
+  email: string;
+  subject: string;
+  html: string;
+  cc?: string[];
+}) {
+  try {
+    const response = await fetch(`${EMAIL_URL}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": `${API_KEY}`,
+      },
+      body: JSON.stringify({
+        to,
+        from: "Agusto & Co. RMS",
+        email,
+        subject,
+        html,
+        cc,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Failed to send Email", errorData);
+    }
+
+    return { success: true, message: "Email sent successfully" };
+  } catch (error) {
+    return { success: false, message: "Error sending email", error };
+  }
+}

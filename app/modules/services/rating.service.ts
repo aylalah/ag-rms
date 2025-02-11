@@ -119,11 +119,11 @@ export class RatingClass extends MainClass {
         <p>Best Regards,</p>
         <p>Agusto & Co RMS Team</p>`;
 
-        sendEmailService({
-          From: "info@agusto.com",
-          To: `${el.email}`,
-          Subject: `New Rating - ${result.ratingTitle} `,
-          HtmlBody,
+        sendEmail({
+          to: `${el.fullName}`,
+          email: `${el.email}`,
+          subject: `New Rating - ${result.ratingTitle} `,
+          html: HtmlBody,
         });
       });
 
@@ -190,7 +190,7 @@ export class RatingClass extends MainClass {
   }: {
     apiToken?: string;
     token?: string;
-    user:any;
+    user: any;
   }) {
     try {
       //const user = { employee_id: 160687 }; // christian

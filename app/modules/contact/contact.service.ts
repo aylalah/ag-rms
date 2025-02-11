@@ -5,6 +5,7 @@ import { DefaultArgs } from "@prisma/client/runtime/library";
 import { MainClass } from "../services/main.service";
 import { Prisma } from "@prisma/client";
 import { hashPassword } from "@helpers/validation";
+import { sendEmail } from "@helpers/email";
 
 interface AllArgs extends Prisma.ContactFindManyArgs {
   limit: number;
@@ -65,7 +66,7 @@ export class ContactClass extends MainClass {
   async create(input: { data: Prisma.ContactCreateInput }) {
     try {
       const { data } = input;
-
+      console.log(data);
       await this.hasAccess("all");
       //removing the hashing function, and storing the password as it is
       // const hashedPassword = hashPassword(data.password as string);
@@ -93,12 +94,13 @@ export class ContactClass extends MainClass {
       const clientUrl = process.env.ROOT_URL;
 
       //only send email when client is created
+
       if (result.canLogin) {
-        sendEmailService({
-          From: "info@agusto.com",
-          To: `${data.email}`,
-          Subject: "Login Details For Agusto & Co. RMS ",
-          HtmlBody: `<p>Dear Client,</p> 
+        await sendEmail({
+          to: data.fullName,
+          email: data.email,
+          subject: "Login Details For Agusto & Co. RMS ",
+          html: `<p>Dear Client,</p> 
           <p>You have been granted access to the <a href=${clientUrl}>Agusto & Co. Rating Management System.</a></p>
            <p>Please see below your log in details:</p>
            <p>Email Address: ${data.email} </p> 
@@ -116,54 +118,10 @@ export class ContactClass extends MainClass {
     }
   }
 
-  // async update(input: { id: string; data: Prisma.ContactUpdateInput }) {
-  //   try {
-  //     await this.hasAccess("all");
-  //     const { id, data } = input;
-  //     if (typeof data.password === "string" && data.password.trim() !== "") {
-  //       data.password = hashPassword(data.password);
-  //     }
-
-  //     const prevDocs = await dbQuery.contact.findUnique({ where: { id } });
-  //     const result = await dbQuery.contact.update({ where: { id }, data });
-
-  //     this.LogAction({
-  //       table: "contact",
-  //       action: "update",
-  //       prevDocs: JSON.stringify(prevDocs),
-  //       newDocs: JSON.stringify(result),
-  //       user: `${this.user?.id}`,
-  //     });
-  //     const clientUrl = process.env.ROOT_URL;
-
-  //     //only send email when client is created
-  //     if (result.canLogin) {
-  //       sendEmailService({
-  //         From: "info@agusto.com",
-  //         To: `${data.email}`,
-  //         Subject: "Agusto & Co. Rating Management System ",
-  //         HtmlBody: `<p>Dear Rating Client,</p>
-  //         <p>Your access to the <a href=${clientUrl}>Agusto & Co. Rating Management System has been updated.</a></p>
-  //          <p>Please see below your new log in details:</p>
-  //          <p>Email Address: ${data.email} </p>
-  //          <p> Password: ${data.password}</p>`,
-  //       });
-  //     }
-  //     return { updateContact: "Contact successfully updated" };
-  //   } catch (error: any) {
-  //     return { error: error.message };
-  //   }
-  // }
   async update(input: { id: string; data: Prisma.ContactUpdateInput }) {
     try {
       await this.hasAccess("all");
       const { id, data } = input;
-      // let originalPassword: string | undefined;
-
-      // if (typeof data.password === "string" && data.password.trim() !== "") {
-      //   originalPassword = data.password; // Store the plain password before hashing
-      //   data.password = hashPassword(data.password);
-      // }
 
       const prevDocs = await dbQuery.contact.findUnique({ where: { id } });
       const result = await dbQuery.contact.update({ where: { id }, data });
@@ -191,11 +149,12 @@ export class ContactClass extends MainClass {
       // Only send email if client login is enabled and internal user is not updating phone numbers or full name
       if (!isNonSensitiveField && result.canLogin && data.password) {
         // Use the stored password
-        sendEmailService({
-          From: "info@agusto.com",
-          To: `${data.email}`,
-          Subject: "Agusto & Co. Rating Management System ",
-          HtmlBody: `<p>Dear Client,</p> 
+
+        sendEmail({
+          to: data.fullName as string,
+          email: data.email as string,
+          subject: "Login Details For Agusto & Co. RMS ",
+          html: `<p>Dear Client,</p> 
           <p>Your access to the <a href=${clientUrl}>Agusto & Co. Rating Management System has been updated.</a></p>
           <p>Please see below your new login details:</p>
           <p>Email Address: ${emailToSend} </p>

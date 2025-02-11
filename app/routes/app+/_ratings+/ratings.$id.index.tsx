@@ -56,6 +56,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
             : "-",
           primaryAnalystEmail: PrimaryAnalystObject?.email,
           secondaryAnalystEmail: SecondaryAnalystObject?.email,
+
           SupervisorObject,
           PrimaryAnalystObject,
           SecondaryAnalystObject,
@@ -81,7 +82,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const method = request.method;
   const id = params.id as string;
   const { token, user } = await validateCookie(request);
-
+  console.log(user, "user");
   if (!token)
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
@@ -165,27 +166,27 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const { CreateReport, error } = await RMSservice(token).report.create({
       data,
     });
-
+    // console.log(body, "body");
     if (CreateReport) {
       if (reportTitle?.toLowerCase().includes("final")) {
-        sendEmailService({
-          From: "info@agusto.com",
-          To: body.supervisorEmail,
-          Subject: "Final Rating Report Uploaded",
-          HtmlBody: `<p>Dear Team Lead,</p>
+        sendEmail({
+          to: body.supervisorEmail,
+          email: body.supervisorEmail,
+          subject: "Final Rating Report Uploaded",
+          html: `<p>Dear Team Lead,</p>
           <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
 
           <p>Best Regards,</p>
-           <p>Agusto & Co RMS Team</p>
-          `,
+           <p>Agusto & Co RMS Team</p>`,
         });
+
         //notify client
         contacts.forEach((el: any) => {
-          sendEmailService({
-            From: "info@agusto.com",
-            To: el?.email,
-            Subject: "Final Rating Report Uploaded",
-            HtmlBody: `<p>Dear Client<p>
+          sendEmail({
+            to: el?.fullName,
+            email: el?.email,
+            subject: "Final Rating Report Uploaded",
+            html: `<p>Dear Client<p>
             <p> The final rating report for ${title} has been uploaded on the Agusto RMS portal.</p>
 
             <p>Best Regards,</p>
@@ -195,11 +196,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           });
         });
       } else {
-        sendEmailService({
-          From: "info@agusto.com",
-          To: body.supervisorEmail,
-          Subject: "Draft Rating Report Uploaded",
-          HtmlBody: `<p>Dear Team Lead,</p>
+        sendEmail({
+          to: body.supervisorEmail,
+          email: body.supervisorEmail,
+          subject: "Draft Rating Report Uploaded",
+          html: `<p>Dear Team Lead,</p>
            <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
 
             <p>Best Regards,</p>
@@ -208,11 +209,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         });
         // notify client
         contacts?.forEach((el: any) => {
-          sendEmailService({
-            From: "info@agusto.com",
-            To: el?.email,
-            Subject: "Draft Rating Report Uploaded",
-            HtmlBody: `<p>Dear Client,</p>
+          sendEmail({
+            to: el?.fullName,
+            email: el?.email,
+            subject: "Draft Rating Report Uploaded",
+            html: `<p>Dear Client,</p>
             <p>The draft report for the ${year} rating of ${title} has been uploaded on the Agusto Rating Management System. Please log in to the portal
             and review the document for any:</p>
             <ul>
