@@ -148,7 +148,7 @@ export class ContactClass extends MainClass {
           email: data.email as string,
           subject: "Login Details For Agusto & Co. RMS ",
           html: `<p>Dear Client,</p> 
-          <p>Your access to the <a href=${clientUrl}>Agusto & Co. Rating Management System has been updated.</a></p>
+          <p>Your access to the <a href=${clientUrl}>Agusto & Co. Rating Management System</a> has been updated.</p>
           <p>Please see below your new login details:</p>
           <p>Email Address: ${emailToSend} </p>
           <p> Password: ${passwordToSend}</p>
