@@ -129,9 +129,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             return { storedUrl: null, status: false, id: key };
           })
         );
-
-        const fileList = saveFiles
-          .filter((file) => file?.name !== undefined)
+        const fileArray = saveFiles.filter((file) => file?.name !== undefined);
+        const fileList = fileArray
           .map((el, index) => `${index + 1}. ${el?.name} <br/> <br/>`)
           .join("\n");
 
@@ -147,7 +146,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           html: `
           <p> Dear ${primaryAnalystName},</p>
           <p>${company} has uploaded the following file${
-            fileList.length > 1 ? "s" : ""
+            fileArray.length > 1 ? "s" : ""
           } for the ${ratingname} on the Agusto & Co. RMS.</p>
            <p> </n> ${fileList.toString()} </n></p>
            <p>Please log in to the <a href="${appUrl}">RMS</a> to view and dowload the information submitted.</p>
