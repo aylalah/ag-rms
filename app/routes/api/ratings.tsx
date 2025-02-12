@@ -24,6 +24,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     })
     .then((res) => {
       const { ratings, error } = res || {};
+      console.log(res, "res");
 
       const { docs, ...meta } = ratings || {};
 

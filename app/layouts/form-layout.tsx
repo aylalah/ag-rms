@@ -39,7 +39,6 @@ export const FormLayout = ({
   const title = data?.id ? "Update" : "Create";
   const isSubmitting = Fetcher?.state === "submitting";
   const modalRef = useRef<HTMLDialogElement>(null);
-
   const onDeleteClick = () => {
     modalRef.current?.showModal();
     //Fetcher?.submit({}, { method: 'DELETE' });
@@ -110,6 +109,13 @@ export const FormLayout = ({
                         placeholder={field}
                         required={isRequired}
                         type="file"
+                        accept={
+                          field === "letterOfEngagement"
+                            ? "application/pdf"
+                            : field === "logo"
+                            ? "image/*"
+                            : ""
+                        }
                       />
                     )}
 

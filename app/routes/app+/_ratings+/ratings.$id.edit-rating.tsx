@@ -120,7 +120,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   });
   if (updateRating) throw redirectDocument(`/app/ratings/${ratingId}`);
 
-  // console.log({ updateRating, error });
+ 
   return { error, message: updateRating };
 };
 

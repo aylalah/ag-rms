@@ -176,7 +176,7 @@ export default function ClientEdit() {
       return;
     }
   }, [FetcherData]);
-  //console client
+
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
