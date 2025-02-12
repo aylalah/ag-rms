@@ -74,6 +74,8 @@ export class RatingClass extends MainClass {
           methodologyModel: true,
           questionnaireModel: true,
           clientModel: { include: { contactModel: true } },
+          loeModel: true,
+          invoiceModel: true,
           ...include,
         },
       });
@@ -235,6 +237,13 @@ export class RatingClass extends MainClass {
       }
 
       const objData = convertZodSchema(RatingSchema);
+
+      objData.forEach((el: any) => {
+        if (el.field === "loe" || el.field === "invoice") {
+          el.type = "file";
+        }
+      });
+
       const ratingStatus = RatingStatusSchema;
 
       const methodology = await dbQuery.methodology.findMany({
@@ -342,7 +351,12 @@ export class RatingClass extends MainClass {
             el.type = "object";
             el.list = ratingClass.map((el) => ({ id: el.id, name: el.name }));
           }
-
+          if (el.field === "letterOfEngagement") {
+            el.type = "file";
+          }
+          if (el.field === "invoice") {
+            el.type = "file";
+          }
           return el;
         });
 

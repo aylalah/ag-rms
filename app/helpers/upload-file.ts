@@ -50,6 +50,30 @@ export const uploadClientStreamToSpace = (file: any, fileName: string) => {
   }).done();
 };
 
+export const uploadLoeToSpaces = (file: any, fileName: string) => {
+  return new Upload({
+    client: s3,
+    params: {
+      Bucket: "agustoportals",
+      Key: `rating-mgt-portal/letter-of-engagement/${fileName}`,
+      Body: file,
+      ACL: "public-read",
+    },
+  }).done();
+};
+
+export const uploadInvoiceToSpaces = (file: any, fileName: string) => {
+  return new Upload({
+    client: s3,
+    params: {
+      Bucket: "agustoportals",
+      Key: `rating-mgt-portal/invoice/${fileName}`,
+      Body: file,
+      ACL: "public-read",
+    },
+  }).done();
+};
+
 export const uploadStreamToSpaces = (
   file: any,
   fileName: string,

@@ -42,8 +42,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   );
   if (logoIndex) result.formObject[logoIndex].type = "file";
 
-  // console.log(clients, "clients");
-
   return json({ clients, client: null, formObject: result?.formObject });
 };
 

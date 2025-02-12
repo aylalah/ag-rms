@@ -59,7 +59,7 @@ export const ControlInput = ({ ...props }: React.HTMLProps<HTMLInputElement>) =>
   return (
     <input
       {...props}
-      accept={props?.type === "file" ? "image/*" : ""}
+      // accept={props?.type === "file" ? "image/*" : ""}
       role="presentation"
       name={props?.placeholder}
       readOnly={props?.placeholder === "createdBy" || props?.placeholder?.includes("password")}

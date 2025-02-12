@@ -329,6 +329,33 @@ export default function RatingLayout({
                   Questionnaire
                 </a>
               </li>
+              {rating.loeModel && (
+                <li className="p-4 bg-base-100">
+                  <a
+                    href={`${rating?.loeModel?.url}`}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="flex items-center gap-2 text-sm link-secondary"
+                  >
+                    <i className="ri-file-text-line" />
+                    Letter of Engagement
+                  </a>
+                </li>
+              )}
+
+              {rating?.invoiceModel && (
+                <li className="p-4 bg-base-100">
+                  <a
+                    href={`${rating?.invoiceModel?.url}`}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="flex items-center gap-2 text-sm link-secondary"
+                  >
+                    <i className="ri-file-text-line" />
+                    Invoice
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
