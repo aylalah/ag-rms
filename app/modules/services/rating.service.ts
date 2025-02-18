@@ -20,6 +20,7 @@ export class RatingClass extends MainClass {
     try {
       await this.hasAccess("all");
       const unit = this.user?.unit;
+   
       const whereUnit = unit === "Information Technology" ? {} : { unit };
 
       const { where, orderBy, page, limit, include } = args;
@@ -92,7 +93,7 @@ export class RatingClass extends MainClass {
       //await this.hasAccess(["admin", "hod", "all"]);
       await this.hasAccess("all");
       const unit = this.user?.unit;
-
+    
       //const check for existing rating with year and client
       const check = await dbQuery.rating.findFirst({
         where: {
@@ -200,41 +201,49 @@ export class RatingClass extends MainClass {
       // const user = await appDecryptData(token);
 
       const unit = user?.unit;
-      const endPoint = process.env.AGUSTO_SERVICES_URL;
+   
+      const endPoint = process.env.AGUSTO_SERVICES;
 
-      let unitMembers = [];
-      // let initialUnitMembers = [];
-      // let unitMembers = [];
-      // let finalUnitMembers = [];
+      let unitMembers: any = [];
 
       if (
         user?.isAdmin !== true ||
         (user?.isAdmin === true && user?.unit.includes("Corporate"))
       ) {
         const { data } = await axios.get(
-          `${endPoint}/users/getStaffBySupervisor/${user?.supervisor.toString()}`,
+          `${endPoint}/users/getStaffBySupervisor/${user?.supervisor_id.toString()}`,
           {
             headers: { Authorization: `Bearer ${apiToken}` },
           }
         );
+
         unitMembers = data?.data || [];
       } else {
         const { data } = await axios.get(
-          `${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`,
+          `${endPoint}/users/getStaffBySupervisor/${user?.id.toString()}`,
           {
             headers: { Authorization: `Bearer ${apiToken}` },
           }
         );
-        // initialUnitMembers = data?.data || [];
         unitMembers = data?.data || [];
       }
 
       if (unit?.includes("Corporate")) {
-        unitMembers = unitMembers?.filter(
-          (el: any) =>
-            el?.unit.includes("Corporate") || el?.unit.includes("Executive")
-        );
+        unitMembers = unitMembers
+          ?.filter(
+            (el: any) =>
+              el?.department?.name.includes("Corporate") ||
+              el?.department?.name.includes("Executive")
+          )
+          .sort((a: any, b: any) => a.firstname.localeCompare(b.firstname));
+      } else {
+        unitMembers = unitMembers
+          ?.filter(
+            (member: any) => member?.department_id === user?.department_id
+          )
+          .sort((a: any, b: any) => a.firstname.localeCompare(b.firstname));
       }
+
 
       const objData = convertZodSchema(RatingSchema);
 
@@ -297,7 +306,7 @@ export class RatingClass extends MainClass {
                 }),
                 name: `${el?.firstname} ${el?.lastname}`,
               }));
-            // .filter((el: any) => el?.employee_id === user?.employee_id);
+           
 
             el.value = sup?.[0]?.id || "";
             el.type = "object";
@@ -314,11 +323,11 @@ export class RatingClass extends MainClass {
                 email: el?.corporate_email,
                 employee_id: el?.employee_id,
               }),
-              // id: `${el?.firstname} ${el?.lastname}`,
+          
               name: `${el?.firstname} ${el?.lastname}`,
-              // email: `${el?.corporate_email}`,
+          
             }));
-            // .filter((el: any) => el?.employee_id !== user?.employee_id);
+          
           }
 
           if (el.field === "secondaryAnalyst") {

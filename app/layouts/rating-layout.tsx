@@ -42,6 +42,7 @@ export default function RatingLayout({
   const formRef = useRef<HTMLFormElement>(null);
   const [reportType, setReportType] = useState<string>("");
   const [reportVersion, setReportVersion] = useState<string>("");
+  const [showModal, setShowModal] = useState(false);
   const FetcherData = Fetcher?.data as { message: string; error: string };
   const isSubmitting = Fetcher.state === "submitting";
   const [forAMI, setForAMI] = useState(false);
@@ -94,6 +95,7 @@ export default function RatingLayout({
     ratingRef.current?.showModal();
   }, []);
  */
+
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
@@ -304,7 +306,7 @@ export default function RatingLayout({
             </h2>
           </div>
 
-          <div className="border rounded border-accent">
+          <div className="border rounded border-accent relative">
             <ul className="grid grid-cols-2 gap-2">
               <li className="p-4 bg-base-100">
                 <a
@@ -344,7 +346,7 @@ export default function RatingLayout({
               )}
 
               {rating?.invoiceModel && (
-                <li className="p-4 bg-base-100">
+                <li className="p-4 bg-base-100 flex gap-4 relative">
                   <a
                     href={`${rating?.invoiceModel?.url}`}
                     target="_blank"
@@ -354,9 +356,27 @@ export default function RatingLayout({
                     <i className="ri-file-text-line" />
                     Invoice
                   </a>
+                  {!isClientOnly && rating?.reportModel?.length === 0 && (
+                    <i
+                      className="ri-edit-line cursor-pointer text-secondary"
+                      onClick={() => {
+                        setShowModal(true);
+                        console.log("the modal should open ");
+                      }}
+                    />
+                  )}
                 </li>
               )}
             </ul>
+            {showModal && (
+              <div className="modal-box flex w-full h-full">
+                <i
+                  className="ri-close-circle-fill text-secondary self-end"
+                  onClick={() => setShowModal(false)}
+                />
+                <p>This is where I would put the input file</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

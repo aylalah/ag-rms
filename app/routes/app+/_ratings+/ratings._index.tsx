@@ -28,7 +28,7 @@ export default function Ratings() {
       return params;
     });
   };
-  console.log(storeQueryData, "storeQueryData");
+
 
   const onNext = () => {
     const currentPage = Number(searchParams.get("page")) || 1;
