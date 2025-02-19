@@ -133,7 +133,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
 */
     const contacts = updatedRating?.clientModel?.contactModel || [];
-
+    //notify contacts of new invoice upload
     const emailPromises = contacts.map((el) =>
       sendEmail({
         to: el?.fullName,
