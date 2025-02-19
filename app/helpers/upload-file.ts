@@ -73,6 +73,19 @@ export const uploadInvoiceToSpaces = (file: any, fileName: string) => {
     },
   }).done();
 };
+export const deleteInvoiceFromSpaces = async (fileName: string) => {
+  const params = {
+    Bucket: "agustoportals",
+    Key: `rating-mgt-portal/invoice/${fileName}`,
+  };
+
+  try {
+    await s3.send(new DeleteObjectCommand(params));
+    return { message: "File deleted" };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
 
 export const uploadStreamToSpaces = (
   file: any,

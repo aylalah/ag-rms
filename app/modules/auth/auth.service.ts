@@ -24,8 +24,7 @@ export class AuthClass extends MainClass {
     try {
       const { email, password } = input;
       const isAgustoMail = email.includes("@agusto.com");
-      const endPoint = process.env.AGUSTO_SERVICES_URL;
-      const endPoint2 = process.env.AGUSTO_SERVICES;
+      const endPoint = process.env.AGUSTO_SERVICES;
 
       if (!email) {
         return { error: "Please enter your email" };
@@ -37,32 +36,16 @@ export class AuthClass extends MainClass {
       if (isAgustoMail) {
         try {
           // Inner try-catch for Agusto API errors
-          // const { data } = await axios.post(`${endPoint}/auth/login`, {
-          //   corporate_email: email,
-          //   password,
-          // });
-          const { data } = await axios.post(`${endPoint2}/auth/login`, {
+
+          const { data } = await axios.post(`${endPoint}/auth/login`, {
             email: email,
             password,
           });
 
           const { token, ...user } = data?.data || {};
-          // const { token, user } = data || {};
 
-        
-
-          if (data?.status === 400) {
-            return { error: data?.message }; // Return consistent object structure
-          }
-
-          // const Me2 = await axios.get(
-          //   `${endPoint}/users/getStaffByempId/${user?.employee_id?.toString()}`,
-          //   {
-          //     headers: { Authorization: `Bearer ${token}` },
-          //   }
-          // );
           const Me = await axios.get(
-            `${endPoint2}/users/${user?.id?.toString()}`,
+            `${endPoint}/users/${user?.id?.toString()}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -74,8 +57,6 @@ export class AuthClass extends MainClass {
             role: Me?.data?.data?.isAdmin ? "admin" : "user",
           });
 
-         
-         
           return {
             user: Me?.data?.data
               ? ({
@@ -85,7 +66,7 @@ export class AuthClass extends MainClass {
                   firstname: Me.data.data.firstname || "",
                   lastname: Me.data.data.lastname || "",
                   corporateEmail: Me.data.data.corporate_email || "",
-                  unit: Me.data.data.department?.name || "", 
+                  unit: Me.data.data.department?.name || "",
                   departmentRole:
                     Me.data.data.department_role ||
                     Me.data.data.position?.name ||
@@ -122,7 +103,10 @@ export class AuthClass extends MainClass {
             client: null,
           };
         } catch (agustoApiError: any) {
-          return { error: agustoApiError.message }; // Handle Agusto API errors specifically
+          return {
+            error:
+              agustoApiError.response?.data?.message || "something went wrong",
+          }; // Handle Agusto API errors specifically
         }
       }
 

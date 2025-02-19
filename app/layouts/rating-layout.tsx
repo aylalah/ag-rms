@@ -1,4 +1,5 @@
 import { Rating } from "@helpers/zodPrisma";
+import EditInvoice from "@routes/app+/_ratings+/ratings.$id.edit-invoice";
 import { FetcherWithComponents, Link, useNavigate } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
@@ -20,6 +21,7 @@ type RatingProps = {
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
   linkTo: string;
+  invoiceEdit: string;
   isClientOnly: boolean;
   SupervisorObject: AnalystObj;
   PrimaryAnalystObject?: AnalystObj;
@@ -31,6 +33,7 @@ const reportUploadMenu = [{ name: "Draft Report" }, { name: "Final Report" }];
 export default function RatingLayout({
   rating,
   linkTo,
+  invoiceEdit,
   Fetcher,
   isClientOnly = false,
   SupervisorObject,
@@ -359,24 +362,13 @@ export default function RatingLayout({
                   {!isClientOnly && rating?.reportModel?.length === 0 && (
                     <i
                       className="ri-edit-line cursor-pointer text-secondary"
-                      onClick={() => {
-                        setShowModal(true);
-                        console.log("the modal should open ");
-                      }}
+                      onClick={() => setShowModal(true)}
                     />
                   )}
                 </li>
               )}
             </ul>
-            {showModal && (
-              <div className="modal-box flex w-full h-full">
-                <i
-                  className="ri-close-circle-fill text-secondary self-end"
-                  onClick={() => setShowModal(false)}
-                />
-                <p>This is where I would put the input file</p>
-              </div>
-            )}
+            {showModal && <EditInvoice onClose={() => setShowModal(false)} />}
           </div>
         </div>
       </div>

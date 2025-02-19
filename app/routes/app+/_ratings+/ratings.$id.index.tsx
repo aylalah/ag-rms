@@ -36,7 +36,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       const SecondaryAnalystObject = rating?.secondaryAnalyst
         ? JSON.parse(rating?.secondaryAnalyst as any)
         : null;
-
+     
       return {
         error,
         rating: {
@@ -244,6 +244,7 @@ export default function Rating() {
   return (
     <RatingLayout
       linkTo={`/app/ratings/${id}/uploaded-files/questionnaire-docs`}
+      invoiceEdit={`/app/ratings/${id}/edit-invoice`}
       isClientOnly={false}
       rating={rating as any}
       Fetcher={Fetcher}
