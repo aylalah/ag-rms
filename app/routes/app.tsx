@@ -95,6 +95,8 @@ export const groupedClientRoutes = MenuLinks.map((route) => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user, token } = await validateCookie(request);
 
+  // console.log(agustoUser, "agustoUser");
+
   if (!user || !token)
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },

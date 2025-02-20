@@ -70,12 +70,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
     });
-    
+
   const dashboardData = await RMSservice(token).general.dashboard();
+  const clientResponse = await RMSservice(token).clients.all({
+    limit: 4,
+    page: 1,
+    orderBy: { createdAt: "desc" },
+  });
+
+  const { docs, ...meta } = clientResponse?.clients || {};
 
   //total client
   const Client = await RMSservice(token)
     .clients.all({ limit: 4, page: 1, orderBy: { createdAt: "desc" } })
+
     .then((res) => {
       const { docs, ...meta } = res?.clients || {};
       return {

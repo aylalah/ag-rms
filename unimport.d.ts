@@ -728,6 +728,7 @@ declare global {
   const dbQuery: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/prisma')['dbQuery']
   const deleteFileFromSpaces: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/upload-file')['deleteFileFromSpaces']
   const deleteFileHandler: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/upload-file')['deleteFileHandler']
+  const deleteInvoiceFromSpaces: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/upload-file')['deleteInvoiceFromSpaces']
   const generalStore: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/stores/general.store')['default']
   const hashPassword: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/validation')['hashPassword']
   const passwordPolicy: typeof import('C:/Users/adeola/workspace/rms-new/rms-v1/app/helpers/validation')['passwordPolicy']

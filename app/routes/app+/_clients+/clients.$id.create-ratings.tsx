@@ -25,6 +25,7 @@ import { dbQuery } from "@helpers/prisma";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { apiToken, token, user } = await validateCookie(request);
 
+
   if (!token || !user) {
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },

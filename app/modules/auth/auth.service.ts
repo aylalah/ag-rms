@@ -24,14 +24,7 @@ export class AuthClass extends MainClass {
     try {
       const { email, password } = input;
       const isAgustoMail = email.includes("@agusto.com");
-      const endPoint = process.env.AGUSTO_SERVICES_URL;
-
-      // if (!navigator.onLine) {
-      //   return {
-      //     error:
-      //       "No internet connection. Please check your network and try again.",
-      //   };
-      // }
+      const endPoint = process.env.AGUSTO_SERVICES;
 
       if (!email) {
         return { error: "Please enter your email" };
@@ -43,41 +36,80 @@ export class AuthClass extends MainClass {
       if (isAgustoMail) {
         try {
           // Inner try-catch for Agusto API errors
+
           const { data } = await axios.post(`${endPoint}/auth/login`, {
-            corporate_email: email,
+            email: email,
             password,
           });
 
-          const { token, user } = data || {};
-
-          if (data?.status === 400) {
-            return { error: data?.message }; // Return consistent object structure
-          }
+          const { token, ...user } = data?.data || {};
 
           const Me = await axios.get(
-            `${endPoint}/users/getStaffByempId/${user?.employee_id?.toString()}`,
+            `${endPoint}/users/${user?.id?.toString()}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
 
           const userJWT = await this.EncryptData({
-            ...user,
-            unit: Me?.data?.data?.unit,
+            user,
+            unit: Me?.data?.data?.department?.name,
             role: Me?.data?.data?.isAdmin ? "admin" : "user",
           });
 
           return {
-            user: Me?.data?.data as User,
+            user: Me?.data?.data
+              ? ({
+                  id: Me.data.data.id || "",
+                  employee_id: Me.data.data.employee_id || "",
+                  role: Me.data.data.role?.name || "",
+                  firstname: Me.data.data.firstname || "",
+                  lastname: Me.data.data.lastname || "",
+                  corporateEmail: Me.data.data.corporate_email || "",
+                  unit: Me.data.data.department?.name || "",
+                  departmentRole:
+                    Me.data.data.department_role ||
+                    Me.data.data.position?.name ||
+                    "",
+                  image: Me.data.data.image || "",
+                  levelModel: {
+                    name: Me.data.data.position?.name || "",
+                  },
+                  unitModel: {
+                    name: Me.data.data.department?.name || "",
+                  },
+                  ...Object.fromEntries(
+                    Object.entries(Me.data.data).filter(
+                      ([key]) =>
+                        ![
+                          "id",
+                          "employee_id",
+                          "role",
+                          "firstname",
+                          "lastname",
+                          "corporate_email",
+                          "department_role",
+                          "position",
+                          "image",
+                          "department",
+                          "unit",
+                        ].includes(key)
+                    )
+                  ),
+                } as User)
+              : undefined,
             apiToken: token,
             token: userJWT,
             client: null,
           };
         } catch (agustoApiError: any) {
-          return { error: agustoApiError.message }; // Handle Agusto API errors specifically
+          return {
+            error:
+              agustoApiError.response?.data?.message || "something went wrong",
+          }; // Handle Agusto API errors specifically
         }
       }
-      
+
       return await this.magicLinkLogin(input);
     } catch (error: any) {
       return { error: error.message };

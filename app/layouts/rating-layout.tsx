@@ -1,4 +1,5 @@
 import { Rating } from "@helpers/zodPrisma";
+import EditInvoice from "@routes/app+/_ratings+/ratings.$id.edit-invoice";
 import { FetcherWithComponents, Link, useNavigate } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
@@ -20,6 +21,7 @@ type RatingProps = {
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
   linkTo: string;
+  invoiceEdit: string;
   isClientOnly: boolean;
   SupervisorObject: AnalystObj;
   PrimaryAnalystObject?: AnalystObj;
@@ -31,6 +33,7 @@ const reportUploadMenu = [{ name: "Draft Report" }, { name: "Final Report" }];
 export default function RatingLayout({
   rating,
   linkTo,
+  invoiceEdit,
   Fetcher,
   isClientOnly = false,
   SupervisorObject,
@@ -42,6 +45,7 @@ export default function RatingLayout({
   const formRef = useRef<HTMLFormElement>(null);
   const [reportType, setReportType] = useState<string>("");
   const [reportVersion, setReportVersion] = useState<string>("");
+  const [showModal, setShowModal] = useState(false);
   const FetcherData = Fetcher?.data as { message: string; error: string };
   const isSubmitting = Fetcher.state === "submitting";
   const [forAMI, setForAMI] = useState(false);
@@ -94,6 +98,7 @@ export default function RatingLayout({
     ratingRef.current?.showModal();
   }, []);
  */
+
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
@@ -304,7 +309,7 @@ export default function RatingLayout({
             </h2>
           </div>
 
-          <div className="border rounded border-accent">
+          <div className="border rounded border-accent relative">
             <ul className="grid grid-cols-2 gap-2">
               <li className="p-4 bg-base-100">
                 <a
@@ -344,7 +349,7 @@ export default function RatingLayout({
               )}
 
               {rating?.invoiceModel && (
-                <li className="p-4 bg-base-100">
+                <li className="p-4 bg-base-100 flex gap-4 relative">
                   <a
                     href={`${rating?.invoiceModel?.url}`}
                     target="_blank"
@@ -354,9 +359,16 @@ export default function RatingLayout({
                     <i className="ri-file-text-line" />
                     Invoice
                   </a>
+                  {!isClientOnly && rating?.reportModel?.length === 0 && (
+                    <i
+                      className="ri-edit-line cursor-pointer text-secondary"
+                      onClick={() => setShowModal(true)}
+                    />
+                  )}
                 </li>
               )}
             </ul>
+            {showModal && <EditInvoice onClose={() => setShowModal(false)} />}
           </div>
         </div>
       </div>
