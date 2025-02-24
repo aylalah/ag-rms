@@ -57,6 +57,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
           "methodology",
           "questionnaire",
           "status",
+          "loe",
+          "invoice",
         ];
 
         // Only exclude primaryAnalyst and secondaryAnalyst if they already have values
@@ -120,7 +122,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   });
   if (updateRating) throw redirectDocument(`/app/ratings/${ratingId}`);
 
- 
   return { error, message: updateRating };
 };
 
