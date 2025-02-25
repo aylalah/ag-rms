@@ -25,7 +25,6 @@ import { dbQuery } from "@helpers/prisma";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { apiToken, token, user } = await validateCookie(request);
 
-
   if (!token || !user) {
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
@@ -69,6 +68,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const data = Object.fromEntries(fd.entries()) as any;
 
   const { token } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const id = params.id as string;
 
   if (!data?.issueDate) delete data.issueDate;

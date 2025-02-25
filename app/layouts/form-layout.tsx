@@ -124,7 +124,7 @@ export const FormLayout = ({
                         placeholder={field}
                         required={isRequired}
                         type="date"
-                        defaultValue={defaultValue}
+                        defaultValue={defaultValue || ""}
                       />
                     )}
 
