@@ -140,7 +140,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
         sendEmail({
           to: primaryAnalyst,
-          cc: ccEmails,
+          // cc: ccEmails,
           email: primaryAnalyst,
           subject: `${company} File Upload`,
           html: `
