@@ -41,7 +41,7 @@ export class AuthClass extends MainClass {
             email: email,
             password,
           });
-          console.log(data, "data");
+         
           const { token, ...user } = data?.data || {};
 
           const Me = await axios.get(
@@ -103,7 +103,7 @@ export class AuthClass extends MainClass {
             client: null,
           };
         } catch (agustoApiError: any) {
-          console.log(agustoApiError, "error");
+          // console.log(agustoApiError, "error");
           return {
             error:
               agustoApiError.response?.data?.message || "something went wrong",

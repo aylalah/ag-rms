@@ -134,13 +134,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           .map((el, index) => `${index + 1}. ${el?.name} <br/> <br/>`)
           .join("\n");
 
-        const ccEmails = secondaryAnalyst
-          ? [supervisor, secondaryAnalyst]
-          : [supervisor];
+        const ccEmail = secondaryAnalyst
+          ? [ secondaryAnalyst]
+          : [];
 
         sendEmail({
           to: primaryAnalyst,
-          // cc: ccEmails,
+          cc: ccEmail,
           email: primaryAnalyst,
           subject: `${company} File Upload`,
           html: `
