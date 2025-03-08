@@ -103,7 +103,7 @@ export class AuthClass extends MainClass {
             client: null,
           };
         } catch (agustoApiError: any) {
-          // console.log(agustoApiError, "error");
+          console.log(agustoApiError, "error");
           return {
             error:
               agustoApiError.response?.data?.message || "something went wrong",

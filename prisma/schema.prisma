@@ -47,7 +47,7 @@ model Questionnaire {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
-model LetterOfEngagement {{
+model LetterOfEngagement {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
   url         String

@@ -2,7 +2,7 @@ import { Rating } from "@helpers/zodPrisma";
 import EditInvoice from "@routes/app+/_ratings+/ratings.$id.edit-invoice";
 import { FetcherWithComponents, Link, useNavigate } from "@remix-run/react";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { report } from "node:process";
 import UpdateStatus from "@routes/app+/_ratings+/ratings.$id.update-status";
@@ -59,7 +59,7 @@ export default function RatingLayout({
     );
     return thisReports?.length ? thisReports.length + 1 : 1;
   };
-
+ 
   const onUploadHandler = (name: string) => {
     if (name === "Draft Report") {
       const version = getVersion(name);
@@ -267,7 +267,8 @@ export default function RatingLayout({
                 isHeader
               />
               {rating?.reportModel?.map((report, i) => (
-                <Tr
+                <React.Fragment key={report?.id}>
+                  <Tr
                   key={report?.id}
                   index={i + 1}
                   name={report?.reportTitle}
@@ -275,7 +276,19 @@ export default function RatingLayout({
                   status={report?.status}
                   link={report?.reportFileUrl || ""}
                 />
-              ))}
+                 {report?.finalLetterUrl && (
+                <Tr
+                  index={i + 1} // Keep the same index since it's part of the same Final Report
+                  name="Final Letter"
+                  version={report?.version}
+                 status={report?.status}
+                 link={report?.finalLetterUrl}
+                />
+                )}
+                  </React.Fragment>
+                ))}
+                
+              
             </ul>
             <div
               className={`flex flex-col md:flex-row items-center ${
