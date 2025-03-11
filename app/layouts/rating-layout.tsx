@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { report } from "node:process";
 import UpdateStatus from "@routes/app+/_ratings+/ratings.$id.update-status";
+import AddReceipt from "@routes/app+/_ratings+/ratings.$id.add-receipt";
 
 type AnalystObj = {
   employee_id: number;
@@ -49,6 +50,7 @@ export default function RatingLayout({
   const [reportVersion, setReportVersion] = useState<string>("");
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
   const FetcherData = Fetcher?.data as { message: string; error: string };
   const isSubmitting = Fetcher.state === "submitting";
   const [forAMI, setForAMI] = useState(false);
@@ -104,7 +106,7 @@ export default function RatingLayout({
     ratingRef.current?.showModal();
   }, []);
  */
-  // console.log(rating, "I want to see if I can see reportType");
+  console.log(rating, "I want to see if I can see receipt");
 
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
@@ -408,10 +410,27 @@ export default function RatingLayout({
                   )}
                 </li>
               )}
+              { rating?.invoice && rating?.reportModel?.length === 0 && (
+                <li className="p-4 bg-base-100 flex gap-4 text-sm relative text-secondary cursor-pointer"
+                 onClick={() => setShowReceiptModal(true)}>
+             
+                  <i className="ri-file-text-line link-secondary" />
+                  Receipt
+                  <i
+                    className="ri-edit-line cursor-pointer text-secondary"
+                    
+                  />
+              
+              </li>
+            )}
             </ul>
             {showInvoiceModal && (
               <EditInvoice onClose={() => setShowInvoiceModal(false)} />
             )}
+            {showReceiptModal && (
+              <AddReceipt onClose={() => setShowReceiptModal(false)} />
+            )}
+            
           </div>
         </div>
       </div>

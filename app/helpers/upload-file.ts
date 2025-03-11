@@ -88,6 +88,8 @@ export const uploadInvoiceToSpaces = (file: any, fileName: string) => {
     },
   }).done();
 };
+
+
 export const deleteInvoiceFromSpaces = async (fileName: string) => {
   const params = {
     Bucket: "agustoportals",
@@ -101,6 +103,18 @@ export const deleteInvoiceFromSpaces = async (fileName: string) => {
     return { error: error.message };
   }
 };
+
+export const uploadReceiptToSpaces = (file: any, fileName: string) => {
+  return new Upload({
+    client: s3,
+    params: {
+      Bucket: "agustoportals",
+      Key: `rating-mgt-portal/receipts/${fileName}`,
+      Body: file,
+      ACL: "public-read",
+    },
+  }).done();
+}
 
 export const uploadStreamToSpaces = (
   file: any,
