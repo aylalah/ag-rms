@@ -112,6 +112,7 @@ export const uploadReceiptToSpaces = (file: any, fileName: string) => {
       Key: `rating-mgt-portal/receipts/${fileName}`,
       Body: file,
       ACL: "public-read",
+      ContentType: "application/pdf"
     },
   }).done();
 }

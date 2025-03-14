@@ -78,6 +78,7 @@ export class RatingClass extends MainClass {
           clientModel: { include: { contactModel: true } },
           loeModel: true,
           invoiceModel: true,
+          receiptModel:true,
           ...include,
         },
       });
@@ -365,6 +366,9 @@ export class RatingClass extends MainClass {
             el.type = "file";
           }
           if (el.field === "invoice") {
+            el.type = "file";
+          }
+          if (el.field === "receipt") {
             el.type = "file";
           }
           return el;

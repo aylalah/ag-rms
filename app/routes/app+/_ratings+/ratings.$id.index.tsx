@@ -173,16 +173,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     if (CreateReport) {
       if (reportTitle?.toLowerCase().includes("final")) {
-        // sendEmail({
-        //   to: body.supervisorEmail,
-        //   email: body.supervisorEmail,
-        //   subject: "Final Rating Report Uploaded",
-        //   html: `<p>Dear Team Lead,</p>
-        //   <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
+         sendEmail({
+          to: body.supervisorEmail,
+          email: body.supervisorEmail,
+           subject: "Final Rating Report Uploaded",
+          html: `<p>Dear Team Lead,</p>
+          <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
 
-        //   <p>Best Regards,</p>
-        //    <p>Agusto & Co RMS Team</p>`,
-        // });
+          <p>Best Regards,</p>
+            <p>Agusto & Co RMS Team</p>`,
+         });
 
         //notify client
         contacts.forEach((el: any) => {
@@ -200,17 +200,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           });
         });
       } else {
-        // sendEmail({
-        //   to: body.supervisorEmail,
-        //   email: body.supervisorEmail,
-        //   subject: "Draft Rating Report Uploaded",
-        //   html: `<p>Dear Team Lead,</p>
-        //    <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
+        sendEmail({
+          to: body.supervisorEmail,
+          email: body.supervisorEmail,
+          subject: "Draft Rating Report Uploaded",
+         html: `<p>Dear Team Lead,</p>
+         <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
 
-        //     <p>Best Regards,</p>
-        //    <p>Agusto & Co RMS Team</p>
-        //    `,
-        // });
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
+           `,
+        });
         // notify client
         contacts?.forEach((el: any) => {
           sendEmail({

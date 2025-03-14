@@ -66,6 +66,7 @@ const uploadCache = new Map<
 
 const delayEmailNotification = (
   analystEmail: string,
+  supervisor:string,
   secondaryAnalyst: string | null,
   primaryAnalystName: string,
   company: string,
@@ -86,12 +87,15 @@ const delayEmailNotification = (
       .map((el, index) => `${index + 1}. ${el.name} <br/> <br/>`)
       .join("\n");
 
-    const ccEmail = secondaryAnalyst ? [secondaryAnalyst] : [];
+    // const ccEmail = secondaryAnalyst ? [secondaryAnalyst] : [];
+    const ccEmails = secondaryAnalyst
+          ? [supervisor, secondaryAnalyst]
+          : [supervisor];
 
     sendEmail({
       to: analystEmail,
       email: analystEmail,
-      cc: ccEmail,
+      cc: ccEmails,
       subject: `${company} File Upload`,
       html: `
         <p> Dear ${primaryAnalystName},</p>
@@ -182,6 +186,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
         if(fileArray.length>0){
           delayEmailNotification(
+            supervisor,
             primaryAnalyst,
             secondaryAnalyst,
             primaryAnalystName,

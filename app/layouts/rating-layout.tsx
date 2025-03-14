@@ -106,7 +106,7 @@ export default function RatingLayout({
     ratingRef.current?.showModal();
   }, []);
  */
-  console.log(rating, "I want to see if I can see receipt");
+ 
 
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
@@ -402,7 +402,7 @@ export default function RatingLayout({
                     <i className="ri-file-text-line" />
                     Invoice
                   </a>
-                  {!isClientOnly && rating?.reportModel?.length === 0 && (
+                  {!isClientOnly && !rating?.receipt && rating?.reportModel?.length === 0 && (
                     <i
                       className="ri-edit-line cursor-pointer text-secondary"
                       onClick={() => setShowInvoiceModal(true)}
@@ -410,7 +410,7 @@ export default function RatingLayout({
                   )}
                 </li>
               )}
-              { rating?.invoice && rating?.reportModel?.length === 0 && (
+              { !isClientOnly && rating?.invoice && rating?.reportModel?.length === 0 && !rating?.receipt && (
                 <li className="p-4 bg-base-100 flex gap-4 text-sm relative text-secondary cursor-pointer"
                  onClick={() => setShowReceiptModal(true)}>
              
@@ -423,6 +423,20 @@ export default function RatingLayout({
               
               </li>
             )}
+               {rating.receipt && (
+                <li className="p-4 bg-base-100">
+                  <a
+                    href={`${rating?.receiptModel?.url}`}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="flex items-center gap-2 text-sm link-secondary"
+                  >
+                    <i className="ri-file-text-line" />
+                    Receipt
+                  </a>
+                </li>
+              )}
+
             </ul>
             {showInvoiceModal && (
               <EditInvoice onClose={() => setShowInvoiceModal(false)} />

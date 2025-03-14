@@ -18,13 +18,11 @@ export const LetterOfEngagementScalarFieldEnumSchema = z.enum(['id','name','url'
 
 export const InvoiceScalarFieldEnumSchema = z.enum(['id','name','url','createdAt','updatedAt']);
 
-export const ReceiptScalarFieldEnumSchema = z.enum(['id','name','url','createdAt','updatedAt']);
-
 export const IndustryScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
 export const ReportsScalarFieldEnumSchema = z.enum(['id','rating','reportTitle','reportFileUrl','finalLetterUrl','consentLetterUrl','version','status','createdAt','updatedAt']);
 
-export const RatingScalarFieldEnumSchema = z.enum(['id','ratingTitle','ratingScore','unit','ratingClass','ratingYear','supervisor','primaryAnalyst','secondaryAnalyst','client','methodology','questionnaire','questionnaireFiles','additionalFiles','requireAdditionalFiles','requireQuestionnaireFiles','loe','invoice','receipt','status','issueDate','expiryDate','createdAt','updatedAt']);
+export const RatingScalarFieldEnumSchema = z.enum(['id','ratingTitle','ratingScore','unit','ratingClass','ratingYear','supervisor','primaryAnalyst','secondaryAnalyst','client','methodology','questionnaire','questionnaireFiles','additionalFiles','requireAdditionalFiles','requireQuestionnaireFiles','loe','invoice','status','issueDate','expiryDate','createdAt','updatedAt']);
 
 export const RatingClassScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
 
@@ -257,57 +255,6 @@ export const InvoiceOptionalDefaultsWithRelationsSchema: z.ZodType<InvoiceOption
 }))
 
 /////////////////////////////////////////
-// RECEIPT SCHEMA
-/////////////////////////////////////////
-
-export const ReceiptSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  url: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-})
-
-export type Receipt = z.infer<typeof ReceiptSchema>
-
-// RECEIPT OPTIONAL DEFAULTS SCHEMA
-//------------------------------------------------------
-
-export const ReceiptOptionalDefaultsSchema = ReceiptSchema.merge(z.object({
-  id: z.string().optional(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-}))
-
-export type ReceiptOptionalDefaults = z.infer<typeof ReceiptOptionalDefaultsSchema>
-
-// RECEIPT RELATION SCHEMA
-//------------------------------------------------------
-
-export type ReceiptRelations = {
-  ratingModel: Rating[];
-};
-
-export type ReceiptWithRelations = z.infer<typeof ReceiptSchema> & ReceiptRelations
-
-export const ReceiptWithRelationsSchema: z.ZodType<ReceiptWithRelations> = ReceiptSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
-}))
-
-// RECEIPT OPTIONAL DEFAULTS RELATION SCHEMA
-//------------------------------------------------------
-
-export type ReceiptOptionalDefaultsRelations = {
-  ratingModel: Rating[];
-};
-
-export type ReceiptOptionalDefaultsWithRelations = z.infer<typeof ReceiptOptionalDefaultsSchema> & ReceiptOptionalDefaultsRelations
-
-export const ReceiptOptionalDefaultsWithRelationsSchema: z.ZodType<ReceiptOptionalDefaultsWithRelations> = ReceiptOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
-}))
-
-/////////////////////////////////////////
 // INDUSTRY SCHEMA
 /////////////////////////////////////////
 
@@ -438,7 +385,6 @@ export const RatingSchema = z.object({
   requireQuestionnaireFiles: z.boolean(),
   loe: z.string().nullable(),
   invoice: z.string().nullable(),
-  receipt: z.string().nullable(),
   issueDate: z.coerce.date().nullable(),
   expiryDate: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
@@ -472,7 +418,6 @@ export type RatingRelations = {
   questionnaireModel: Questionnaire;
   loeModel?: LetterOfEngagement | null;
   invoiceModel?: Invoice | null;
-  receiptModel?: Receipt | null;
   reportModel: Reports[];
 };
 
@@ -485,7 +430,6 @@ export const RatingWithRelationsSchema: z.ZodType<RatingWithRelations> = RatingS
   questionnaireModel: z.lazy(() => QuestionnaireSchema),
   loeModel: z.lazy(() => LetterOfEngagementSchema).nullable(),
   invoiceModel: z.lazy(() => InvoiceSchema).nullable(),
-  receiptModel: z.lazy(() => ReceiptSchema).nullable(),
   reportModel: z.lazy(() => ReportsSchema).array(),
 }))
 
@@ -499,7 +443,6 @@ export type RatingOptionalDefaultsRelations = {
   questionnaireModel: Questionnaire;
   loeModel?: LetterOfEngagement | null;
   invoiceModel?: Invoice | null;
-  receiptModel?: Receipt | null;
   reportModel: Reports[];
 };
 
@@ -512,7 +455,6 @@ export const RatingOptionalDefaultsWithRelationsSchema: z.ZodType<RatingOptional
   questionnaireModel: z.lazy(() => QuestionnaireSchema),
   loeModel: z.lazy(() => LetterOfEngagementSchema).nullable(),
   invoiceModel: z.lazy(() => InvoiceSchema).nullable(),
-  receiptModel: z.lazy(() => ReceiptSchema).nullable(),
   reportModel: z.lazy(() => ReportsSchema).array(),
 }))
 
@@ -742,12 +684,12 @@ export type LogOptionalDefaults = z.infer<typeof LogOptionalDefaultsSchema>
 export const MethodologyIncludeSchema: z.ZodType<Prisma.MethodologyInclude> = z.object({
 }).strict()
 
-export const MethodologyArgsSchema: z.ZodType<Prisma.MethodologyDefaultArgs> = z.object({
+export const MethodologyArgsSchema = z.object({
   select: z.lazy(() => MethodologySelectSchema).optional(),
   include: z.lazy(() => MethodologyIncludeSchema).optional(),
 }).strict();
 
-export const MethodologyCountOutputTypeArgsSchema: z.ZodType<Prisma.MethodologyCountOutputTypeDefaultArgs> = z.object({
+export const MethodologyCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => MethodologyCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -772,12 +714,12 @@ export const MethodologySelectSchema: z.ZodType<Prisma.MethodologySelect> = z.ob
 export const QuestionnaireIncludeSchema: z.ZodType<Prisma.QuestionnaireInclude> = z.object({
 }).strict()
 
-export const QuestionnaireArgsSchema: z.ZodType<Prisma.QuestionnaireDefaultArgs> = z.object({
+export const QuestionnaireArgsSchema= z.object({
   select: z.lazy(() => QuestionnaireSelectSchema).optional(),
   include: z.lazy(() => QuestionnaireIncludeSchema).optional(),
 }).strict();
 
-export const QuestionnaireCountOutputTypeArgsSchema: z.ZodType<Prisma.QuestionnaireCountOutputTypeDefaultArgs> = z.object({
+export const QuestionnaireCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => QuestionnaireCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -802,12 +744,12 @@ export const QuestionnaireSelectSchema: z.ZodType<Prisma.QuestionnaireSelect> = 
 export const LetterOfEngagementIncludeSchema: z.ZodType<Prisma.LetterOfEngagementInclude> = z.object({
 }).strict()
 
-export const LetterOfEngagementArgsSchema: z.ZodType<Prisma.LetterOfEngagementDefaultArgs> = z.object({
+export const LetterOfEngagementArgsSchema= z.object({
   select: z.lazy(() => LetterOfEngagementSelectSchema).optional(),
   include: z.lazy(() => LetterOfEngagementIncludeSchema).optional(),
 }).strict();
 
-export const LetterOfEngagementCountOutputTypeArgsSchema: z.ZodType<Prisma.LetterOfEngagementCountOutputTypeDefaultArgs> = z.object({
+export const LetterOfEngagementCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => LetterOfEngagementCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -831,12 +773,12 @@ export const LetterOfEngagementSelectSchema: z.ZodType<Prisma.LetterOfEngagement
 export const InvoiceIncludeSchema: z.ZodType<Prisma.InvoiceInclude> = z.object({
 }).strict()
 
-export const InvoiceArgsSchema: z.ZodType<Prisma.InvoiceDefaultArgs> = z.object({
+export const InvoiceArgsSchema= z.object({
   select: z.lazy(() => InvoiceSelectSchema).optional(),
   include: z.lazy(() => InvoiceIncludeSchema).optional(),
 }).strict();
 
-export const InvoiceCountOutputTypeArgsSchema: z.ZodType<Prisma.InvoiceCountOutputTypeDefaultArgs> = z.object({
+export const InvoiceCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => InvoiceCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -854,47 +796,18 @@ export const InvoiceSelectSchema: z.ZodType<Prisma.InvoiceSelect> = z.object({
   _count: z.union([z.boolean(),z.lazy(() => InvoiceCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-// RECEIPT
-//------------------------------------------------------
-
-export const ReceiptIncludeSchema: z.ZodType<Prisma.ReceiptInclude> = z.object({
-}).strict()
-
-export const ReceiptArgsSchema: z.ZodType<Prisma.ReceiptDefaultArgs> = z.object({
-  select: z.lazy(() => ReceiptSelectSchema).optional(),
-  include: z.lazy(() => ReceiptIncludeSchema).optional(),
-}).strict();
-
-export const ReceiptCountOutputTypeArgsSchema: z.ZodType<Prisma.ReceiptCountOutputTypeDefaultArgs> = z.object({
-  select: z.lazy(() => ReceiptCountOutputTypeSelectSchema).nullish(),
-}).strict();
-
-export const ReceiptCountOutputTypeSelectSchema: z.ZodType<Prisma.ReceiptCountOutputTypeSelect> = z.object({
-  ratingModel: z.boolean().optional(),
-}).strict();
-
-export const ReceiptSelectSchema: z.ZodType<Prisma.ReceiptSelect> = z.object({
-  id: z.boolean().optional(),
-  name: z.boolean().optional(),
-  url: z.boolean().optional(),
-  createdAt: z.boolean().optional(),
-  updatedAt: z.boolean().optional(),
-  ratingModel: z.union([z.boolean(),z.lazy(() => RatingArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => ReceiptCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
 // INDUSTRY
 //------------------------------------------------------
 
 export const IndustryIncludeSchema: z.ZodType<Prisma.IndustryInclude> = z.object({
 }).strict()
 
-export const IndustryArgsSchema: z.ZodType<Prisma.IndustryDefaultArgs> = z.object({
+export const IndustryArgsSchema= z.object({
   select: z.lazy(() => IndustrySelectSchema).optional(),
   include: z.lazy(() => IndustryIncludeSchema).optional(),
 }).strict();
 
-export const IndustryCountOutputTypeArgsSchema: z.ZodType<Prisma.IndustryCountOutputTypeDefaultArgs> = z.object({
+export const IndustryCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => IndustryCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -917,7 +830,7 @@ export const IndustrySelectSchema: z.ZodType<Prisma.IndustrySelect> = z.object({
 export const ReportsIncludeSchema: z.ZodType<Prisma.ReportsInclude> = z.object({
 }).strict()
 
-export const ReportsArgsSchema: z.ZodType<Prisma.ReportsDefaultArgs> = z.object({
+export const ReportsArgsSchema= z.object({
   select: z.lazy(() => ReportsSelectSchema).optional(),
   include: z.lazy(() => ReportsIncludeSchema).optional(),
 }).strict();
@@ -942,12 +855,12 @@ export const ReportsSelectSchema: z.ZodType<Prisma.ReportsSelect> = z.object({
 export const RatingIncludeSchema: z.ZodType<Prisma.RatingInclude> = z.object({
 }).strict()
 
-export const RatingArgsSchema: z.ZodType<Prisma.RatingDefaultArgs> = z.object({
+export const RatingArgsSchema= z.object({
   select: z.lazy(() => RatingSelectSchema).optional(),
   include: z.lazy(() => RatingIncludeSchema).optional(),
 }).strict();
 
-export const RatingCountOutputTypeArgsSchema: z.ZodType<Prisma.RatingCountOutputTypeDefaultArgs> = z.object({
+export const RatingCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => RatingCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -974,7 +887,6 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.boolean().optional(),
   invoice: z.boolean().optional(),
-  receipt: z.boolean().optional(),
   status: z.boolean().optional(),
   issueDate: z.boolean().optional(),
   expiryDate: z.boolean().optional(),
@@ -986,7 +898,6 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
   questionnaireModel: z.union([z.boolean(),z.lazy(() => QuestionnaireArgsSchema)]).optional(),
   loeModel: z.union([z.boolean(),z.lazy(() => LetterOfEngagementArgsSchema)]).optional(),
   invoiceModel: z.union([z.boolean(),z.lazy(() => InvoiceArgsSchema)]).optional(),
-  receiptModel: z.union([z.boolean(),z.lazy(() => ReceiptArgsSchema)]).optional(),
   reportModel: z.union([z.boolean(),z.lazy(() => ReportsArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => RatingCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -997,12 +908,12 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
 export const RatingClassIncludeSchema: z.ZodType<Prisma.RatingClassInclude> = z.object({
 }).strict()
 
-export const RatingClassArgsSchema: z.ZodType<Prisma.RatingClassDefaultArgs> = z.object({
+export const RatingClassArgsSchema= z.object({
   select: z.lazy(() => RatingClassSelectSchema).optional(),
   include: z.lazy(() => RatingClassIncludeSchema).optional(),
 }).strict();
 
-export const RatingClassCountOutputTypeArgsSchema: z.ZodType<Prisma.RatingClassCountOutputTypeDefaultArgs> = z.object({
+export const RatingClassCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => RatingClassCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -1025,12 +936,12 @@ export const RatingClassSelectSchema: z.ZodType<Prisma.RatingClassSelect> = z.ob
 export const ClientIncludeSchema: z.ZodType<Prisma.ClientInclude> = z.object({
 }).strict()
 
-export const ClientArgsSchema: z.ZodType<Prisma.ClientDefaultArgs> = z.object({
+export const ClientArgsSchema= z.object({
   select: z.lazy(() => ClientSelectSchema).optional(),
   include: z.lazy(() => ClientIncludeSchema).optional(),
 }).strict();
 
-export const ClientCountOutputTypeArgsSchema: z.ZodType<Prisma.ClientCountOutputTypeDefaultArgs> = z.object({
+export const ClientCountOutputTypeArgsSchema= z.object({
   select: z.lazy(() => ClientCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -1069,7 +980,7 @@ export const ClientSelectSchema: z.ZodType<Prisma.ClientSelect> = z.object({
 export const ContactIncludeSchema: z.ZodType<Prisma.ContactInclude> = z.object({
 }).strict()
 
-export const ContactArgsSchema: z.ZodType<Prisma.ContactDefaultArgs> = z.object({
+export const ContactArgsSchema= z.object({
   select: z.lazy(() => ContactSelectSchema).optional(),
   include: z.lazy(() => ContactIncludeSchema).optional(),
 }).strict();
@@ -1093,7 +1004,7 @@ export const ContactSelectSchema: z.ZodType<Prisma.ContactSelect> = z.object({
 // LOG
 //------------------------------------------------------
 
-export const LogArgsSchema: z.ZodType<Prisma.LogDefaultArgs> = z.object({
+export const LogArgsSchema= z.object({
   select: z.lazy(() => LogSelectSchema).optional(),
 }).strict();
 
@@ -1392,73 +1303,6 @@ export const InvoiceScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Invoi
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
-export const ReceiptWhereInputSchema: z.ZodType<Prisma.ReceiptWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => ReceiptWhereInputSchema),z.lazy(() => ReceiptWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ReceiptWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ReceiptWhereInputSchema),z.lazy(() => ReceiptWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  ratingModel: z.lazy(() => RatingListRelationFilterSchema).optional()
-}).strict();
-
-export const ReceiptOrderByWithRelationInputSchema: z.ZodType<Prisma.ReceiptOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  name: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  ratingModel: z.lazy(() => RatingOrderByRelationAggregateInputSchema).optional()
-}).strict();
-
-export const ReceiptWhereUniqueInputSchema: z.ZodType<Prisma.ReceiptWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string(),
-    name: z.string()
-  }),
-  z.object({
-    id: z.string(),
-  }),
-  z.object({
-    name: z.string(),
-  }),
-])
-.and(z.object({
-  id: z.string().optional(),
-  name: z.string().optional(),
-  AND: z.union([ z.lazy(() => ReceiptWhereInputSchema),z.lazy(() => ReceiptWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ReceiptWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ReceiptWhereInputSchema),z.lazy(() => ReceiptWhereInputSchema).array() ]).optional(),
-  url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  ratingModel: z.lazy(() => RatingListRelationFilterSchema).optional()
-}).strict());
-
-export const ReceiptOrderByWithAggregationInputSchema: z.ZodType<Prisma.ReceiptOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  name: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => ReceiptCountOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => ReceiptMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => ReceiptMinOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const ReceiptScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ReceiptScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => ReceiptScalarWhereWithAggregatesInputSchema),z.lazy(() => ReceiptScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ReceiptScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ReceiptScalarWhereWithAggregatesInputSchema),z.lazy(() => ReceiptScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  url: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
-  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
-}).strict();
-
 export const IndustryWhereInputSchema: z.ZodType<Prisma.IndustryWhereInput> = z.object({
   AND: z.union([ z.lazy(() => IndustryWhereInputSchema),z.lazy(() => IndustryWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => IndustryWhereInputSchema).array().optional(),
@@ -1535,7 +1379,7 @@ export const ReportsWhereInputSchema: z.ZodType<Prisma.ReportsWhereInput> = z.ob
   status: z.union([ z.lazy(() => EnumReportStatusNullableFilterSchema),z.lazy(() => ReportStatusSchema) ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  ratingModel: z.union([ z.lazy(() => RatingRelationFilterSchema),z.lazy(() => RatingWhereInputSchema) ]).optional(),
+  ratingModel: z.union([ z.lazy(() => RatingScalarRelationFilterSchema),z.lazy(() => RatingWhereInputSchema) ]).optional(),
 }).strict();
 
 export const ReportsOrderByWithRelationInputSchema: z.ZodType<Prisma.ReportsOrderByWithRelationInput> = z.object({
@@ -1569,7 +1413,7 @@ export const ReportsWhereUniqueInputSchema: z.ZodType<Prisma.ReportsWhereUniqueI
   status: z.union([ z.lazy(() => EnumReportStatusNullableFilterSchema),z.lazy(() => ReportStatusSchema) ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  ratingModel: z.union([ z.lazy(() => RatingRelationFilterSchema),z.lazy(() => RatingWhereInputSchema) ]).optional(),
+  ratingModel: z.union([ z.lazy(() => RatingScalarRelationFilterSchema),z.lazy(() => RatingWhereInputSchema) ]).optional(),
 }).strict());
 
 export const ReportsOrderByWithAggregationInputSchema: z.ZodType<Prisma.ReportsOrderByWithAggregationInput> = z.object({
@@ -1626,19 +1470,17 @@ export const RatingWhereInputSchema: z.ZodType<Prisma.RatingWhereInput> = z.obje
   requireQuestionnaireFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   loe: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   invoice: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  receipt: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  ratingClassModel: z.union([ z.lazy(() => RatingClassNullableRelationFilterSchema),z.lazy(() => RatingClassWhereInputSchema) ]).optional().nullable(),
-  clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
-  methodologyModel: z.union([ z.lazy(() => MethodologyRelationFilterSchema),z.lazy(() => MethodologyWhereInputSchema) ]).optional(),
-  questionnaireModel: z.union([ z.lazy(() => QuestionnaireRelationFilterSchema),z.lazy(() => QuestionnaireWhereInputSchema) ]).optional(),
-  loeModel: z.union([ z.lazy(() => LetterOfEngagementNullableRelationFilterSchema),z.lazy(() => LetterOfEngagementWhereInputSchema) ]).optional().nullable(),
-  invoiceModel: z.union([ z.lazy(() => InvoiceNullableRelationFilterSchema),z.lazy(() => InvoiceWhereInputSchema) ]).optional().nullable(),
-  receiptModel: z.union([ z.lazy(() => ReceiptNullableRelationFilterSchema),z.lazy(() => ReceiptWhereInputSchema) ]).optional().nullable(),
+  ratingClassModel: z.union([ z.lazy(() => RatingClassNullableScalarRelationFilterSchema),z.lazy(() => RatingClassWhereInputSchema) ]).optional().nullable(),
+  clientModel: z.union([ z.lazy(() => ClientScalarRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
+  methodologyModel: z.union([ z.lazy(() => MethodologyScalarRelationFilterSchema),z.lazy(() => MethodologyWhereInputSchema) ]).optional(),
+  questionnaireModel: z.union([ z.lazy(() => QuestionnaireScalarRelationFilterSchema),z.lazy(() => QuestionnaireWhereInputSchema) ]).optional(),
+  loeModel: z.union([ z.lazy(() => LetterOfEngagementNullableScalarRelationFilterSchema),z.lazy(() => LetterOfEngagementWhereInputSchema) ]).optional().nullable(),
+  invoiceModel: z.union([ z.lazy(() => InvoiceNullableScalarRelationFilterSchema),z.lazy(() => InvoiceWhereInputSchema) ]).optional().nullable(),
   reportModel: z.lazy(() => ReportsListRelationFilterSchema).optional()
 }).strict();
 
@@ -1661,7 +1503,6 @@ export const RatingOrderByWithRelationInputSchema: z.ZodType<Prisma.RatingOrderB
   requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   loe: z.lazy(() => SortOrderSchema).optional(),
   invoice: z.lazy(() => SortOrderSchema).optional(),
-  receipt: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -1673,7 +1514,6 @@ export const RatingOrderByWithRelationInputSchema: z.ZodType<Prisma.RatingOrderB
   questionnaireModel: z.lazy(() => QuestionnaireOrderByWithRelationInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementOrderByWithRelationInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceOrderByWithRelationInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptOrderByWithRelationInputSchema).optional(),
   reportModel: z.lazy(() => ReportsOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
@@ -1702,19 +1542,17 @@ export const RatingWhereUniqueInputSchema: z.ZodType<Prisma.RatingWhereUniqueInp
   requireQuestionnaireFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   loe: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   invoice: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  receipt: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  ratingClassModel: z.union([ z.lazy(() => RatingClassNullableRelationFilterSchema),z.lazy(() => RatingClassWhereInputSchema) ]).optional().nullable(),
-  clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
-  methodologyModel: z.union([ z.lazy(() => MethodologyRelationFilterSchema),z.lazy(() => MethodologyWhereInputSchema) ]).optional(),
-  questionnaireModel: z.union([ z.lazy(() => QuestionnaireRelationFilterSchema),z.lazy(() => QuestionnaireWhereInputSchema) ]).optional(),
-  loeModel: z.union([ z.lazy(() => LetterOfEngagementNullableRelationFilterSchema),z.lazy(() => LetterOfEngagementWhereInputSchema) ]).optional().nullable(),
-  invoiceModel: z.union([ z.lazy(() => InvoiceNullableRelationFilterSchema),z.lazy(() => InvoiceWhereInputSchema) ]).optional().nullable(),
-  receiptModel: z.union([ z.lazy(() => ReceiptNullableRelationFilterSchema),z.lazy(() => ReceiptWhereInputSchema) ]).optional().nullable(),
+  ratingClassModel: z.union([ z.lazy(() => RatingClassNullableScalarRelationFilterSchema),z.lazy(() => RatingClassWhereInputSchema) ]).optional().nullable(),
+  clientModel: z.union([ z.lazy(() => ClientScalarRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
+  methodologyModel: z.union([ z.lazy(() => MethodologyScalarRelationFilterSchema),z.lazy(() => MethodologyWhereInputSchema) ]).optional(),
+  questionnaireModel: z.union([ z.lazy(() => QuestionnaireScalarRelationFilterSchema),z.lazy(() => QuestionnaireWhereInputSchema) ]).optional(),
+  loeModel: z.union([ z.lazy(() => LetterOfEngagementNullableScalarRelationFilterSchema),z.lazy(() => LetterOfEngagementWhereInputSchema) ]).optional().nullable(),
+  invoiceModel: z.union([ z.lazy(() => InvoiceNullableScalarRelationFilterSchema),z.lazy(() => InvoiceWhereInputSchema) ]).optional().nullable(),
   reportModel: z.lazy(() => ReportsListRelationFilterSchema).optional()
 }).strict());
 
@@ -1737,7 +1575,6 @@ export const RatingOrderByWithAggregationInputSchema: z.ZodType<Prisma.RatingOrd
   requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   loe: z.lazy(() => SortOrderSchema).optional(),
   invoice: z.lazy(() => SortOrderSchema).optional(),
-  receipt: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -1772,7 +1609,6 @@ export const RatingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Rating
   requireQuestionnaireFiles: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   loe: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   invoice: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  receipt: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableWithAggregatesFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1863,7 +1699,7 @@ export const ClientWhereInputSchema: z.ZodType<Prisma.ClientWhereInput> = z.obje
   isDeleted: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  industryModel: z.union([ z.lazy(() => IndustryRelationFilterSchema),z.lazy(() => IndustryWhereInputSchema) ]).optional(),
+  industryModel: z.union([ z.lazy(() => IndustryScalarRelationFilterSchema),z.lazy(() => IndustryWhereInputSchema) ]).optional(),
   contactModel: z.lazy(() => ContactListRelationFilterSchema).optional(),
   ratingModel: z.lazy(() => RatingListRelationFilterSchema).optional()
 }).strict();
@@ -1915,7 +1751,7 @@ export const ClientWhereUniqueInputSchema: z.ZodType<Prisma.ClientWhereUniqueInp
   isDeleted: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  industryModel: z.union([ z.lazy(() => IndustryRelationFilterSchema),z.lazy(() => IndustryWhereInputSchema) ]).optional(),
+  industryModel: z.union([ z.lazy(() => IndustryScalarRelationFilterSchema),z.lazy(() => IndustryWhereInputSchema) ]).optional(),
   contactModel: z.lazy(() => ContactListRelationFilterSchema).optional(),
   ratingModel: z.lazy(() => RatingListRelationFilterSchema).optional()
 }).strict());
@@ -1982,7 +1818,7 @@ export const ContactWhereInputSchema: z.ZodType<Prisma.ContactWhereInput> = z.ob
   canLogin: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
+  clientModel: z.union([ z.lazy(() => ClientScalarRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
 }).strict();
 
 export const ContactOrderByWithRelationInputSchema: z.ZodType<Prisma.ContactOrderByWithRelationInput> = z.object({
@@ -2029,7 +1865,7 @@ export const ContactWhereUniqueInputSchema: z.ZodType<Prisma.ContactWhereUniqueI
   canLogin: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  clientModel: z.union([ z.lazy(() => ClientRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
+  clientModel: z.union([ z.lazy(() => ClientScalarRelationFilterSchema),z.lazy(() => ClientWhereInputSchema) ]).optional(),
 }).strict());
 
 export const ContactOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContactOrderByWithAggregationInput> = z.object({
@@ -2381,62 +2217,6 @@ export const InvoiceUncheckedUpdateManyInputSchema: z.ZodType<Prisma.InvoiceUnch
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const ReceiptCreateInputSchema: z.ZodType<Prisma.ReceiptCreateInput> = z.object({
-  id: z.string().optional(),
-  name: z.string(),
-  url: z.string(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  ratingModel: z.lazy(() => RatingCreateNestedManyWithoutReceiptModelInputSchema).optional()
-}).strict();
-
-export const ReceiptUncheckedCreateInputSchema: z.ZodType<Prisma.ReceiptUncheckedCreateInput> = z.object({
-  id: z.string().optional(),
-  name: z.string(),
-  url: z.string(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  ratingModel: z.lazy(() => RatingUncheckedCreateNestedManyWithoutReceiptModelInputSchema).optional()
-}).strict();
-
-export const ReceiptUpdateInputSchema: z.ZodType<Prisma.ReceiptUpdateInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  ratingModel: z.lazy(() => RatingUpdateManyWithoutReceiptModelNestedInputSchema).optional()
-}).strict();
-
-export const ReceiptUncheckedUpdateInputSchema: z.ZodType<Prisma.ReceiptUncheckedUpdateInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  ratingModel: z.lazy(() => RatingUncheckedUpdateManyWithoutReceiptModelNestedInputSchema).optional()
-}).strict();
-
-export const ReceiptCreateManyInputSchema: z.ZodType<Prisma.ReceiptCreateManyInput> = z.object({
-  id: z.string().optional(),
-  name: z.string(),
-  url: z.string(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ReceiptUpdateManyMutationInputSchema: z.ZodType<Prisma.ReceiptUpdateManyMutationInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ReceiptUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ReceiptUncheckedUpdateManyInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
 export const IndustryCreateInputSchema: z.ZodType<Prisma.IndustryCreateInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
@@ -2596,7 +2376,6 @@ export const RatingCreateInputSchema: z.ZodType<Prisma.RatingCreateInput> = z.ob
   questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
   loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional(),
   reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
@@ -2619,7 +2398,6 @@ export const RatingUncheckedCreateInputSchema: z.ZodType<Prisma.RatingUncheckedC
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -2651,7 +2429,6 @@ export const RatingUpdateInputSchema: z.ZodType<Prisma.RatingUpdateInput> = z.ob
   questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
@@ -2673,7 +2450,6 @@ export const RatingUncheckedUpdateInputSchema: z.ZodType<Prisma.RatingUncheckedU
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2701,7 +2477,6 @@ export const RatingCreateManyInputSchema: z.ZodType<Prisma.RatingCreateManyInput
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -2746,7 +2521,6 @@ export const RatingUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RatingUnchec
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3331,30 +3105,6 @@ export const InvoiceMinOrderByAggregateInputSchema: z.ZodType<Prisma.InvoiceMinO
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const ReceiptCountOrderByAggregateInputSchema: z.ZodType<Prisma.ReceiptCountOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  name: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ReceiptMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ReceiptMaxOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  name: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ReceiptMinOrderByAggregateInputSchema: z.ZodType<Prisma.ReceiptMinOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  name: z.lazy(() => SortOrderSchema).optional(),
-  url: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
 export const ClientListRelationFilterSchema: z.ZodType<Prisma.ClientListRelationFilter> = z.object({
   every: z.lazy(() => ClientWhereInputSchema).optional(),
   some: z.lazy(() => ClientWhereInputSchema).optional(),
@@ -3394,7 +3144,7 @@ export const EnumReportStatusNullableFilterSchema: z.ZodType<Prisma.EnumReportSt
   isSet: z.boolean().optional()
 }).strict();
 
-export const RatingRelationFilterSchema: z.ZodType<Prisma.RatingRelationFilter> = z.object({
+export const RatingScalarRelationFilterSchema: z.ZodType<Prisma.RatingScalarRelationFilter> = z.object({
   is: z.lazy(() => RatingWhereInputSchema).optional(),
   isNot: z.lazy(() => RatingWhereInputSchema).optional()
 }).strict();
@@ -3485,39 +3235,34 @@ export const DateTimeNullableFilterSchema: z.ZodType<Prisma.DateTimeNullableFilt
   isSet: z.boolean().optional()
 }).strict();
 
-export const RatingClassNullableRelationFilterSchema: z.ZodType<Prisma.RatingClassNullableRelationFilter> = z.object({
+export const RatingClassNullableScalarRelationFilterSchema: z.ZodType<Prisma.RatingClassNullableScalarRelationFilter> = z.object({
   is: z.lazy(() => RatingClassWhereInputSchema).optional().nullable(),
   isNot: z.lazy(() => RatingClassWhereInputSchema).optional().nullable()
 }).strict();
 
-export const ClientRelationFilterSchema: z.ZodType<Prisma.ClientRelationFilter> = z.object({
+export const ClientScalarRelationFilterSchema: z.ZodType<Prisma.ClientScalarRelationFilter> = z.object({
   is: z.lazy(() => ClientWhereInputSchema).optional(),
   isNot: z.lazy(() => ClientWhereInputSchema).optional()
 }).strict();
 
-export const MethodologyRelationFilterSchema: z.ZodType<Prisma.MethodologyRelationFilter> = z.object({
+export const MethodologyScalarRelationFilterSchema: z.ZodType<Prisma.MethodologyScalarRelationFilter> = z.object({
   is: z.lazy(() => MethodologyWhereInputSchema).optional(),
   isNot: z.lazy(() => MethodologyWhereInputSchema).optional()
 }).strict();
 
-export const QuestionnaireRelationFilterSchema: z.ZodType<Prisma.QuestionnaireRelationFilter> = z.object({
+export const QuestionnaireScalarRelationFilterSchema: z.ZodType<Prisma.QuestionnaireScalarRelationFilter> = z.object({
   is: z.lazy(() => QuestionnaireWhereInputSchema).optional(),
   isNot: z.lazy(() => QuestionnaireWhereInputSchema).optional()
 }).strict();
 
-export const LetterOfEngagementNullableRelationFilterSchema: z.ZodType<Prisma.LetterOfEngagementNullableRelationFilter> = z.object({
+export const LetterOfEngagementNullableScalarRelationFilterSchema: z.ZodType<Prisma.LetterOfEngagementNullableScalarRelationFilter> = z.object({
   is: z.lazy(() => LetterOfEngagementWhereInputSchema).optional().nullable(),
   isNot: z.lazy(() => LetterOfEngagementWhereInputSchema).optional().nullable()
 }).strict();
 
-export const InvoiceNullableRelationFilterSchema: z.ZodType<Prisma.InvoiceNullableRelationFilter> = z.object({
+export const InvoiceNullableScalarRelationFilterSchema: z.ZodType<Prisma.InvoiceNullableScalarRelationFilter> = z.object({
   is: z.lazy(() => InvoiceWhereInputSchema).optional().nullable(),
   isNot: z.lazy(() => InvoiceWhereInputSchema).optional().nullable()
-}).strict();
-
-export const ReceiptNullableRelationFilterSchema: z.ZodType<Prisma.ReceiptNullableRelationFilter> = z.object({
-  is: z.lazy(() => ReceiptWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => ReceiptWhereInputSchema).optional().nullable()
 }).strict();
 
 export const ReportsListRelationFilterSchema: z.ZodType<Prisma.ReportsListRelationFilter> = z.object({
@@ -3549,7 +3294,6 @@ export const RatingCountOrderByAggregateInputSchema: z.ZodType<Prisma.RatingCoun
   requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   loe: z.lazy(() => SortOrderSchema).optional(),
   invoice: z.lazy(() => SortOrderSchema).optional(),
-  receipt: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -3580,7 +3324,6 @@ export const RatingMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RatingMaxOrd
   requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   loe: z.lazy(() => SortOrderSchema).optional(),
   invoice: z.lazy(() => SortOrderSchema).optional(),
-  receipt: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -3607,7 +3350,6 @@ export const RatingMinOrderByAggregateInputSchema: z.ZodType<Prisma.RatingMinOrd
   requireQuestionnaireFiles: z.lazy(() => SortOrderSchema).optional(),
   loe: z.lazy(() => SortOrderSchema).optional(),
   invoice: z.lazy(() => SortOrderSchema).optional(),
-  receipt: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
   issueDate: z.lazy(() => SortOrderSchema).optional(),
   expiryDate: z.lazy(() => SortOrderSchema).optional(),
@@ -3690,7 +3432,7 @@ export const RatingClassMinOrderByAggregateInputSchema: z.ZodType<Prisma.RatingC
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const IndustryRelationFilterSchema: z.ZodType<Prisma.IndustryRelationFilter> = z.object({
+export const IndustryScalarRelationFilterSchema: z.ZodType<Prisma.IndustryScalarRelationFilter> = z.object({
   is: z.lazy(() => IndustryWhereInputSchema).optional(),
   isNot: z.lazy(() => IndustryWhereInputSchema).optional()
 }).strict();
@@ -4027,48 +3769,6 @@ export const RatingUncheckedUpdateManyWithoutInvoiceModelNestedInputSchema: z.Zo
   deleteMany: z.union([ z.lazy(() => RatingScalarWhereInputSchema),z.lazy(() => RatingScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const RatingCreateNestedManyWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingCreateNestedManyWithoutReceiptModelInput> = z.object({
-  create: z.union([ z.lazy(() => RatingCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateWithoutReceiptModelInputSchema).array(),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => RatingCreateManyReceiptModelInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const RatingUncheckedCreateNestedManyWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateNestedManyWithoutReceiptModelInput> = z.object({
-  create: z.union([ z.lazy(() => RatingCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateWithoutReceiptModelInputSchema).array(),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => RatingCreateManyReceiptModelInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const RatingUpdateManyWithoutReceiptModelNestedInputSchema: z.ZodType<Prisma.RatingUpdateManyWithoutReceiptModelNestedInput> = z.object({
-  create: z.union([ z.lazy(() => RatingCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateWithoutReceiptModelInputSchema).array(),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => RatingUpsertWithWhereUniqueWithoutReceiptModelInputSchema),z.lazy(() => RatingUpsertWithWhereUniqueWithoutReceiptModelInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => RatingCreateManyReceiptModelInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => RatingUpdateWithWhereUniqueWithoutReceiptModelInputSchema),z.lazy(() => RatingUpdateWithWhereUniqueWithoutReceiptModelInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => RatingUpdateManyWithWhereWithoutReceiptModelInputSchema),z.lazy(() => RatingUpdateManyWithWhereWithoutReceiptModelInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => RatingScalarWhereInputSchema),z.lazy(() => RatingScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const RatingUncheckedUpdateManyWithoutReceiptModelNestedInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateManyWithoutReceiptModelNestedInput> = z.object({
-  create: z.union([ z.lazy(() => RatingCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateWithoutReceiptModelInputSchema).array(),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema),z.lazy(() => RatingCreateOrConnectWithoutReceiptModelInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => RatingUpsertWithWhereUniqueWithoutReceiptModelInputSchema),z.lazy(() => RatingUpsertWithWhereUniqueWithoutReceiptModelInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => RatingCreateManyReceiptModelInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => RatingWhereUniqueInputSchema),z.lazy(() => RatingWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => RatingUpdateWithWhereUniqueWithoutReceiptModelInputSchema),z.lazy(() => RatingUpdateWithWhereUniqueWithoutReceiptModelInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => RatingUpdateManyWithWhereWithoutReceiptModelInputSchema),z.lazy(() => RatingUpdateManyWithWhereWithoutReceiptModelInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => RatingScalarWhereInputSchema),z.lazy(() => RatingScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
 export const ClientCreateNestedManyWithoutIndustryModelInputSchema: z.ZodType<Prisma.ClientCreateNestedManyWithoutIndustryModelInput> = z.object({
   create: z.union([ z.lazy(() => ClientCreateWithoutIndustryModelInputSchema),z.lazy(() => ClientCreateWithoutIndustryModelInputSchema).array(),z.lazy(() => ClientUncheckedCreateWithoutIndustryModelInputSchema),z.lazy(() => ClientUncheckedCreateWithoutIndustryModelInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ClientCreateOrConnectWithoutIndustryModelInputSchema),z.lazy(() => ClientCreateOrConnectWithoutIndustryModelInputSchema).array() ]).optional(),
@@ -4166,12 +3866,6 @@ export const InvoiceCreateNestedOneWithoutRatingModelInputSchema: z.ZodType<Pris
   connect: z.lazy(() => InvoiceWhereUniqueInputSchema).optional()
 }).strict();
 
-export const ReceiptCreateNestedOneWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptCreateNestedOneWithoutRatingModelInput> = z.object({
-  create: z.union([ z.lazy(() => ReceiptCreateWithoutRatingModelInputSchema),z.lazy(() => ReceiptUncheckedCreateWithoutRatingModelInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => ReceiptCreateOrConnectWithoutRatingModelInputSchema).optional(),
-  connect: z.lazy(() => ReceiptWhereUniqueInputSchema).optional()
-}).strict();
-
 export const ReportsCreateNestedManyWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsCreateNestedManyWithoutRatingModelInput> = z.object({
   create: z.union([ z.lazy(() => ReportsCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateWithoutRatingModelInputSchema).array(),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedCreateWithoutRatingModelInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema),z.lazy(() => ReportsCreateOrConnectWithoutRatingModelInputSchema).array() ]).optional(),
@@ -4260,16 +3954,6 @@ export const InvoiceUpdateOneWithoutRatingModelNestedInputSchema: z.ZodType<Pris
   delete: z.union([ z.boolean(),z.lazy(() => InvoiceWhereInputSchema) ]).optional(),
   connect: z.lazy(() => InvoiceWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => InvoiceUpdateToOneWithWhereWithoutRatingModelInputSchema),z.lazy(() => InvoiceUpdateWithoutRatingModelInputSchema),z.lazy(() => InvoiceUncheckedUpdateWithoutRatingModelInputSchema) ]).optional(),
-}).strict();
-
-export const ReceiptUpdateOneWithoutRatingModelNestedInputSchema: z.ZodType<Prisma.ReceiptUpdateOneWithoutRatingModelNestedInput> = z.object({
-  create: z.union([ z.lazy(() => ReceiptCreateWithoutRatingModelInputSchema),z.lazy(() => ReceiptUncheckedCreateWithoutRatingModelInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => ReceiptCreateOrConnectWithoutRatingModelInputSchema).optional(),
-  upsert: z.lazy(() => ReceiptUpsertWithoutRatingModelInputSchema).optional(),
-  disconnect: z.boolean().optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => ReceiptWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => ReceiptWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => ReceiptUpdateToOneWithWhereWithoutRatingModelInputSchema),z.lazy(() => ReceiptUpdateWithoutRatingModelInputSchema),z.lazy(() => ReceiptUncheckedUpdateWithoutRatingModelInputSchema) ]).optional(),
 }).strict();
 
 export const ReportsUpdateManyWithoutRatingModelNestedInputSchema: z.ZodType<Prisma.ReportsUpdateManyWithoutRatingModelNestedInput> = z.object({
@@ -4694,7 +4378,6 @@ export const RatingCreateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.Ra
   questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
   loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional(),
   reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
@@ -4716,7 +4399,6 @@ export const RatingUncheckedCreateWithoutMethodologyModelInputSchema: z.ZodType<
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4772,7 +4454,6 @@ export const RatingScalarWhereInputSchema: z.ZodType<Prisma.RatingScalarWhereInp
   requireQuestionnaireFiles: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   loe: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   invoice: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  receipt: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumRatingStatusNullableFilterSchema),z.lazy(() => RatingStatusSchema) ]).optional().nullable(),
   issueDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   expiryDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -4803,7 +4484,6 @@ export const RatingCreateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.
   methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
   loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional(),
   reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
@@ -4825,7 +4505,6 @@ export const RatingUncheckedCreateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4882,7 +4561,6 @@ export const RatingCreateWithoutLoeModelInputSchema: z.ZodType<Prisma.RatingCrea
   methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
   questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
   invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional(),
   reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
@@ -4904,7 +4582,6 @@ export const RatingUncheckedCreateWithoutLoeModelInputSchema: z.ZodType<Prisma.R
   requireAdditionalFiles: z.boolean().optional(),
   requireQuestionnaireFiles: z.boolean().optional(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -4961,7 +4638,6 @@ export const RatingCreateWithoutInvoiceModelInputSchema: z.ZodType<Prisma.Rating
   methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
   questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
   loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional(),
   reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
@@ -4983,7 +4659,6 @@ export const RatingUncheckedCreateWithoutInvoiceModelInputSchema: z.ZodType<Pris
   requireAdditionalFiles: z.boolean().optional(),
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -5015,85 +4690,6 @@ export const RatingUpdateWithWhereUniqueWithoutInvoiceModelInputSchema: z.ZodTyp
 export const RatingUpdateManyWithWhereWithoutInvoiceModelInputSchema: z.ZodType<Prisma.RatingUpdateManyWithWhereWithoutInvoiceModelInput> = z.object({
   where: z.lazy(() => RatingScalarWhereInputSchema),
   data: z.union([ z.lazy(() => RatingUpdateManyMutationInputSchema),z.lazy(() => RatingUncheckedUpdateManyWithoutInvoiceModelInputSchema) ]),
-}).strict();
-
-export const RatingCreateWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingCreateWithoutReceiptModelInput> = z.object({
-  id: z.string().optional(),
-  ratingTitle: z.string().optional(),
-  ratingScore: z.string().optional().nullable(),
-  unit: z.string().optional().nullable(),
-  ratingYear: z.number().int(),
-  supervisor: z.string(),
-  primaryAnalyst: z.string().optional().nullable(),
-  secondaryAnalyst: z.string().optional().nullable(),
-  questionnaireFiles: z.string().optional().nullable(),
-  additionalFiles: z.string().optional().nullable(),
-  requireAdditionalFiles: z.boolean().optional(),
-  requireQuestionnaireFiles: z.boolean().optional(),
-  status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issueDate: z.coerce.date().optional().nullable(),
-  expiryDate: z.coerce.date().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  ratingClassModel: z.lazy(() => RatingClassCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  clientModel: z.lazy(() => ClientCreateNestedOneWithoutRatingModelInputSchema),
-  methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
-  questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
-  loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
-}).strict();
-
-export const RatingUncheckedCreateWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutReceiptModelInput> = z.object({
-  id: z.string().optional(),
-  ratingTitle: z.string().optional(),
-  ratingScore: z.string().optional().nullable(),
-  unit: z.string().optional().nullable(),
-  ratingClass: z.string().optional().nullable(),
-  ratingYear: z.number().int(),
-  supervisor: z.string(),
-  primaryAnalyst: z.string().optional().nullable(),
-  secondaryAnalyst: z.string().optional().nullable(),
-  client: z.string(),
-  methodology: z.string(),
-  questionnaire: z.string(),
-  questionnaireFiles: z.string().optional().nullable(),
-  additionalFiles: z.string().optional().nullable(),
-  requireAdditionalFiles: z.boolean().optional(),
-  requireQuestionnaireFiles: z.boolean().optional(),
-  loe: z.string().optional().nullable(),
-  invoice: z.string().optional().nullable(),
-  status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issueDate: z.coerce.date().optional().nullable(),
-  expiryDate: z.coerce.date().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  reportModel: z.lazy(() => ReportsUncheckedCreateNestedManyWithoutRatingModelInputSchema).optional()
-}).strict();
-
-export const RatingCreateOrConnectWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingCreateOrConnectWithoutReceiptModelInput> = z.object({
-  where: z.lazy(() => RatingWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => RatingCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema) ]),
-}).strict();
-
-export const RatingCreateManyReceiptModelInputEnvelopeSchema: z.ZodType<Prisma.RatingCreateManyReceiptModelInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => RatingCreateManyReceiptModelInputSchema),z.lazy(() => RatingCreateManyReceiptModelInputSchema).array() ]),
-}).strict();
-
-export const RatingUpsertWithWhereUniqueWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUpsertWithWhereUniqueWithoutReceiptModelInput> = z.object({
-  where: z.lazy(() => RatingWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => RatingUpdateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedUpdateWithoutReceiptModelInputSchema) ]),
-  create: z.union([ z.lazy(() => RatingCreateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedCreateWithoutReceiptModelInputSchema) ]),
-}).strict();
-
-export const RatingUpdateWithWhereUniqueWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUpdateWithWhereUniqueWithoutReceiptModelInput> = z.object({
-  where: z.lazy(() => RatingWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => RatingUpdateWithoutReceiptModelInputSchema),z.lazy(() => RatingUncheckedUpdateWithoutReceiptModelInputSchema) ]),
-}).strict();
-
-export const RatingUpdateManyWithWhereWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUpdateManyWithWhereWithoutReceiptModelInput> = z.object({
-  where: z.lazy(() => RatingScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => RatingUpdateManyMutationInputSchema),z.lazy(() => RatingUncheckedUpdateManyWithoutReceiptModelInputSchema) ]),
 }).strict();
 
 export const ClientCreateWithoutIndustryModelInputSchema: z.ZodType<Prisma.ClientCreateWithoutIndustryModelInput> = z.object({
@@ -5209,8 +4805,7 @@ export const RatingCreateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingC
   methodologyModel: z.lazy(() => MethodologyCreateNestedOneWithoutRatingModelInputSchema),
   questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
   loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional()
+  invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedCreateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingUncheckedCreateWithoutReportModelInput> = z.object({
@@ -5232,7 +4827,6 @@ export const RatingUncheckedCreateWithoutReportModelInputSchema: z.ZodType<Prism
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -5278,8 +4872,7 @@ export const RatingUpdateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingU
   methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional()
+  invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
 export const RatingUncheckedUpdateWithoutReportModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutReportModelInput> = z.object({
@@ -5300,7 +4893,6 @@ export const RatingUncheckedUpdateWithoutReportModelInputSchema: z.ZodType<Prism
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -5460,27 +5052,6 @@ export const InvoiceUncheckedCreateWithoutRatingModelInputSchema: z.ZodType<Pris
 export const InvoiceCreateOrConnectWithoutRatingModelInputSchema: z.ZodType<Prisma.InvoiceCreateOrConnectWithoutRatingModelInput> = z.object({
   where: z.lazy(() => InvoiceWhereUniqueInputSchema),
   create: z.union([ z.lazy(() => InvoiceCreateWithoutRatingModelInputSchema),z.lazy(() => InvoiceUncheckedCreateWithoutRatingModelInputSchema) ]),
-}).strict();
-
-export const ReceiptCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptCreateWithoutRatingModelInput> = z.object({
-  id: z.string().optional(),
-  name: z.string(),
-  url: z.string(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ReceiptUncheckedCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptUncheckedCreateWithoutRatingModelInput> = z.object({
-  id: z.string().optional(),
-  name: z.string(),
-  url: z.string(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const ReceiptCreateOrConnectWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptCreateOrConnectWithoutRatingModelInput> = z.object({
-  where: z.lazy(() => ReceiptWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => ReceiptCreateWithoutRatingModelInputSchema),z.lazy(() => ReceiptUncheckedCreateWithoutRatingModelInputSchema) ]),
 }).strict();
 
 export const ReportsCreateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsCreateWithoutRatingModelInput> = z.object({
@@ -5694,31 +5265,6 @@ export const InvoiceUncheckedUpdateWithoutRatingModelInputSchema: z.ZodType<Pris
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const ReceiptUpsertWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptUpsertWithoutRatingModelInput> = z.object({
-  update: z.union([ z.lazy(() => ReceiptUpdateWithoutRatingModelInputSchema),z.lazy(() => ReceiptUncheckedUpdateWithoutRatingModelInputSchema) ]),
-  create: z.union([ z.lazy(() => ReceiptCreateWithoutRatingModelInputSchema),z.lazy(() => ReceiptUncheckedCreateWithoutRatingModelInputSchema) ]),
-  where: z.lazy(() => ReceiptWhereInputSchema).optional()
-}).strict();
-
-export const ReceiptUpdateToOneWithWhereWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptUpdateToOneWithWhereWithoutRatingModelInput> = z.object({
-  where: z.lazy(() => ReceiptWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => ReceiptUpdateWithoutRatingModelInputSchema),z.lazy(() => ReceiptUncheckedUpdateWithoutRatingModelInputSchema) ]),
-}).strict();
-
-export const ReceiptUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptUpdateWithoutRatingModelInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ReceiptUncheckedUpdateWithoutRatingModelInputSchema: z.ZodType<Prisma.ReceiptUncheckedUpdateWithoutRatingModelInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
 export const ReportsUpsertWithWhereUniqueWithoutRatingModelInputSchema: z.ZodType<Prisma.ReportsUpsertWithWhereUniqueWithoutRatingModelInput> = z.object({
   where: z.lazy(() => ReportsWhereUniqueInputSchema),
   update: z.union([ z.lazy(() => ReportsUpdateWithoutRatingModelInputSchema),z.lazy(() => ReportsUncheckedUpdateWithoutRatingModelInputSchema) ]),
@@ -5774,7 +5320,6 @@ export const RatingCreateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
   questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
   loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional(),
   reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
@@ -5796,7 +5341,6 @@ export const RatingUncheckedCreateWithoutRatingClassModelInputSchema: z.ZodType<
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -5909,7 +5453,6 @@ export const RatingCreateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingC
   questionnaireModel: z.lazy(() => QuestionnaireCreateNestedOneWithoutRatingModelInputSchema),
   loeModel: z.lazy(() => LetterOfEngagementCreateNestedOneWithoutRatingModelInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceCreateNestedOneWithoutRatingModelInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptCreateNestedOneWithoutRatingModelInputSchema).optional(),
   reportModel: z.lazy(() => ReportsCreateNestedManyWithoutRatingModelInputSchema).optional()
 }).strict();
 
@@ -5931,7 +5474,6 @@ export const RatingUncheckedCreateWithoutClientModelInputSchema: z.ZodType<Prism
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -6138,7 +5680,6 @@ export const RatingCreateManyMethodologyModelInputSchema: z.ZodType<Prisma.Ratin
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -6168,7 +5709,6 @@ export const RatingUpdateWithoutMethodologyModelInputSchema: z.ZodType<Prisma.Ra
   questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
@@ -6189,7 +5729,6 @@ export const RatingUncheckedUpdateWithoutMethodologyModelInputSchema: z.ZodType<
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6215,7 +5754,6 @@ export const RatingUncheckedUpdateManyWithoutMethodologyModelInputSchema: z.ZodT
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6241,7 +5779,6 @@ export const RatingCreateManyQuestionnaireModelInputSchema: z.ZodType<Prisma.Rat
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -6271,7 +5808,6 @@ export const RatingUpdateWithoutQuestionnaireModelInputSchema: z.ZodType<Prisma.
   methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
@@ -6292,7 +5828,6 @@ export const RatingUncheckedUpdateWithoutQuestionnaireModelInputSchema: z.ZodTyp
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6318,7 +5853,6 @@ export const RatingUncheckedUpdateManyWithoutQuestionnaireModelInputSchema: z.Zo
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6344,7 +5878,6 @@ export const RatingCreateManyLoeModelInputSchema: z.ZodType<Prisma.RatingCreateM
   requireAdditionalFiles: z.boolean().optional(),
   requireQuestionnaireFiles: z.boolean().optional(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -6374,7 +5907,6 @@ export const RatingUpdateWithoutLoeModelInputSchema: z.ZodType<Prisma.RatingUpda
   methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
@@ -6395,7 +5927,6 @@ export const RatingUncheckedUpdateWithoutLoeModelInputSchema: z.ZodType<Prisma.R
   requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6421,7 +5952,6 @@ export const RatingUncheckedUpdateManyWithoutLoeModelInputSchema: z.ZodType<Pris
   requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6447,7 +5977,6 @@ export const RatingCreateManyInvoiceModelInputSchema: z.ZodType<Prisma.RatingCre
   requireAdditionalFiles: z.boolean().optional(),
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -6477,7 +6006,6 @@ export const RatingUpdateWithoutInvoiceModelInputSchema: z.ZodType<Prisma.Rating
   methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
@@ -6498,7 +6026,6 @@ export const RatingUncheckedUpdateWithoutInvoiceModelInputSchema: z.ZodType<Pris
   requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6524,110 +6051,6 @@ export const RatingUncheckedUpdateManyWithoutInvoiceModelInputSchema: z.ZodType<
   requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const RatingCreateManyReceiptModelInputSchema: z.ZodType<Prisma.RatingCreateManyReceiptModelInput> = z.object({
-  id: z.string().optional(),
-  ratingTitle: z.string().optional(),
-  ratingScore: z.string().optional().nullable(),
-  unit: z.string().optional().nullable(),
-  ratingClass: z.string().optional().nullable(),
-  ratingYear: z.number().int(),
-  supervisor: z.string(),
-  primaryAnalyst: z.string().optional().nullable(),
-  secondaryAnalyst: z.string().optional().nullable(),
-  client: z.string(),
-  methodology: z.string(),
-  questionnaire: z.string(),
-  questionnaireFiles: z.string().optional().nullable(),
-  additionalFiles: z.string().optional().nullable(),
-  requireAdditionalFiles: z.boolean().optional(),
-  requireQuestionnaireFiles: z.boolean().optional(),
-  loe: z.string().optional().nullable(),
-  invoice: z.string().optional().nullable(),
-  status: z.lazy(() => RatingStatusSchema).optional().nullable(),
-  issueDate: z.coerce.date().optional().nullable(),
-  expiryDate: z.coerce.date().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
-}).strict();
-
-export const RatingUpdateWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUpdateWithoutReceiptModelInput> = z.object({
-  ratingTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  ratingScore: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  unit: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  ratingClassModel: z.lazy(() => RatingClassUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  clientModel: z.lazy(() => ClientUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  methodologyModel: z.lazy(() => MethodologyUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
-  loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
-}).strict();
-
-export const RatingUncheckedUpdateWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutReceiptModelInput> = z.object({
-  ratingTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  ratingScore: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  unit: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  reportModel: z.lazy(() => ReportsUncheckedUpdateManyWithoutRatingModelNestedInputSchema).optional()
-}).strict();
-
-export const RatingUncheckedUpdateManyWithoutReceiptModelInputSchema: z.ZodType<Prisma.RatingUncheckedUpdateManyWithoutReceiptModelInput> = z.object({
-  ratingTitle: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  ratingScore: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  unit: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingClass: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ratingYear: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  supervisor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  primaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  secondaryAnalyst: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  client: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  methodology: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  questionnaire: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  questionnaireFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  additionalFiles: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  requireAdditionalFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6775,7 +6198,6 @@ export const RatingCreateManyRatingClassModelInputSchema: z.ZodType<Prisma.Ratin
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -6805,7 +6227,6 @@ export const RatingUpdateWithoutRatingClassModelInputSchema: z.ZodType<Prisma.Ra
   questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
@@ -6826,7 +6247,6 @@ export const RatingUncheckedUpdateWithoutRatingClassModelInputSchema: z.ZodType<
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6852,7 +6272,6 @@ export const RatingUncheckedUpdateManyWithoutRatingClassModelInputSchema: z.ZodT
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6892,7 +6311,6 @@ export const RatingCreateManyClientModelInputSchema: z.ZodType<Prisma.RatingCrea
   requireQuestionnaireFiles: z.boolean().optional(),
   loe: z.string().optional().nullable(),
   invoice: z.string().optional().nullable(),
-  receipt: z.string().optional().nullable(),
   status: z.lazy(() => RatingStatusSchema).optional().nullable(),
   issueDate: z.coerce.date().optional().nullable(),
   expiryDate: z.coerce.date().optional().nullable(),
@@ -6961,7 +6379,6 @@ export const RatingUpdateWithoutClientModelInputSchema: z.ZodType<Prisma.RatingU
   questionnaireModel: z.lazy(() => QuestionnaireUpdateOneRequiredWithoutRatingModelNestedInputSchema).optional(),
   loeModel: z.lazy(() => LetterOfEngagementUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   invoiceModel: z.lazy(() => InvoiceUpdateOneWithoutRatingModelNestedInputSchema).optional(),
-  receiptModel: z.lazy(() => ReceiptUpdateOneWithoutRatingModelNestedInputSchema).optional(),
   reportModel: z.lazy(() => ReportsUpdateManyWithoutRatingModelNestedInputSchema).optional()
 }).strict();
 
@@ -6982,7 +6399,6 @@ export const RatingUncheckedUpdateWithoutClientModelInputSchema: z.ZodType<Prism
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7008,7 +6424,6 @@ export const RatingUncheckedUpdateManyWithoutClientModelInputSchema: z.ZodType<P
   requireQuestionnaireFiles: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   loe: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   invoice: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  receipt: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => RatingStatusSchema),z.lazy(() => NullableEnumRatingStatusFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   issueDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   expiryDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7266,68 +6681,6 @@ export const InvoiceFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.InvoiceFindUni
   select: InvoiceSelectSchema.optional(),
   include: InvoiceIncludeSchema.optional(),
   where: InvoiceWhereUniqueInputSchema,
-}).strict() ;
-
-export const ReceiptFindFirstArgsSchema: z.ZodType<Prisma.ReceiptFindFirstArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  where: ReceiptWhereInputSchema.optional(),
-  orderBy: z.union([ ReceiptOrderByWithRelationInputSchema.array(),ReceiptOrderByWithRelationInputSchema ]).optional(),
-  cursor: ReceiptWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ ReceiptScalarFieldEnumSchema,ReceiptScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const ReceiptFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ReceiptFindFirstOrThrowArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  where: ReceiptWhereInputSchema.optional(),
-  orderBy: z.union([ ReceiptOrderByWithRelationInputSchema.array(),ReceiptOrderByWithRelationInputSchema ]).optional(),
-  cursor: ReceiptWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ ReceiptScalarFieldEnumSchema,ReceiptScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const ReceiptFindManyArgsSchema: z.ZodType<Prisma.ReceiptFindManyArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  where: ReceiptWhereInputSchema.optional(),
-  orderBy: z.union([ ReceiptOrderByWithRelationInputSchema.array(),ReceiptOrderByWithRelationInputSchema ]).optional(),
-  cursor: ReceiptWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ ReceiptScalarFieldEnumSchema,ReceiptScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const ReceiptAggregateArgsSchema: z.ZodType<Prisma.ReceiptAggregateArgs> = z.object({
-  where: ReceiptWhereInputSchema.optional(),
-  orderBy: z.union([ ReceiptOrderByWithRelationInputSchema.array(),ReceiptOrderByWithRelationInputSchema ]).optional(),
-  cursor: ReceiptWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const ReceiptGroupByArgsSchema: z.ZodType<Prisma.ReceiptGroupByArgs> = z.object({
-  where: ReceiptWhereInputSchema.optional(),
-  orderBy: z.union([ ReceiptOrderByWithAggregationInputSchema.array(),ReceiptOrderByWithAggregationInputSchema ]).optional(),
-  by: ReceiptScalarFieldEnumSchema.array(),
-  having: ReceiptScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const ReceiptFindUniqueArgsSchema: z.ZodType<Prisma.ReceiptFindUniqueArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  where: ReceiptWhereUniqueInputSchema,
-}).strict() ;
-
-export const ReceiptFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ReceiptFindUniqueOrThrowArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  where: ReceiptWhereUniqueInputSchema,
 }).strict() ;
 
 export const IndustryFindFirstArgsSchema: z.ZodType<Prisma.IndustryFindFirstArgs> = z.object({
@@ -7793,10 +7146,12 @@ export const MethodologyUpdateArgsSchema: z.ZodType<Prisma.MethodologyUpdateArgs
 export const MethodologyUpdateManyArgsSchema: z.ZodType<Prisma.MethodologyUpdateManyArgs> = z.object({
   data: z.union([ MethodologyUpdateManyMutationInputSchema,MethodologyUncheckedUpdateManyInputSchema ]),
   where: MethodologyWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const MethodologyDeleteManyArgsSchema: z.ZodType<Prisma.MethodologyDeleteManyArgs> = z.object({
   where: MethodologyWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const QuestionnaireCreateArgsSchema: z.ZodType<Prisma.QuestionnaireCreateArgs> = z.object({
@@ -7833,10 +7188,12 @@ export const QuestionnaireUpdateArgsSchema: z.ZodType<Prisma.QuestionnaireUpdate
 export const QuestionnaireUpdateManyArgsSchema: z.ZodType<Prisma.QuestionnaireUpdateManyArgs> = z.object({
   data: z.union([ QuestionnaireUpdateManyMutationInputSchema,QuestionnaireUncheckedUpdateManyInputSchema ]),
   where: QuestionnaireWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const QuestionnaireDeleteManyArgsSchema: z.ZodType<Prisma.QuestionnaireDeleteManyArgs> = z.object({
   where: QuestionnaireWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const LetterOfEngagementCreateArgsSchema: z.ZodType<Prisma.LetterOfEngagementCreateArgs> = z.object({
@@ -7873,10 +7230,12 @@ export const LetterOfEngagementUpdateArgsSchema: z.ZodType<Prisma.LetterOfEngage
 export const LetterOfEngagementUpdateManyArgsSchema: z.ZodType<Prisma.LetterOfEngagementUpdateManyArgs> = z.object({
   data: z.union([ LetterOfEngagementUpdateManyMutationInputSchema,LetterOfEngagementUncheckedUpdateManyInputSchema ]),
   where: LetterOfEngagementWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const LetterOfEngagementDeleteManyArgsSchema: z.ZodType<Prisma.LetterOfEngagementDeleteManyArgs> = z.object({
   where: LetterOfEngagementWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const InvoiceCreateArgsSchema: z.ZodType<Prisma.InvoiceCreateArgs> = z.object({
@@ -7913,50 +7272,12 @@ export const InvoiceUpdateArgsSchema: z.ZodType<Prisma.InvoiceUpdateArgs> = z.ob
 export const InvoiceUpdateManyArgsSchema: z.ZodType<Prisma.InvoiceUpdateManyArgs> = z.object({
   data: z.union([ InvoiceUpdateManyMutationInputSchema,InvoiceUncheckedUpdateManyInputSchema ]),
   where: InvoiceWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const InvoiceDeleteManyArgsSchema: z.ZodType<Prisma.InvoiceDeleteManyArgs> = z.object({
   where: InvoiceWhereInputSchema.optional(),
-}).strict() ;
-
-export const ReceiptCreateArgsSchema: z.ZodType<Prisma.ReceiptCreateArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  data: z.union([ ReceiptCreateInputSchema,ReceiptUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const ReceiptUpsertArgsSchema: z.ZodType<Prisma.ReceiptUpsertArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  where: ReceiptWhereUniqueInputSchema,
-  create: z.union([ ReceiptCreateInputSchema,ReceiptUncheckedCreateInputSchema ]),
-  update: z.union([ ReceiptUpdateInputSchema,ReceiptUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const ReceiptCreateManyArgsSchema: z.ZodType<Prisma.ReceiptCreateManyArgs> = z.object({
-  data: z.union([ ReceiptCreateManyInputSchema,ReceiptCreateManyInputSchema.array() ]),
-}).strict() ;
-
-export const ReceiptDeleteArgsSchema: z.ZodType<Prisma.ReceiptDeleteArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  where: ReceiptWhereUniqueInputSchema,
-}).strict() ;
-
-export const ReceiptUpdateArgsSchema: z.ZodType<Prisma.ReceiptUpdateArgs> = z.object({
-  select: ReceiptSelectSchema.optional(),
-  include: ReceiptIncludeSchema.optional(),
-  data: z.union([ ReceiptUpdateInputSchema,ReceiptUncheckedUpdateInputSchema ]),
-  where: ReceiptWhereUniqueInputSchema,
-}).strict() ;
-
-export const ReceiptUpdateManyArgsSchema: z.ZodType<Prisma.ReceiptUpdateManyArgs> = z.object({
-  data: z.union([ ReceiptUpdateManyMutationInputSchema,ReceiptUncheckedUpdateManyInputSchema ]),
-  where: ReceiptWhereInputSchema.optional(),
-}).strict() ;
-
-export const ReceiptDeleteManyArgsSchema: z.ZodType<Prisma.ReceiptDeleteManyArgs> = z.object({
-  where: ReceiptWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const IndustryCreateArgsSchema: z.ZodType<Prisma.IndustryCreateArgs> = z.object({
@@ -7993,10 +7314,12 @@ export const IndustryUpdateArgsSchema: z.ZodType<Prisma.IndustryUpdateArgs> = z.
 export const IndustryUpdateManyArgsSchema: z.ZodType<Prisma.IndustryUpdateManyArgs> = z.object({
   data: z.union([ IndustryUpdateManyMutationInputSchema,IndustryUncheckedUpdateManyInputSchema ]),
   where: IndustryWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const IndustryDeleteManyArgsSchema: z.ZodType<Prisma.IndustryDeleteManyArgs> = z.object({
   where: IndustryWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const ReportsCreateArgsSchema: z.ZodType<Prisma.ReportsCreateArgs> = z.object({
@@ -8033,10 +7356,12 @@ export const ReportsUpdateArgsSchema: z.ZodType<Prisma.ReportsUpdateArgs> = z.ob
 export const ReportsUpdateManyArgsSchema: z.ZodType<Prisma.ReportsUpdateManyArgs> = z.object({
   data: z.union([ ReportsUpdateManyMutationInputSchema,ReportsUncheckedUpdateManyInputSchema ]),
   where: ReportsWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const ReportsDeleteManyArgsSchema: z.ZodType<Prisma.ReportsDeleteManyArgs> = z.object({
   where: ReportsWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const RatingCreateArgsSchema: z.ZodType<Prisma.RatingCreateArgs> = z.object({
@@ -8073,10 +7398,12 @@ export const RatingUpdateArgsSchema: z.ZodType<Prisma.RatingUpdateArgs> = z.obje
 export const RatingUpdateManyArgsSchema: z.ZodType<Prisma.RatingUpdateManyArgs> = z.object({
   data: z.union([ RatingUpdateManyMutationInputSchema,RatingUncheckedUpdateManyInputSchema ]),
   where: RatingWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const RatingDeleteManyArgsSchema: z.ZodType<Prisma.RatingDeleteManyArgs> = z.object({
   where: RatingWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const RatingClassCreateArgsSchema: z.ZodType<Prisma.RatingClassCreateArgs> = z.object({
@@ -8113,10 +7440,12 @@ export const RatingClassUpdateArgsSchema: z.ZodType<Prisma.RatingClassUpdateArgs
 export const RatingClassUpdateManyArgsSchema: z.ZodType<Prisma.RatingClassUpdateManyArgs> = z.object({
   data: z.union([ RatingClassUpdateManyMutationInputSchema,RatingClassUncheckedUpdateManyInputSchema ]),
   where: RatingClassWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const RatingClassDeleteManyArgsSchema: z.ZodType<Prisma.RatingClassDeleteManyArgs> = z.object({
   where: RatingClassWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const ClientCreateArgsSchema: z.ZodType<Prisma.ClientCreateArgs> = z.object({
@@ -8153,10 +7482,12 @@ export const ClientUpdateArgsSchema: z.ZodType<Prisma.ClientUpdateArgs> = z.obje
 export const ClientUpdateManyArgsSchema: z.ZodType<Prisma.ClientUpdateManyArgs> = z.object({
   data: z.union([ ClientUpdateManyMutationInputSchema,ClientUncheckedUpdateManyInputSchema ]),
   where: ClientWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const ClientDeleteManyArgsSchema: z.ZodType<Prisma.ClientDeleteManyArgs> = z.object({
   where: ClientWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const ContactCreateArgsSchema: z.ZodType<Prisma.ContactCreateArgs> = z.object({
@@ -8193,10 +7524,12 @@ export const ContactUpdateArgsSchema: z.ZodType<Prisma.ContactUpdateArgs> = z.ob
 export const ContactUpdateManyArgsSchema: z.ZodType<Prisma.ContactUpdateManyArgs> = z.object({
   data: z.union([ ContactUpdateManyMutationInputSchema,ContactUncheckedUpdateManyInputSchema ]),
   where: ContactWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const ContactDeleteManyArgsSchema: z.ZodType<Prisma.ContactDeleteManyArgs> = z.object({
   where: ContactWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const LogCreateArgsSchema: z.ZodType<Prisma.LogCreateArgs> = z.object({
@@ -8229,8 +7562,10 @@ export const LogUpdateArgsSchema: z.ZodType<Prisma.LogUpdateArgs> = z.object({
 export const LogUpdateManyArgsSchema: z.ZodType<Prisma.LogUpdateManyArgs> = z.object({
   data: z.union([ LogUpdateManyMutationInputSchema,LogUncheckedUpdateManyInputSchema ]),
   where: LogWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const LogDeleteManyArgsSchema: z.ZodType<Prisma.LogDeleteManyArgs> = z.object({
   where: LogWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;

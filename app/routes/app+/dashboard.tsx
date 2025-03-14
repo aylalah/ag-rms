@@ -62,7 +62,22 @@ const options = {
     },
   },
 };
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
 
+async function testConnection() {
+  try {
+    // Replace 'YourModel' with an actual model name from your schema
+    const count = await prisma.industry.count()
+    console.log('Connection successful. Item count:', count)
+  } catch (error) {
+    console.error('Database connection or query error:', error)
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+testConnection()
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
 
