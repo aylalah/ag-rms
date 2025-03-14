@@ -44,6 +44,7 @@
     "remix-flat-routes": "^0.6.5",
     "unimport": "^3.7.2",
     "vitest": "^1.6.0",
+    "zod": "^3.24.2",
     "zod-prisma": "^0.5.4",
     "zustand": "^4.5.4"
   },
