@@ -78,7 +78,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   if (!data?.issueDate) delete data.issueDate;
   if (!data?.expiryDate) delete data.expiryDate;
   if (!data?.ratingClass) delete data.ratingClass;
+  
+  if (!data.receipt || typeof data.receipt !== "object" || !data.receipt.size) {
+     delete data.receipt;
+   }
 
+  
   data.client = id;
   //  data.ratingScore = Number(data.ratingScore);
   data.ratingScore = data.ratingScore;
@@ -95,8 +100,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const loe = data?.loe;
   const invoice = data?.invoice;
 
+  
+
   if (loe.size > 0) {
-    const ext = loe.type.split("/")[1];
+    //loe can be a pdf, doc, docx
+    const extMap: Record<string, string> = {
+      "application/pdf": "pdf",
+      "application/msword": "doc",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+    };
+    const ext = extMap[loe.type] || "bin"
     const fileName = `${data.ratingTitle}-loe.${ext}`;
     const upload = await uploadLoeToSpaces(loe, fileName);
 
@@ -112,8 +125,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
   }
   if (invoice.size > 0) {
-    const ext = invoice.type.split("/")[1];
-    const fileName = `${data.ratingTitle}-invoice.${ext}`;
+    // invoice is always pdf
+    const fileName = `${data.ratingTitle}-invoice.pdf`;
     const upload = await uploadInvoiceToSpaces(invoice, fileName);
     if (upload.$metadata?.httpStatusCode === 200) {
       const invoiceDoc = await dbQuery.invoice.create({
@@ -125,6 +138,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       data.invoice = invoiceDoc.id;
     }
   }
+  if (data.receipt && data.receipt.size > 0) {
+   //receipt is always pdf
+    const fileName = `${data.ratingTitle}-receipt.pdf`;
+    const upload = await uploadReceiptToSpaces(data.receipt, fileName);
+  
+    if (upload.$metadata?.httpStatusCode === 200) {
+      const receiptDoc = await dbQuery.receipt.create({
+        data: {
+          name: fileName,
+          url: upload.Location as string,
+        },
+      });
+      data.receipt = receiptDoc.id; 
+    } else {
+      delete data.receipt; 
+    }
+  }
+  
 
   const { createRating, error } = await RMSservice(token).ratings.create({
     data,
