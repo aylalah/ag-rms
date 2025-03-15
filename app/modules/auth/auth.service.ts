@@ -43,7 +43,7 @@ export class AuthClass extends MainClass {
           });
          
           const { token, ...user } = data?.data || {};
-          console.log(user, token)
+         
 
           const Me = await axios.get(
             `${endPoint}/users/${user?.id?.toString()}`,

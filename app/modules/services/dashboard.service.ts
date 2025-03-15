@@ -54,7 +54,7 @@ export class GeneralClass extends MainClass {
           },
         ],
       };
- console.log(result, "result")
+ 
       return {
         clients: result[0],
         industries: result[1],

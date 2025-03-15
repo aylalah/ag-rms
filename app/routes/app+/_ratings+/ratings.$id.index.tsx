@@ -168,8 +168,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       data,
     });
 
-    // console.log(CreateReport, "create report");
-    console.log(error, "error");
+   
 
     if (CreateReport) {
       if (reportTitle?.toLowerCase().includes("final")) {

@@ -112,7 +112,7 @@ export class RatingClass extends MainClass {
         data: { ...data, unit },
         include: { clientModel: true },
       });
-
+  
       const contacts = await dbQuery.contact.findMany({
         where: { client: result.clientModel.id },
       });
