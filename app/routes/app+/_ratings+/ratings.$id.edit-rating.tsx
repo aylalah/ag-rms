@@ -59,6 +59,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
           "status",
           "loe",
           "invoice",
+          "receipt"
         ];
 
         // Only exclude primaryAnalyst and secondaryAnalyst if they already have values
