@@ -3,6 +3,7 @@ import {
   ActionFunctionArgs,
   json,
   LoaderFunctionArgs,
+  redirect,
   unstable_composeUploadHandlers,
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
@@ -13,6 +14,15 @@ import numeral from "numeral";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
+// const allowFileTypes = [
+//   "image/png",
+//   "image/jpeg",
+//   "image/jpg",
+//   "application/pdf",
+//   "application/zip",
+//   "application/rar",
+//   "text/csv",
+// ];
 const allowFileTypes = [
   "image/png",
   "image/jpeg",
@@ -21,10 +31,22 @@ const allowFileTypes = [
   "application/zip",
   "application/rar",
   "text/csv",
+  // Word documents
+  "application/msword", // .doc
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  // Google Docs (treated as generic office documents)
+  "application/vnd.google-apps.document",
+  // Excel files
+  "application/vnd.ms-excel", // .xls
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.google-apps.spreadsheet", // Google Sheets
 ];
-
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
+  if (!client || !token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
 
   //get the companyName from client
 
@@ -43,7 +65,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { token, client } = await validateCookie(request);
-
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
   const method = request.method;
   const id = params.id || "testing";
   const slug = params.slug as "questionnaire-docs" | "additional-docs";
@@ -75,6 +100,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         const primaryAnalyst = files.primaryAnalyst as string;
         const secondaryAnalyst = files.secondaryAnalyst as string;
 
+        const primaryAnalystName = files.primaryAnalystName as string;
+
         if (Object.keys(files).length < 1) return json({});
 
         const saveFiles = await Promise.all(
@@ -102,22 +129,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
             return { storedUrl: null, status: false, id: key };
           })
         );
-
-        const fileList = saveFiles
-          .filter((file) => file?.name !== undefined)
+        const fileArray = saveFiles.filter((file) => file?.name !== undefined);
+        const fileList = fileArray
           .map((el, index) => `${index + 1}. ${el?.name} <br/> <br/>`)
           .join("\n");
 
-        sendEmailService({
-          From: "info@agusto.com",
-          To: primaryAnalyst,
-          Cc: `${supervisor},${secondaryAnalyst}`,
+        const ccEmails = secondaryAnalyst
+          ? [supervisor, secondaryAnalyst]
+          : [supervisor];
 
-          Subject: `${company} File Upload`,
-          HtmlBody: `
-          <p> Dear ${primaryAnalyst},</p>
+        sendEmail({
+          to: primaryAnalyst,
+          // cc: ccEmails,
+          email: primaryAnalyst,
+          subject: `${company} File Upload`,
+          html: `
+          <p> Dear ${primaryAnalystName},</p>
           <p>${company} has uploaded the following file${
-            fileList.length > 1 ? "s" : ""
+            fileArray.length > 1 ? "s" : ""
           } for the ${ratingname} on the Agusto & Co. RMS.</p>
            <p> </n> ${fileList.toString()} </n></p>
            <p>Please log in to the <a href="${appUrl}">RMS</a> to view and dowload the information submitted.</p>
@@ -248,15 +277,28 @@ export default function Dragger() {
     const SupervisorAnalystObject = JSON.parse(rating?.supervisor as any);
 
     const PrimaryAnalystObject = JSON.parse(rating?.primaryAnalyst as any);
-
-    const SecondaryAnalystObject = JSON.parse(rating?.secondaryAnalyst as any);
+    const SecondaryAnalystObject = rating?.secondaryAnalyst
+      ? JSON.parse(rating.secondaryAnalyst as string)
+      : null;
 
     formData.append("supervisor", SupervisorAnalystObject?.email as string);
     formData.append("primaryAnalyst", PrimaryAnalystObject?.email as string);
-    formData.append(
-      "secondaryAnalyst",
-      SecondaryAnalystObject?.email as string
-    );
+    // formData.append(
+    //   "secondaryAnalyst",
+    //   SecondaryAnalystObject?.email as string
+    // );
+    formData.append("primaryAnalystName", PrimaryAnalystObject?.firstname);
+    // formData.append("secondaryAnalystName", SecondaryAnalystObject?.firstname);
+    if (SecondaryAnalystObject) {
+      formData.append(
+        "secondaryAnalyst",
+        SecondaryAnalystObject.email as string
+      );
+      formData.append("secondaryAnalystName", SecondaryAnalystObject.firstname);
+    } else {
+      formData.append("secondaryAnalyst", "");
+      formData.append("secondaryAnalystName", "");
+    }
 
     Fetcher.submit(formData, {
       method: "POST",
@@ -317,9 +359,9 @@ export default function Dragger() {
   }, [FetcherData]);
 
   return (
-    <div className="flex flex-col flex-1 h-[98%] gap-10 overflow-hidden border-b-2 ">
+    <div className="flex flex-col min-h-screen gap-10 overflow-auto border-b-2 ">
       <div
-        className="border-dashed flex flex-col items-center justify-center h-[17em]  overflow-hidden transition-all border bg-[#07354f10] rounded-xl border-primary"
+        className="border-dashed flex flex-col items-center justify-center h-[15em]  overflow-hidden transition-all border bg-[#07354f10] rounded-xl border-primary"
         ref={dragRef}
         id="drop_zone"
         onDrop={onDrop}
@@ -346,13 +388,14 @@ export default function Dragger() {
           <input
             onChange={onChangeFileInput}
             type="file"
-            accept="application/pdf"
+            // accept="application/pdf"
+            accept={allowFileTypes.join(" , ")}
             className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 w-full overflow-hidden">
+      <div className="flex flex-col flex-grow w-full overflow-auto">
         <h2 className="flex justify-between p-4 pr-6 font-semibold text-white capitalize bg-primary">
           <span>
             {fileList?.length} File{fileList?.length > 1 ? "s" : ""}

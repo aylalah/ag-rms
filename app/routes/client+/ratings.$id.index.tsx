@@ -1,23 +1,39 @@
 import RatingLayout from "@layouts/rating-layout";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { json, useFetcher, useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
   const { token } = await validateCookie(request);
+
+  if (!token) {
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+  }
+
   const { rating, error } = await RMSservice(token)
     .ratings.one({ id })
     .then((res) => {
       const { rating, error } = res || {};
-      const PrimaryAnalystObject = JSON.parse(rating?.primaryAnalyst as any);
-      const SecondaryAnalystObject = JSON.parse(rating?.secondaryAnalyst as any);
+      const PrimaryAnalystObject = rating?.primaryAnalyst
+        ? JSON.parse(rating?.primaryAnalyst as any)
+        : null;
+      const SecondaryAnalystObject = rating?.secondaryAnalyst
+        ? JSON.parse(rating?.secondaryAnalyst as any)
+        : null;
 
       return {
         error,
         rating: {
           ...rating,
-          primaryAnalyst: PrimaryAnalystObject?.firstname + " " + PrimaryAnalystObject?.lastname,
-          secondaryAnalyst: SecondaryAnalystObject?.firstname + " " + SecondaryAnalystObject?.lastname,
+          ratingScore: rating?.ratingScore,
+          primaryAnalyst: PrimaryAnalystObject
+            ? `${PrimaryAnalystObject.firstname} ${PrimaryAnalystObject.lastname}`
+            : "-",
+          secondaryAnalyst: SecondaryAnalystObject
+            ? `${SecondaryAnalystObject.firstname} ${SecondaryAnalystObject.lastname}`
+            : "-",
           primaryAnalystEmail: PrimaryAnalystObject?.email,
           secondaryAnalystEmail: SecondaryAnalystObject?.email,
         },
@@ -29,7 +45,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     { name: "Draft Report", version: "2.0", link: "" },
     { name: "Final Report", version: "1.0", link: "" },
   ];
-
   return json({ rating, reports, error });
 };
 

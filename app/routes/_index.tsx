@@ -29,7 +29,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const { token, user, error, apiToken, client, message } =
       await RMSservice().auth.login(body);
 
-    // console.log(token, user, error, apiToken, client, message);
+   
 
     if (client && token) {
       return redirectDocument("/client/ratings", {
@@ -51,19 +51,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       });
     }
 
-    if (client && token) {
-      return redirectDocument("/client/dashboard", {
-        headers: {
-          "set-cookie": await appCookie.serialize(
-            JSON.stringify({ token, client })
-          ),
-        },
-      });
-    }
+    // if (client && token) {
+    //   return redirectDocument("/client/dashboard", {
+    //     headers: {
+    //       "set-cookie": await appCookie.serialize(
+    //         JSON.stringify({ token, client })
+    //       ),
+    //     },
+    //   });
+    // }
 
     return json({ error });
   } catch (error) {
-    console.log(error);
+ 
     return { error: "Unable to login at this time. Please try again later." };
   }
 };

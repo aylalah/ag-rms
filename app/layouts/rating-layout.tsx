@@ -1,8 +1,11 @@
 import { Rating } from "@helpers/zodPrisma";
+import EditInvoice from "@routes/app+/_ratings+/ratings.$id.edit-invoice";
 import { FetcherWithComponents, Link, useNavigate } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { report } from "node:process";
+import UpdateStatus from "@routes/app+/_ratings+/ratings.$id.update-status";
 
 type AnalystObj = {
   employee_id: number;
@@ -15,15 +18,17 @@ type RatingProps = {
   rating: RatingWithRelations & {
     primaryAnalystEmail?: string;
     secondaryAnalystEmail?: string;
+    contacts?: any;
   };
   Fetcher: FetcherWithComponents<any>;
   reports?: { name: string; version: string; link: string }[];
   isReadOnly?: boolean;
   linkTo: string;
+
   isClientOnly: boolean;
-  SupervisorObject: AnalystObj;
-  PrimaryAnalystObject: AnalystObj;
-  SecondaryAnalystObject: AnalystObj;
+  SupervisorObject?: AnalystObj;
+  PrimaryAnalystObject?: AnalystObj;
+  SecondaryAnalystObject?: AnalystObj;
 };
 
 const reportUploadMenu = [{ name: "Draft Report" }, { name: "Final Report" }];
@@ -42,6 +47,8 @@ export default function RatingLayout({
   const formRef = useRef<HTMLFormElement>(null);
   const [reportType, setReportType] = useState<string>("");
   const [reportVersion, setReportVersion] = useState<string>("");
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
   const FetcherData = Fetcher?.data as { message: string; error: string };
   const isSubmitting = Fetcher.state === "submitting";
   const [forAMI, setForAMI] = useState(false);
@@ -63,7 +70,7 @@ export default function RatingLayout({
     if (name === "Final Report") {
       const version = getVersion(name);
       if (!rating?.issueDate || !rating?.expiryDate || !rating?.ratingClass) {
-        console.log(`/app/ratings/${rating?.id}/edit-rating`);
+        // console.log(`/app/ratings/${rating?.id}/edit-rating`);
         window.location.href = `/app/ratings/${rating?.id}/edit-rating`;
         //toast.error("Please fill in the required fields before uploading the final report", { toastId: "error" });
         return;
@@ -90,17 +97,22 @@ export default function RatingLayout({
     onCloseHandler();
   }, [FetcherData]);
 
+  const hasFinalReport = rating?.reportModel?.some(
+    (report) => report?.reportTitle === "Final Report"
+  );
   /*   useEffect(() => {
     ratingRef.current?.showModal();
   }, []);
  */
+  // console.log(rating, "I want to see if I can see reportType");
+
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
       <div className="flex items-end justify-between pt-6">
         <div className="flex flex-col items-start">
-          <h1 className="text-3xl font-bold">
-            {rating?.ratingYear} - {rating?.ratingTitle}
-          </h1>
+          {/* <h1 className="text-3xl font-bold capitalize">
+            {rating?.ratingTitle}
+          </h1> */}
           <span
             className={`px-4 py-1 text text-white capitalize rounded-full ${rating?.status}`}
           >
@@ -177,9 +189,9 @@ export default function RatingLayout({
 
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
-                  title="Rating Class"
+                  title="Rating Score"
                   isLarge
-                  subTitle={`${rating?.ratingClassModel?.name || "-"}`}
+                  subTitle={`${rating?.ratingScore || "-"}`}
                 />
                 <SummaryCard
                   title="Rating Year"
@@ -212,7 +224,9 @@ export default function RatingLayout({
               <div className="grid grid-cols-2 gap-4">
                 <SummaryCard
                   title="Primary Analyst"
+                  // {...(rating?.primaryAnalyst && {subTitle: rating.primaryAnalyst})}
                   subTitle={rating?.primaryAnalyst || "-"}
+                  // {...(rating?.primaryAnalystEmail && { subSubTitle: rating.primaryAnalystEmail })}
                   subSubTitle={rating?.primaryAnalystEmail || "-"}
                 />
 
@@ -220,6 +234,9 @@ export default function RatingLayout({
                   title="Secondary Analyst"
                   subTitle={rating?.secondaryAnalyst || "-"}
                   subSubTitle={rating?.secondaryAnalystEmail || "-"}
+                  // {...(rating?.primaryAnalystEmail && {
+                  //   subSubTitle: rating.primaryAnalystEmail,
+                  // })}
                 />
 
                 <div className="col-span-2 ">
@@ -260,46 +277,67 @@ export default function RatingLayout({
                 />
               ))}
             </ul>
+            <div
+              className={`flex flex-col md:flex-row items-center ${
+                !isClientOnly && rating?.status === "ongoing" && hasFinalReport
+                  ? "justify-between"
+                  : "justify-center"
+              }`}
+            >
+              {!isClientOnly && rating?.status === "ongoing" && (
+                <div className="flex justify-center">
+                  <div className="flex justify-end dropdown dropdown-end">
+                    <button
+                      tabIndex={1}
+                      className="mt-6 text-sm border btn btn-secondary border-secondary"
+                    >
+                      Upload Report
+                      <i className="ri-arrow-down-s-line" />
+                    </button>
 
-            {!isClientOnly && rating?.status === "ongoing" && (
-              <div className="flex justify-center">
-                <div className="flex justify-end dropdown dropdown-end">
-                  <button
-                    tabIndex={1}
-                    className="mt-6 text-sm border btn btn-secondary border-secondary"
-                  >
-                    Upload Report
-                    <i className="ri-arrow-down-s-line" />
-                  </button>
-
-                  <ul
-                    tabIndex={1}
-                    className="rounded-lg p-4 text-sm shadow-lg dropdown-content border bg-base-100 w-[18em] z-[10] mr-1"
-                  >
-                    {reportUploadMenu?.map((el, i) => (
-                      <li key={i} onClick={() => onUploadHandler(el.name)}>
-                        <a
-                          href="#"
-                          className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2"
-                        >
-                          <i className="ri-file-text-line" />
-                          {el?.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                    <ul
+                      tabIndex={1}
+                      className="rounded-lg p-4 text-sm shadow-lg dropdown-content border bg-base-100 w-[18em] z-[10] mr-1"
+                    >
+                      {reportUploadMenu?.map((el, i) => (
+                        <li key={i} onClick={() => onUploadHandler(el.name)}>
+                          <a
+                            href="#"
+                            className="flex items-center gap-2 py-4 hover:text-secondary hover:px-2"
+                          >
+                            <i className="ri-file-text-line" />
+                            {el?.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+              {!isClientOnly &&
+                rating?.status === "ongoing" &&
+                hasFinalReport && (
+                  <div className="flex mt-6">
+                    <div
+                      className="btn btn-secondary"
+                      onClick={() => setShowStatusModal(true)}
+                    >
+                      Update Status
+                    </div>
+                  </div>
+                )}
+              {showStatusModal && (
+                <UpdateStatus onClose={() => setShowStatusModal(false)} />
+              )}
+            </div>
           </div>
-
           <div className="p-4 mt-4 border rounded bg-primary border-accent">
             <h2 className="text-sm font-bold text-white uppercase ">
               Download Resources
             </h2>
           </div>
 
-          <div className="border rounded border-accent">
+          <div className="border rounded border-accent relative">
             <ul className="grid grid-cols-2 gap-2">
               <li className="p-4 bg-base-100">
                 <a
@@ -324,7 +362,43 @@ export default function RatingLayout({
                   Questionnaire
                 </a>
               </li>
+              {rating.loeModel && (
+                <li className="p-4 bg-base-100">
+                  <a
+                    href={`${rating?.loeModel?.url}`}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="flex items-center gap-2 text-sm link-secondary"
+                  >
+                    <i className="ri-file-text-line" />
+                    Letter of Engagement
+                  </a>
+                </li>
+              )}
+
+              {rating?.invoiceModel && (
+                <li className="p-4 bg-base-100 flex gap-4 relative">
+                  <a
+                    href={`${rating?.invoiceModel?.url}`}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="flex items-center gap-2 text-sm link-secondary"
+                  >
+                    <i className="ri-file-text-line" />
+                    Invoice
+                  </a>
+                  {!isClientOnly && rating?.reportModel?.length === 0 && (
+                    <i
+                      className="ri-edit-line cursor-pointer text-secondary"
+                      onClick={() => setShowInvoiceModal(true)}
+                    />
+                  )}
+                </li>
+              )}
             </ul>
+            {showInvoiceModal && (
+              <EditInvoice onClose={() => setShowInvoiceModal(false)} />
+            )}
           </div>
         </div>
       </div>
@@ -469,8 +543,8 @@ export default function RatingLayout({
                   />
                 </div>
               )} */}
-              
-              {reportType === "Final Report" && (
+
+              {/* {reportType === "Final Report" && (
                 <div>
                   <label htmlFor="status" className="text-sm hint">
                     Status
@@ -486,7 +560,7 @@ export default function RatingLayout({
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-              )}
+              )} */}
 
               <button className="btn btn-secondary">
                 {isSubmitting && <span className="loading loading-xs"></span>}
@@ -554,7 +628,7 @@ const SummaryCard = ({
   isLarge,
 }: {
   title: string;
-  subTitle: string;
+  subTitle?: string;
   subSubTitle?: string;
   isLarge?: boolean;
 }) => (

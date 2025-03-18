@@ -20,6 +20,7 @@ export class RatingClass extends MainClass {
     try {
       await this.hasAccess("all");
       const unit = this.user?.unit;
+   
       const whereUnit = unit === "Information Technology" ? {} : { unit };
 
       const { where, orderBy, page, limit, include } = args;
@@ -58,6 +59,7 @@ export class RatingClass extends MainClass {
     }
   }
 
+
   async one(input: {
     id: string;
     include?: Prisma.RatingInclude<DefaultArgs>;
@@ -74,6 +76,8 @@ export class RatingClass extends MainClass {
           methodologyModel: true,
           questionnaireModel: true,
           clientModel: { include: { contactModel: true } },
+          loeModel: true,
+          invoiceModel: true,
           ...include,
         },
       });
@@ -90,7 +94,7 @@ export class RatingClass extends MainClass {
       //await this.hasAccess(["admin", "hod", "all"]);
       await this.hasAccess("all");
       const unit = this.user?.unit;
-
+    
       //const check for existing rating with year and client
       const check = await dbQuery.rating.findFirst({
         where: {
@@ -107,22 +111,23 @@ export class RatingClass extends MainClass {
         data: { ...data, unit },
         include: { clientModel: true },
       });
+
       const contacts = await dbQuery.contact.findMany({
         where: { client: result.clientModel.id },
       });
 
       contacts.forEach((el) => {
-        const HtmlBody = `<p>Dear Agusto Rating Client,</p>
+        const HtmlBody = `<p>Dear Client,</p>
         <p>A new rating program has been created for you on the Agusto Rating Management System.</p> 
         <p>Please log in to the <a href="https://arms.agusto.com">portal</a> to access our rating methodology and information gathering questionnaire</p>
-         <p>Best Regards,</p>
-          <p>Agusto & Co RMS Team</p>`;
+        <p>Best Regards,</p>
+        <p>Agusto & Co RMS Team</p>`;
 
-        sendEmailService({
-          From: "info@agusto.com",
-          To: `${el.email}`,
-          Subject: "Agusto & Co. Rating Management System ",
-          HtmlBody,
+        sendEmail({
+          to: `${el.fullName}`,
+          email: `${el.email}`,
+          subject: `New Rating - ${result.ratingTitle} `,
+          html: HtmlBody,
         });
       });
 
@@ -144,8 +149,6 @@ export class RatingClass extends MainClass {
       // await this.hasAccess(["admin", "client", "hod"]);
       await this.hasAccess("all");
       const { id, data } = input;
-
-      console.log(data);
 
       const prevDocs = await dbQuery.rating.findUnique({ where: { id } });
       const result = await dbQuery.rating.update({
@@ -198,46 +201,59 @@ export class RatingClass extends MainClass {
       //const user = { employee_id: 220684 }; // ike
       // const user = await appDecryptData(token);
 
-      console.log(user, "getting user");
       const unit = user?.unit;
-      const endPoint = process.env.AGUSTO_SERVICES_URL;
+   
+      const endPoint = process.env.AGUSTO_SERVICES;
 
-      let unitMembers = [];
-      // let initialUnitMembers = [];
-      // let unitMembers = [];
-      // let finalUnitMembers = [];
+      let unitMembers: any = [];
 
       if (
         user?.isAdmin !== true ||
         (user?.isAdmin === true && user?.unit.includes("Corporate"))
       ) {
         const { data } = await axios.get(
-          `${endPoint}/users/getStaffBySupervisor/${user?.supervisor.toString()}`,
+          `${endPoint}/users/getStaffBySupervisor/${user?.supervisor_id.toString()}`,
           {
             headers: { Authorization: `Bearer ${apiToken}` },
           }
         );
+
         unitMembers = data?.data || [];
       } else {
         const { data } = await axios.get(
-          `${endPoint}/users/getStaffBySupervisor/${user?.employee_id.toString()}`,
+          `${endPoint}/users/getStaffBySupervisor/${user?.id.toString()}`,
           {
             headers: { Authorization: `Bearer ${apiToken}` },
           }
         );
-        // initialUnitMembers = data?.data || [];
         unitMembers = data?.data || [];
       }
-      console.log(unitMembers, "unitMembers");
 
       if (unit?.includes("Corporate")) {
-        unitMembers = unitMembers?.filter(
-          (el: any) =>
-            el?.unit.includes("Corporate") || el?.unit.includes("Executive")
-        );
+        unitMembers = unitMembers
+          ?.filter(
+            (el: any) =>
+              el?.department?.name.includes("Corporate") ||
+              el?.department?.name.includes("Executive")
+          )
+          .sort((a: any, b: any) => a.firstname.localeCompare(b.firstname));
+      } else {
+        unitMembers = unitMembers
+          ?.filter(
+            (member: any) => member?.department_id === user?.department_id
+          )
+          .sort((a: any, b: any) => a.firstname.localeCompare(b.firstname));
       }
 
+
       const objData = convertZodSchema(RatingSchema);
+
+      objData.forEach((el: any) => {
+        if (el.field === "loe" || el.field === "invoice") {
+          el.type = "file";
+        }
+      });
+
       const ratingStatus = RatingStatusSchema;
 
       const methodology = await dbQuery.methodology.findMany({
@@ -251,6 +267,7 @@ export class RatingClass extends MainClass {
       });
       const ratingClass = await dbQuery.ratingClass.findMany({
         select: { id: true, name: true },
+        orderBy: { name: "asc" },
       });
 
       const dataList = objData
@@ -290,7 +307,7 @@ export class RatingClass extends MainClass {
                 }),
                 name: `${el?.firstname} ${el?.lastname}`,
               }));
-            // .filter((el: any) => el?.employee_id === user?.employee_id);
+           
 
             el.value = sup?.[0]?.id || "";
             el.type = "object";
@@ -307,11 +324,11 @@ export class RatingClass extends MainClass {
                 email: el?.corporate_email,
                 employee_id: el?.employee_id,
               }),
-              // id: `${el?.firstname} ${el?.lastname}`,
+          
               name: `${el?.firstname} ${el?.lastname}`,
-              // email: `${el?.corporate_email}`,
+          
             }));
-            // .filter((el: any) => el?.employee_id !== user?.employee_id);
+          
           }
 
           if (el.field === "secondaryAnalyst") {
@@ -344,7 +361,12 @@ export class RatingClass extends MainClass {
             el.type = "object";
             el.list = ratingClass.map((el) => ({ id: el.id, name: el.name }));
           }
-
+          if (el.field === "letterOfEngagement") {
+            el.type = "file";
+          }
+          if (el.field === "invoice") {
+            el.type = "file";
+          }
           return el;
         });
 

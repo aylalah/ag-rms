@@ -4,6 +4,7 @@ import {
   ActionFunctionArgs,
   json,
   LoaderFunctionArgs,
+  redirect,
   unstable_composeUploadHandlers,
   unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
@@ -15,6 +16,11 @@ import { useEffect } from "react";
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
   const { token } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
 
   const { rating, error } = await RMSservice(token)
     .ratings.one({ id })
@@ -42,16 +48,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
           })),
           year: rating?.ratingYear,
           title: rating?.ratingTitle,
-          primaryAnalyst:
-            PrimaryAnalystObject?.firstname +
-            " " +
-            PrimaryAnalystObject?.lastname,
-          secondaryAnalyst:
-            SecondaryAnalystObject?.firstname +
-            " " +
-            SecondaryAnalystObject?.lastname,
+          primaryAnalyst: PrimaryAnalystObject
+            ? `${PrimaryAnalystObject.firstname} ${PrimaryAnalystObject.lastname}`
+            : "-",
+          secondaryAnalyst: SecondaryAnalystObject
+            ? `${SecondaryAnalystObject.firstname} ${SecondaryAnalystObject.lastname}`
+            : "-",
           primaryAnalystEmail: PrimaryAnalystObject?.email,
           secondaryAnalystEmail: SecondaryAnalystObject?.email,
+
           SupervisorObject,
           PrimaryAnalystObject,
           SecondaryAnalystObject,
@@ -77,6 +82,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const method = request.method;
   const id = params.id as string;
   const { token, user } = await validateCookie(request);
+
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
 
   if (method === "PATCH") {
     const formData = await unstable_parseMultipartFormData(
@@ -157,26 +167,29 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       data,
     });
 
+    console.log(CreateReport, "create report");
+    console.log(error, "error");
+
     if (CreateReport) {
       if (reportTitle?.toLowerCase().includes("final")) {
-        sendEmailService({
-          From: "info@agusto.com",
-          To: body.supervisorEmail,
-          Subject: "Final Rating Report Uploaded",
-          HtmlBody: `<p>Dear Team Lead,</p>
-          <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
+        // sendEmail({
+        //   to: body.supervisorEmail,
+        //   email: body.supervisorEmail,
+        //   subject: "Final Rating Report Uploaded",
+        //   html: `<p>Dear Team Lead,</p>
+        //   <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
 
-          <p>Best Regards,</p>
-           <p>Agusto & Co RMS Team</p>
-          `,
-        });
+        //   <p>Best Regards,</p>
+        //    <p>Agusto & Co RMS Team</p>`,
+        // });
+
         //notify client
         contacts.forEach((el: any) => {
-          sendEmailService({
-            From: "info@agusto.com",
-            To: el?.email,
-            Subject: "Final Rating Report Uploaded",
-            HtmlBody: `<p>Dear Client<p>
+          sendEmail({
+            to: el?.name,
+            email: el?.email,
+            subject: "Final Rating Report Uploaded",
+            html: `<p>Dear Client<p>
             <p> The final rating report for ${title} has been uploaded on the Agusto RMS portal.</p>
 
             <p>Best Regards,</p>
@@ -186,24 +199,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           });
         });
       } else {
-        sendEmailService({
-          From: "info@agusto.com",
-          To: body.supervisorEmail,
-          Subject: "Draft Rating Report Uploaded",
-          HtmlBody: `<p>Dear Team Lead,</p>
-           <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
+        // sendEmail({
+        //   to: body.supervisorEmail,
+        //   email: body.supervisorEmail,
+        //   subject: "Draft Rating Report Uploaded",
+        //   html: `<p>Dear Team Lead,</p>
+        //    <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
 
-            <p>Best Regards,</p>
-           <p>Agusto & Co RMS Team</p>
-           `,
-        });
+        //     <p>Best Regards,</p>
+        //    <p>Agusto & Co RMS Team</p>
+        //    `,
+        // });
         // notify client
         contacts?.forEach((el: any) => {
-          sendEmailService({
-            From: "info@agusto.com",
-            To: el?.email,
-            Subject: "Draft Rating Report Uploaded",
-            HtmlBody: `<p>Dear Client,</p>
+          sendEmail({
+            to: el?.name,
+            email: el?.email,
+            subject: "Draft Rating Report Uploaded",
+            html: `<p>Dear Client,</p>
             <p>The draft report for the ${year} rating of ${title} has been uploaded on the Agusto Rating Management System. Please log in to the portal
             and review the document for any:</p>
             <ul>

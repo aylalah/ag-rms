@@ -10,6 +10,15 @@ import { useFetcher } from "@remix-run/react";
 import numeral from "numeral";
 import { useEffect, useRef, useState } from "react";
 
+// const allowFileTypes = [
+//   "image/png",
+//   "image/jpeg",
+//   "image/jpg",
+//   "application/pdf",
+//   "application/zip",
+//   "application/rar",
+//   "text/csv",
+// ];
 const allowFileTypes = [
   "image/png",
   "image/jpeg",
@@ -18,6 +27,15 @@ const allowFileTypes = [
   "application/zip",
   "application/rar",
   "text/csv",
+  // Word documents
+  "application/msword", // .doc
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  // Google Docs (treated as generic office documents)
+  "application/vnd.google-apps.document",
+  // Excel files
+  "application/vnd.ms-excel", // .xls
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.google-apps.spreadsheet", // Google Sheets
 ];
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -31,7 +49,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   );
 
   //const loader = uploadFileHandler(request, 'and');
-  const formData = await unstable_parseMultipartFormData(request, uploadHandler);
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  );
   const files = Object.fromEntries(formData.entries());
 
   const saveFiles = await Promise.all(
@@ -42,7 +63,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       const name = `${id}/${fileName?.replace(/\s/g, "-")}`.toLowerCase();
       const upload = await uploadStreamToSpaces(file, name);
 
-      if (upload?.$metadata?.httpStatusCode === 200) return { storedUrl: upload?.Location, status: true, id: key };
+      if (upload?.$metadata?.httpStatusCode === 200)
+        return { storedUrl: upload?.Location, status: true, id: key };
       return { storedUrl: null, status: false, id: key };
     })
   );
@@ -53,11 +75,22 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Dragger() {
   const Fetcher = useFetcher();
   const FetcherData = Fetcher.data as {
-    saveQuery: { id: string; storedUrl: string | null; status: boolean; fileName: string }[];
+    saveQuery: {
+      id: string;
+      storedUrl: string | null;
+      status: boolean;
+      fileName: string;
+    }[];
   };
   const dragRef = useRef<HTMLDivElement>(null);
   const [fileList, setFileList] = useState<
-    { id: string; name: string; size: number; status: boolean; shouldAllow: boolean }[]
+    {
+      id: string;
+      name: string;
+      size: number;
+      status: boolean;
+      shouldAllow: boolean;
+    }[]
   >([]);
 
   const dragOverHandler = (event: React.DragEvent<HTMLDivElement>) => {
@@ -77,7 +110,13 @@ export default function Dragger() {
       const fileType = files[i].type;
       const shouldAllow = allowFileTypes.includes(fileType);
 
-      payload.push({ id: key, name: files[i].name, size: files[i].size, status: false, shouldAllow });
+      payload.push({
+        id: key,
+        name: files[i].name,
+        size: files[i].size,
+        status: false,
+        shouldAllow,
+      });
 
       if (allowFileTypes.includes(files[i].type)) {
         formData.append(key, files[i]);
@@ -85,7 +124,10 @@ export default function Dragger() {
     }
 
     setFileList([...fileList, ...payload]);
-    Fetcher.submit(formData, { method: "POST", encType: "multipart/form-data" });
+    Fetcher.submit(formData, {
+      method: "POST",
+      encType: "multipart/form-data",
+    });
   };
 
   const onDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
@@ -136,16 +178,28 @@ export default function Dragger() {
       <div className="w-full">
         {fileList &&
           Array.from(fileList).map((file, index) => (
-            <div key={index} className="flex items-center justify-between py-4 border-b ">
+            <div
+              key={index}
+              className="flex items-center justify-between py-4 border-b "
+            >
               <div className="flex items-center gap-4">
-                {file?.status && <i className="text-xl text-green-600 ri-checkbox-circle-fill" />}
-                {!file?.shouldAllow && <i className="text-xl text-red-600 ri-close-circle-fill" />}
-                {!file?.status && file.shouldAllow && <span className="loading loading-sm" />}
+                {file?.status && (
+                  <i className="text-xl text-green-600 ri-checkbox-circle-fill" />
+                )}
+                {!file?.shouldAllow && (
+                  <i className="text-xl text-red-600 ri-close-circle-fill" />
+                )}
+                {!file?.status && file.shouldAllow && (
+                  <span className="loading loading-sm" />
+                )}
 
-                <p className={`${!file?.shouldAllow && "text-red-500"}`}>{file.name}</p>
+                <p className={`${!file?.shouldAllow && "text-red-500"}`}>
+                  {file.name}
+                </p>
               </div>
               <p className={`${!file?.shouldAllow && "text-red-500"}`}>
-                {file?.size && numeral(file.size / 1000000).format("0,00.00")} MB
+                {file?.size && numeral(file.size / 1000000).format("0,00.00")}{" "}
+                MB
               </p>
             </div>
           ))}

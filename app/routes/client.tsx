@@ -53,13 +53,14 @@ export const groupedClientRoutes = MenuLinks.map((route) => {
   }, {});
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { client, user, token } = await validateCookie(request);
-  if (!client)
+  const { client, token } = await validateCookie(request);
+
+  if (!client || !token)
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
     });
 
-  const result = await RMSservice(token).clients.one({ id: client?.id });
+  const result = await RMSservice(token).clients.one({ id: client?.client });
 
   return json({ client: result.client });
 };
@@ -67,13 +68,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function App() {
   const { pathname } = useLocation();
   const { client } = useLoaderData<typeof loader>();
+
   const { setClient } = useAppStore.user((state) => state);
+
   const [breadcrumb, setBreadcrumb] = useState<
     { name: string; path: string }[]
   >([]);
   const { ratingsData } = useRatingStore((state) => state);
 
   useEffect(() => setClient(client as any), [client]);
+
   useEffect(() => {
     const crumbs = pathname.split("/").filter(Boolean);
     const crumbsSlice = crumbs.slice(2, crumbs.length);
@@ -112,11 +116,11 @@ export default function App() {
         </ul>
       </div>
 
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden overflow-y-auto">
         <Outlet />
       </div>
 
-      <footer className="flex items-center justify-between py-4 text-xs font-bold ">
+      <footer className="flex items-center justify-between py-4 text-xs font-bold mt-auto ">
         <div className="opacity-40">
           {" "}
           &copy; Copyright Agusto & Co.{dayjs().format("YYYY")}.{" "}

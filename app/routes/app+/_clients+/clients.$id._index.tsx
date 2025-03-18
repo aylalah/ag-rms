@@ -1,6 +1,11 @@
 import ContactCard from "@ui/cards/contact-card";
 import ContactForm from "@ui/forms/contact-form";
-import { ActionFunctionArgs, defer, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  defer,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { Contact } from "@helpers/zodPrisma";
 import { Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { toast } from "react-toastify";
@@ -9,6 +14,11 @@ import { validateCookie } from "@helpers/cookies";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
+  if (!token)
+    return redirect("/", {
+      headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
+    });
+
   const id = params?.id as string;
 
   const ratingQuery = RMSservice(token)
@@ -37,21 +47,27 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         client: {
           ...client,
           ratingModel: client?.ratingModel?.map((el: any) => {
-            const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
+            // const PrimaryAnalystObject = JSON.parse(el?.primaryAnalyst as any);
 
-            const SecondaryAnalystObject = JSON.parse(
-              el?.secondaryAnalyst as any
-            );
+            // const SecondaryAnalystObject = JSON.parse(
+            //   el?.secondaryAnalyst as any
+            // );
+            const PrimaryAnalystObject = el?.primaryAnalyst
+              ? JSON.parse(el.primaryAnalyst)
+              : null;
+            const SecondaryAnalystObject = el?.secondaryAnalyst
+              ? JSON.parse(el.secondaryAnalyst)
+              : null;
+
             return {
               ...el,
-              primaryAnalyst:
-                PrimaryAnalystObject?.firstname +
-                " " +
-                PrimaryAnalystObject?.lastname,
-              secondaryAnalyst:
-                SecondaryAnalystObject?.firstname +
-                " " +
-                SecondaryAnalystObject?.lastname,
+              primaryAnalyst: PrimaryAnalystObject
+                ? `${PrimaryAnalystObject.firstname} ${PrimaryAnalystObject.lastname}`
+                : "-",
+
+              secondaryAnalyst: SecondaryAnalystObject
+                ? `${SecondaryAnalystObject.firstname} ${SecondaryAnalystObject.lastname}`
+                : "-",
             };
           }),
         },
@@ -110,6 +126,7 @@ export default function ClientEdit() {
   const FetcherData = Fetcher.data as { message: string; error: string };
   const [showForm, setShowForm] = useState(false);
   const [selectedContact, setSelectedContact] = useState({} as any);
+  const [contact, setContact] = useState({} as any);
 
   const onNewContact = () => {
     setSelectedContact({} as any);
@@ -145,7 +162,7 @@ export default function ClientEdit() {
       { pending: "Loading client data", error: "Failed to load form object" },
       { toastId: "form-object" }
     );
-  }, []);
+  }, [ratingQuery, navigate]);
 
   useEffect(() => {
     if (FetcherData?.message) {
@@ -159,7 +176,7 @@ export default function ClientEdit() {
       return;
     }
   }, [FetcherData]);
-  //console client
+
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-auto">
@@ -238,7 +255,7 @@ export default function ClientEdit() {
                     <th className="w-[2em] px-2">#</th>
                     <th>Primary Analyst</th>
                     <th>Secondary Analyst</th>
-                     <th>Rating Score</th>
+                    <th>Rating Score</th>
                     <th>Rating Class</th>
                     <th className="p-3">Rating Year</th>
                     <th>Status</th>
