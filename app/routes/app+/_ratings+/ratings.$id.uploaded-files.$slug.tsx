@@ -9,6 +9,8 @@ import numeral from "numeral";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import JSZip from "jszip";
+import pkg from "file-saver";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token } = await validateCookie(request);
@@ -81,6 +83,7 @@ export default function UploadedFiles() {
   const { rating, error, slug, id, ratingFiles } =
     useLoaderData<typeof loader>();
   const [allFiles, setAllFiles] = useState<FileProp[] | null>([]);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const Fetcher = useFetcher();
   const FetcherData = Fetcher.data as { updateRating: boolean; error: string };
 
@@ -132,6 +135,42 @@ export default function UploadedFiles() {
     }
   };
 
+  //download files section
+  const { saveAs } = pkg;
+
+  const toggleFileSelection = (fileUrl: string) => {
+    setSelectedFiles((prev) =>
+      prev.includes(fileUrl)
+        ? prev.filter((url) => url !== fileUrl)
+        : [...prev, fileUrl]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedFiles.length === allFiles?.length) {
+      setSelectedFiles([]);
+    } else {
+      setSelectedFiles(allFiles ? allFiles.map((file) => file.url) : []);
+    }
+  };
+ 
+  const downloadFiles = async () => {
+    if (selectedFiles.length === 1) {
+      window.open(selectedFiles[0], "_blank");
+    } else if (selectedFiles.length > 1) {
+      const zip = new JSZip();
+      const promises = selectedFiles.map(async (fileUrl) => {
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const fileName = fileUrl.split("/").pop();
+        if (fileName) zip.file(fileName, blob);
+      });
+      await Promise.all(promises);
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      saveAs(zipBlob, "selected-files.zip");
+    }
+  };
+
   useEffect(() => {
     setAllFiles(() => [...ratingFiles]);
   }, []);
@@ -140,6 +179,9 @@ export default function UploadedFiles() {
     if (FetcherData?.error) toast.error(FetcherData?.error);
     if (FetcherData?.updateRating) toast.success("Rating Updated Successfully");
   }, [FetcherData]);
+
+  
+
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
@@ -223,12 +265,27 @@ export default function UploadedFiles() {
           </div>
         </div>
       </div>
-
+      {/* Select All & Download Buttons */}
+      <div className="flex justify-between items-center py-3">
+        <button className="btn btn-secondary" onClick={toggleSelectAll}>
+          {selectedFiles.length === allFiles?.length ? "Deselect All" : "Select All"}
+        </button>
+        <button
+          className="btn btn-primary"
+          onClick={downloadFiles}
+          disabled={selectedFiles.length === 0}
+        >
+          Download Selected ({selectedFiles.length})
+        </button>
+      </div>
       <div className="flex flex-col flex-1 overflow-y-scroll border-b bg-base-200">
         <table>
+         
           <thead>
-            <tr className="text-sm text-left bg-primary text-base-100">
-              <th className="w-[2em] p-3 text-center">#</th>
+          <tr className="text-sm text-left bg-primary text-base-100">
+          <th className="w-[2em] p-3 text-center">#</th>
+            
+              <th className="w-[2em] p-3 text-center"></th>
               <th className="p-3">FileName</th>
               <th className="p-3">Size</th>
               <th className="p-3">Created</th>
@@ -242,6 +299,13 @@ export default function UploadedFiles() {
                 key={el.id}
               >
                 <td className="text-center">{i + 1}</td>
+                <td className="text-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedFiles.includes(el.url)}
+                    onChange={() => toggleFileSelection(el.url)}
+                  />
+                </td>
                 <td className="p-3">
                   <Link
                     to={el?.url}

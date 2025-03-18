@@ -38,8 +38,20 @@ const s3 = new S3Client({
 });
 // uploadClientStreamToSpaces
 
-export const uploadClientStreamToSpace = (file: any, fileName: string) => {
-  return new Upload({
+// export const uploadClientStreamToSpace = (file: any, fileName: string) => {
+//   return new Upload({
+//     client: s3,
+//     params: {
+//       Bucket: "agustoportals",
+//       Key: `rating-mgt-portal/uploads/${fileName}`,
+//       Body: file,
+//       ACL: "public-read",
+//     },
+
+//   }).done();
+// };
+export const uploadClientStreamToSpace = async (file: any, fileName: string) => {
+  const upload = new Upload({
     client: s3,
     params: {
       Bucket: "agustoportals",
@@ -47,9 +59,12 @@ export const uploadClientStreamToSpace = (file: any, fileName: string) => {
       Body: file,
       ACL: "public-read",
     },
-  }).done();
-};
+    partSize: 10 * 1024 * 1024, 
+    leavePartsOnError: false,
+  });
 
+  return upload.done(); // Wait for completion
+};
 export const uploadLoeToSpaces = (file: any, fileName: string) => {
   return new Upload({
     client: s3,
@@ -73,6 +88,8 @@ export const uploadInvoiceToSpaces = (file: any, fileName: string) => {
     },
   }).done();
 };
+
+
 export const deleteInvoiceFromSpaces = async (fileName: string) => {
   const params = {
     Bucket: "agustoportals",
@@ -86,6 +103,19 @@ export const deleteInvoiceFromSpaces = async (fileName: string) => {
     return { error: error.message };
   }
 };
+
+export const uploadReceiptToSpaces = (file: any, fileName: string) => {
+  return new Upload({
+    client: s3,
+    params: {
+      Bucket: "agustoportals",
+      Key: `rating-mgt-portal/receipts/${fileName}`,
+      Body: file,
+      ACL: "public-read",
+      ContentType: "application/pdf"
+    },
+  }).done();
+}
 
 export const uploadStreamToSpaces = (
   file: any,

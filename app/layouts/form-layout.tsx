@@ -110,10 +110,12 @@ export const FormLayout = ({
                         required={isRequired}
                         type="file"
                         accept={
-                          field === "letterOfEngagement"
+                          field === "invoice" || field === "receipt"
                             ? "application/pdf"
                             : field === "logo"
                             ? "image/*"
+                            : field === "loe"
+                            ? "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             : ""
                         }
                       />

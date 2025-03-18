@@ -41,8 +41,9 @@ export class AuthClass extends MainClass {
             email: email,
             password,
           });
-          console.log(data, "data");
+         
           const { token, ...user } = data?.data || {};
+         
 
           const Me = await axios.get(
             `${endPoint}/users/${user?.id?.toString()}`,

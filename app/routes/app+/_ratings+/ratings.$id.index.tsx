@@ -71,7 +71,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 const uploadHandler = unstable_composeUploadHandlers(
   unstable_createFileUploadHandler({
-    maxPartSize: 5_000_000,
+    maxPartSize: 100_000_000,
     directory: "/tmp",
     file: ({ filename }) => filename,
   }),
@@ -134,14 +134,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         data.reportFileUrl = upload?.Location as any;
     }
 
-    if (finalLetter > 0) {
+    if (finalLetter && finalLetter.size > 0) {
       let fileName = `${id}-${reportTitle}-letter.${version}`;
       const upload = await uploadStreamToSpaces(finalLetter, fileName, version);
       if (upload?.$metadata?.httpStatusCode === 200)
         data.finalLetterUrl = upload?.Location as any;
     }
+    
 
-    if (consentLetter > 0) {
+    if (consentLetter.size > 0) {
       let fileName = `${id}-${reportTitle}-consent-letter.${version}`;
       const upload = await uploadStreamToSpaces(
         consentLetter,
@@ -167,21 +168,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       data,
     });
 
-    console.log(CreateReport, "create report");
-    console.log(error, "error");
+   
 
     if (CreateReport) {
       if (reportTitle?.toLowerCase().includes("final")) {
-        // sendEmail({
-        //   to: body.supervisorEmail,
-        //   email: body.supervisorEmail,
-        //   subject: "Final Rating Report Uploaded",
-        //   html: `<p>Dear Team Lead,</p>
-        //   <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
+         sendEmail({
+          to: body.supervisorEmail,
+          email: body.supervisorEmail,
+           subject: "Final Rating Report Uploaded",
+          html: `<p>Dear Team Lead,</p>
+          <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
 
-        //   <p>Best Regards,</p>
-        //    <p>Agusto & Co RMS Team</p>`,
-        // });
+          <p>Best Regards,</p>
+            <p>Agusto & Co RMS Team</p>`,
+         });
 
         //notify client
         contacts.forEach((el: any) => {
@@ -199,17 +199,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           });
         });
       } else {
-        // sendEmail({
-        //   to: body.supervisorEmail,
-        //   email: body.supervisorEmail,
-        //   subject: "Draft Rating Report Uploaded",
-        //   html: `<p>Dear Team Lead,</p>
-        //    <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
+        sendEmail({
+          to: body.supervisorEmail,
+          email: body.supervisorEmail,
+          subject: "Draft Rating Report Uploaded",
+         html: `<p>Dear Team Lead,</p>
+         <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
 
-        //     <p>Best Regards,</p>
-        //    <p>Agusto & Co RMS Team</p>
-        //    `,
-        // });
+            <p>Best Regards,</p>
+           <p>Agusto & Co RMS Team</p>
+           `,
+        });
         // notify client
         contacts?.forEach((el: any) => {
           sendEmail({

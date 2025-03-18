@@ -132,6 +132,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }
     }
 */
+const supervisorData = updatedRating?.supervisor ? JSON.parse(updatedRating.supervisor) : null;
+   sendEmail({
+    to: `${supervisorData?.firstname} ${supervisorData?.lastname}`,
+    email: supervisorData?.email,
+    subject: "New Invoice",
+    html: `<p>Dear ${supervisorData?.firstname} ${supervisorData?.lastname},</p>
+      <p> An updated invoice  for ${updatedRating?.ratingTitle} has been uploaded on the Agusto RMS portal.</p>
+        <p>Please log in to the RMS to view</p>
+        <p>Best Regards,</p>
+       <p>Agusto & Co RMS Team</p>
+        `,
+   })
     const contacts = updatedRating?.clientModel?.contactModel || [];
     //notify contacts of new invoice upload
     const emailPromises = contacts.map((el) =>

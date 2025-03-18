@@ -14,15 +14,7 @@ import numeral from "numeral";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-// const allowFileTypes = [
-//   "image/png",
-//   "image/jpeg",
-//   "image/jpg",
-//   "application/pdf",
-//   "application/zip",
-//   "application/rar",
-//   "text/csv",
-// ];
+
 const allowFileTypes = [
   "image/png",
   "image/jpeg",
@@ -41,6 +33,7 @@ const allowFileTypes = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
   "application/vnd.google-apps.spreadsheet", // Google Sheets
 ];
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token, client } = await validateCookie(request);
   if (!client || !token)
@@ -63,6 +56,66 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({ error, rating, docs });
 };
 
+// const uploadCache = new Map<string, NodeJS.Timeout>();
+
+const uploadCache = new Map<
+  string,
+  { timeout: NodeJS.Timeout; files: { name: string }[] }
+>();
+
+
+const delayEmailNotification = (
+  analystEmail: string,
+  supervisor:string,
+  secondaryAnalyst: string | null,
+  primaryAnalystName: string,
+  company: string,
+  ratingname: string,
+  appUrl: string,
+  newFiles: { name: string }[]
+) => {
+  const existingData = uploadCache.get(analystEmail);
+  const accumulatedFiles = existingData ? [...existingData.files, ...newFiles] : newFiles;
+
+
+  if (existingData) {
+    clearTimeout(existingData.timeout);
+  }
+
+  const timer = setTimeout(() => {
+    const fileList = accumulatedFiles
+      .map((el, index) => `${index + 1}. ${el.name} <br/> <br/>`)
+      .join("\n");
+
+    // const ccEmail = secondaryAnalyst ? [secondaryAnalyst] : [];
+    const ccEmails = secondaryAnalyst
+          ? [supervisor, secondaryAnalyst]
+          : [supervisor];
+
+    sendEmail({
+      to: analystEmail,
+      email: analystEmail,
+      cc: ccEmails,
+      subject: `${company} File Upload`,
+      html: `
+        <p> Dear ${primaryAnalystName},</p>
+        <p>${company} has uploaded the following file${
+        accumulatedFiles.length > 1 ? "s" : ""
+        } for the ${ratingname} on the Agusto & Co. RMS.</p>
+        <p> ${fileList.toString()} </p>
+        <p>Please log in to the <a href="${appUrl}">RMS</a> to view and download the information submitted.</p>
+        <p>Best Regards,</p>
+        <p>Agusto & Co RMS Team</p>`,
+    });
+
+    uploadCache.delete(analystEmail);
+  }, 120000); // 2 minute delay
+
+  uploadCache.set(analystEmail, { timeout: timer, files: accumulatedFiles });
+};
+
+
+
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { token, client } = await validateCookie(request);
   if (!token)
@@ -81,7 +134,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     unstable_createFileUploadHandler({
       avoidFileConflicts: true,
       directory: "/tmp",
-      maxPartSize: 30_000_000,
+      maxPartSize: 100_000_000,
       file: ({ filename }) => filename,
     }),
     unstable_createMemoryUploadHandler()
@@ -130,17 +183,29 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           })
         );
         const fileArray = saveFiles.filter((file) => file?.name !== undefined);
-        const fileList = fileArray
+
+        if(fileArray.length>0){
+          delayEmailNotification(
+            supervisor,
+            primaryAnalyst,
+            secondaryAnalyst,
+            primaryAnalystName,
+            company as string,
+            ratingname as string,
+            appUrl as string,
+            fileArray
+      )}
+       /* const fileList = fileArray
           .map((el, index) => `${index + 1}. ${el?.name} <br/> <br/>`)
           .join("\n");
 
-        const ccEmails = secondaryAnalyst
-          ? [supervisor, secondaryAnalyst]
-          : [supervisor];
+        const ccEmail = secondaryAnalyst
+          ? [ secondaryAnalyst]
+          : [];
 
         sendEmail({
           to: primaryAnalyst,
-          // cc: ccEmails,
+          cc: ccEmail,
           email: primaryAnalyst,
           subject: `${company} File Upload`,
           html: `
@@ -152,7 +217,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
            <p>Please log in to the <a href="${appUrl}">RMS</a> to view and dowload the information submitted.</p>
             <p>Best Regards,</p>
            <p>Agusto & Co RMS Team</p>`,
-        });
+        });*/
 
         return json({ saveQuery: saveFiles });
       })

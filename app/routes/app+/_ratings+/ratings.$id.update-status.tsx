@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token, user } = await validateCookie(request);
   const id = params.id as string;
-  console.log(id, "this is the id");
   if (!token || !user) {
     return redirect("/", {
       headers: { "Set-Cookie": await appCookie.serialize("", { maxAge: 0 }) },
@@ -21,7 +20,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     id,
     include: { invoiceModel: true, reportModel: true },
   });
-  console.log(rating);
+
   return { rating, error };
 };
 

@@ -54,7 +54,7 @@ export class GeneralClass extends MainClass {
           },
         ],
       };
-
+ 
       return {
         clients: result[0],
         industries: result[1],

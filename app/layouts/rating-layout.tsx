@@ -2,10 +2,11 @@ import { Rating } from "@helpers/zodPrisma";
 import EditInvoice from "@routes/app+/_ratings+/ratings.$id.edit-invoice";
 import { FetcherWithComponents, Link, useNavigate } from "@remix-run/react";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { report } from "node:process";
 import UpdateStatus from "@routes/app+/_ratings+/ratings.$id.update-status";
+import AddReceipt from "@routes/app+/_ratings+/ratings.$id.add-receipt";
 
 type AnalystObj = {
   employee_id: number;
@@ -49,6 +50,7 @@ export default function RatingLayout({
   const [reportVersion, setReportVersion] = useState<string>("");
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
   const FetcherData = Fetcher?.data as { message: string; error: string };
   const isSubmitting = Fetcher.state === "submitting";
   const [forAMI, setForAMI] = useState(false);
@@ -59,7 +61,7 @@ export default function RatingLayout({
     );
     return thisReports?.length ? thisReports.length + 1 : 1;
   };
-
+ 
   const onUploadHandler = (name: string) => {
     if (name === "Draft Report") {
       const version = getVersion(name);
@@ -104,7 +106,7 @@ export default function RatingLayout({
     ratingRef.current?.showModal();
   }, []);
  */
-  // console.log(rating, "I want to see if I can see reportType");
+ 
 
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
@@ -267,7 +269,8 @@ export default function RatingLayout({
                 isHeader
               />
               {rating?.reportModel?.map((report, i) => (
-                <Tr
+                <React.Fragment key={report?.id}>
+                  <Tr
                   key={report?.id}
                   index={i + 1}
                   name={report?.reportTitle}
@@ -275,7 +278,19 @@ export default function RatingLayout({
                   status={report?.status}
                   link={report?.reportFileUrl || ""}
                 />
-              ))}
+                 {report?.finalLetterUrl && (
+                <Tr
+                  index={i + 1} // Keep the same index since it's part of the same Final Report
+                  name="Final Letter"
+                  version={report?.version}
+                 status={report?.status}
+                 link={report?.finalLetterUrl}
+                />
+                )}
+                  </React.Fragment>
+                ))}
+                
+              
             </ul>
             <div
               className={`flex flex-col md:flex-row items-center ${
@@ -387,7 +402,7 @@ export default function RatingLayout({
                     <i className="ri-file-text-line" />
                     Invoice
                   </a>
-                  {!isClientOnly && rating?.reportModel?.length === 0 && (
+                  {!isClientOnly && !rating?.receipt && rating?.reportModel?.length === 0 && (
                     <i
                       className="ri-edit-line cursor-pointer text-secondary"
                       onClick={() => setShowInvoiceModal(true)}
@@ -395,10 +410,41 @@ export default function RatingLayout({
                   )}
                 </li>
               )}
+              { !isClientOnly && rating?.invoice && rating?.reportModel?.length === 0 && !rating?.receipt && (
+                <li className="p-4 bg-base-100 flex gap-4 text-sm relative text-secondary cursor-pointer"
+                 onClick={() => setShowReceiptModal(true)}>
+             
+                  <i className="ri-file-text-line link-secondary" />
+                  Receipt
+                  <i
+                    className="ri-edit-line cursor-pointer text-secondary"
+                    
+                  />
+              
+              </li>
+            )}
+               {rating.receipt && (
+                <li className="p-4 bg-base-100">
+                  <a
+                    href={`${rating?.receiptModel?.url}`}
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="flex items-center gap-2 text-sm link-secondary"
+                  >
+                    <i className="ri-file-text-line" />
+                    Receipt
+                  </a>
+                </li>
+              )}
+
             </ul>
             {showInvoiceModal && (
               <EditInvoice onClose={() => setShowInvoiceModal(false)} />
             )}
+            {showReceiptModal && (
+              <AddReceipt onClose={() => setShowReceiptModal(false)} />
+            )}
+            
           </div>
         </div>
       </div>

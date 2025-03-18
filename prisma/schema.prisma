@@ -47,7 +47,7 @@ model Questionnaire {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
-model LetterOfEngagement {{
+model LetterOfEngagement {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
   url         String
@@ -56,6 +56,14 @@ model LetterOfEngagement {{
   updatedAt   DateTime @updatedAt
 }
 model Invoice {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  url         String
+  ratingModel Rating[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+model Receipt {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
   url         String
@@ -108,9 +116,11 @@ model Rating {
   requireAdditionalFiles    Boolean       @default(false)
   requireQuestionnaireFiles Boolean       @default(true)
   loe                      String?     @db.ObjectId
+  receipt                    String?     @db.ObjectId
   invoice                   String?     @db.ObjectId
   loeModel                  LetterOfEngagement? @relation(fields: [loe], references: [id])
   invoiceModel              Invoice?      @relation(fields: [invoice], references: [id])
+  receiptModel              Receipt?     @relation(fields: [receipt], references: [id])
   status                    RatingStatus? @default(ongoing)
   issueDate                 DateTime?
   expiryDate                DateTime?
