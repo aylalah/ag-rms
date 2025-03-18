@@ -824,4 +824,34 @@ declare global {
   // @ts-ignore
   export type { RatingStatusType, ReportStatusType, Methodology, MethodologyOptionalDefaults, MethodologyRelations, MethodologyWithRelations, MethodologyOptionalDefaultsRelations, MethodologyOptionalDefaultsWithRelations, Questionnaire, QuestionnaireOptionalDefaults, QuestionnaireRelations, QuestionnaireWithRelations, QuestionnaireOptionalDefaultsRelations, QuestionnaireOptionalDefaultsWithRelations, LetterOfEngagement, LetterOfEngagementOptionalDefaults, LetterOfEngagementRelations, LetterOfEngagementWithRelations, LetterOfEngagementOptionalDefaultsRelations, LetterOfEngagementOptionalDefaultsWithRelations, Invoice, InvoiceOptionalDefaults, InvoiceRelations, InvoiceWithRelations, InvoiceOptionalDefaultsRelations, InvoiceOptionalDefaultsWithRelations, Receipt, ReceiptOptionalDefaults, ReceiptRelations, ReceiptWithRelations, ReceiptOptionalDefaultsRelations, ReceiptOptionalDefaultsWithRelations, Industry, IndustryOptionalDefaults, IndustryRelations, IndustryWithRelations, IndustryOptionalDefaultsRelations, IndustryOptionalDefaultsWithRelations, Reports, ReportsOptionalDefaults, ReportsRelations, ReportsWithRelations, ReportsOptionalDefaultsRelations, ReportsOptionalDefaultsWithRelations, Rating, RatingOptionalDefaults, RatingRelations, RatingWithRelations, RatingOptionalDefaultsRelations, RatingOptionalDefaultsWithRelations, RatingClassOptionalDefaults, RatingClassRelations, RatingClassWithRelations, RatingClassOptionalDefaultsRelations, RatingClassOptionalDefaultsWithRelations, Client, ClientOptionalDefaults, ClientRelations, ClientWithRelations, ClientOptionalDefaultsRelations, ClientOptionalDefaultsWithRelations, Contact, ContactOptionalDefaults, ContactRelations, ContactWithRelations, ContactOptionalDefaultsRelations, ContactOptionalDefaultsWithRelations, Log, LogOptionalDefaults } from 'C:/Projects/RMS/rms-v1/app/helpers/zodPrisma/index'
   import('C:/Projects/RMS/rms-v1/app/helpers/zodPrisma/index')
+  // @ts-ignore
+  export type { AuthClass } from 'C:/Projects/RMS/rms-v1/app/modules/auth/auth.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/auth/auth.service')
+  // @ts-ignore
+  export type { ClientClass } from 'C:/Projects/RMS/rms-v1/app/modules/client/client.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/client/client.service')
+  // @ts-ignore
+  export type { ContactClass } from 'C:/Projects/RMS/rms-v1/app/modules/contact/contact.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/contact/contact.service')
+  // @ts-ignore
+  export type { IndustryClass } from 'C:/Projects/RMS/rms-v1/app/modules/industry/industry.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/industry/industry.service')
+  // @ts-ignore
+  export type { MethodologyClass } from 'C:/Projects/RMS/rms-v1/app/modules/methodology/methodology.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/methodology/methodology.service')
+  // @ts-ignore
+  export type { QuestionnaireClass } from 'C:/Projects/RMS/rms-v1/app/modules/questionnaire/questionnaire.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/questionnaire/questionnaire.service')
+  // @ts-ignore
+  export type { GeneralClass } from 'C:/Projects/RMS/rms-v1/app/modules/services/dashboard.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/services/dashboard.service')
+  // @ts-ignore
+  export type { MainClass } from 'C:/Projects/RMS/rms-v1/app/modules/services/main.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/services/main.service')
+  // @ts-ignore
+  export type { RatingClass } from 'C:/Projects/RMS/rms-v1/app/modules/services/rating.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/services/rating.service')
+  // @ts-ignore
+  export type { ReportClass } from 'C:/Projects/RMS/rms-v1/app/modules/services/reports.service'
+  import('C:/Projects/RMS/rms-v1/app/modules/services/reports.service')
 }

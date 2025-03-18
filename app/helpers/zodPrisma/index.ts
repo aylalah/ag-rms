@@ -80,26 +80,26 @@ export type MethodologyOptionalDefaults = z.infer<typeof MethodologyOptionalDefa
 //------------------------------------------------------
 
 export type MethodologyRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingWithRelations[];
 };
 
 export type MethodologyWithRelations = z.infer<typeof MethodologySchema> & MethodologyRelations
 
 export const MethodologyWithRelationsSchema: z.ZodType<MethodologyWithRelations> = MethodologySchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
 }))
 
 // METHODOLOGY OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type MethodologyOptionalDefaultsRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
 };
 
 export type MethodologyOptionalDefaultsWithRelations = z.infer<typeof MethodologyOptionalDefaultsSchema> & MethodologyOptionalDefaultsRelations
 
 export const MethodologyOptionalDefaultsWithRelationsSchema: z.ZodType<MethodologyOptionalDefaultsWithRelations> = MethodologyOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -132,26 +132,26 @@ export type QuestionnaireOptionalDefaults = z.infer<typeof QuestionnaireOptional
 //------------------------------------------------------
 
 export type QuestionnaireRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingWithRelations[];
 };
 
 export type QuestionnaireWithRelations = z.infer<typeof QuestionnaireSchema> & QuestionnaireRelations
 
 export const QuestionnaireWithRelationsSchema: z.ZodType<QuestionnaireWithRelations> = QuestionnaireSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
 }))
 
 // QUESTIONNAIRE OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type QuestionnaireOptionalDefaultsRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
 };
 
 export type QuestionnaireOptionalDefaultsWithRelations = z.infer<typeof QuestionnaireOptionalDefaultsSchema> & QuestionnaireOptionalDefaultsRelations
 
 export const QuestionnaireOptionalDefaultsWithRelationsSchema: z.ZodType<QuestionnaireOptionalDefaultsWithRelations> = QuestionnaireOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -183,26 +183,26 @@ export type LetterOfEngagementOptionalDefaults = z.infer<typeof LetterOfEngageme
 //------------------------------------------------------
 
 export type LetterOfEngagementRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingWithRelations[];
 };
 
 export type LetterOfEngagementWithRelations = z.infer<typeof LetterOfEngagementSchema> & LetterOfEngagementRelations
 
 export const LetterOfEngagementWithRelationsSchema: z.ZodType<LetterOfEngagementWithRelations> = LetterOfEngagementSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
 }))
 
 // LETTER OF ENGAGEMENT OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type LetterOfEngagementOptionalDefaultsRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
 };
 
 export type LetterOfEngagementOptionalDefaultsWithRelations = z.infer<typeof LetterOfEngagementOptionalDefaultsSchema> & LetterOfEngagementOptionalDefaultsRelations
 
 export const LetterOfEngagementOptionalDefaultsWithRelationsSchema: z.ZodType<LetterOfEngagementOptionalDefaultsWithRelations> = LetterOfEngagementOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -234,26 +234,26 @@ export type InvoiceOptionalDefaults = z.infer<typeof InvoiceOptionalDefaultsSche
 //------------------------------------------------------
 
 export type InvoiceRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingWithRelations[];
 };
 
 export type InvoiceWithRelations = z.infer<typeof InvoiceSchema> & InvoiceRelations
 
 export const InvoiceWithRelationsSchema: z.ZodType<InvoiceWithRelations> = InvoiceSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
 }))
 
 // INVOICE OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type InvoiceOptionalDefaultsRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
 };
 
 export type InvoiceOptionalDefaultsWithRelations = z.infer<typeof InvoiceOptionalDefaultsSchema> & InvoiceOptionalDefaultsRelations
 
 export const InvoiceOptionalDefaultsWithRelationsSchema: z.ZodType<InvoiceOptionalDefaultsWithRelations> = InvoiceOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -285,26 +285,26 @@ export type ReceiptOptionalDefaults = z.infer<typeof ReceiptOptionalDefaultsSche
 //------------------------------------------------------
 
 export type ReceiptRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingWithRelations[];
 };
 
 export type ReceiptWithRelations = z.infer<typeof ReceiptSchema> & ReceiptRelations
 
 export const ReceiptWithRelationsSchema: z.ZodType<ReceiptWithRelations> = ReceiptSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
 }))
 
 // RECEIPT OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type ReceiptOptionalDefaultsRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
 };
 
 export type ReceiptOptionalDefaultsWithRelations = z.infer<typeof ReceiptOptionalDefaultsSchema> & ReceiptOptionalDefaultsRelations
 
 export const ReceiptOptionalDefaultsWithRelationsSchema: z.ZodType<ReceiptOptionalDefaultsWithRelations> = ReceiptOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -335,26 +335,26 @@ export type IndustryOptionalDefaults = z.infer<typeof IndustryOptionalDefaultsSc
 //------------------------------------------------------
 
 export type IndustryRelations = {
-  clientModel: Client[];
+  clientModel: ClientWithRelations[];
 };
 
 export type IndustryWithRelations = z.infer<typeof IndustrySchema> & IndustryRelations
 
 export const IndustryWithRelationsSchema: z.ZodType<IndustryWithRelations> = IndustrySchema.merge(z.object({
-  clientModel: z.lazy(() => ClientSchema).array(),
+  clientModel: z.lazy(() => ClientWithRelationsSchema).array(),
 }))
 
 // INDUSTRY OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type IndustryOptionalDefaultsRelations = {
-  clientModel: Client[];
+  clientModel: ClientOptionalDefaultsWithRelations[];
 };
 
 export type IndustryOptionalDefaultsWithRelations = z.infer<typeof IndustryOptionalDefaultsSchema> & IndustryOptionalDefaultsRelations
 
 export const IndustryOptionalDefaultsWithRelationsSchema: z.ZodType<IndustryOptionalDefaultsWithRelations> = IndustryOptionalDefaultsSchema.merge(z.object({
-  clientModel: z.lazy(() => ClientSchema).array(),
+  clientModel: z.lazy(() => ClientOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -392,26 +392,26 @@ export type ReportsOptionalDefaults = z.infer<typeof ReportsOptionalDefaultsSche
 //------------------------------------------------------
 
 export type ReportsRelations = {
-  ratingModel: Rating;
+  ratingModel: RatingWithRelations;
 };
 
 export type ReportsWithRelations = z.infer<typeof ReportsSchema> & ReportsRelations
 
 export const ReportsWithRelationsSchema: z.ZodType<ReportsWithRelations> = ReportsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema),
 }))
 
 // REPORTS OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type ReportsOptionalDefaultsRelations = {
-  ratingModel: Rating;
+  ratingModel: RatingOptionalDefaultsWithRelations;
 };
 
 export type ReportsOptionalDefaultsWithRelations = z.infer<typeof ReportsOptionalDefaultsSchema> & ReportsOptionalDefaultsRelations
 
 export const ReportsOptionalDefaultsWithRelationsSchema: z.ZodType<ReportsOptionalDefaultsWithRelations> = ReportsOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema),
 }))
 
 /////////////////////////////////////////
@@ -466,54 +466,54 @@ export type RatingOptionalDefaults = z.infer<typeof RatingOptionalDefaultsSchema
 //------------------------------------------------------
 
 export type RatingRelations = {
-  ratingClassModel?: RatingClass | null;
-  clientModel: Client;
-  methodologyModel: Methodology;
-  questionnaireModel: Questionnaire;
-  loeModel?: LetterOfEngagement | null;
-  invoiceModel?: Invoice | null;
-  receiptModel?: Receipt | null;
-  reportModel: Reports[];
+  ratingClassModel?: RatingClassWithRelations | null;
+  clientModel: ClientWithRelations;
+  methodologyModel: MethodologyWithRelations;
+  questionnaireModel: QuestionnaireWithRelations;
+  loeModel?: LetterOfEngagementWithRelations | null;
+  invoiceModel?: InvoiceWithRelations | null;
+  receiptModel?: ReceiptWithRelations | null;
+  reportModel: ReportsWithRelations[];
 };
 
 export type RatingWithRelations = z.infer<typeof RatingSchema> & RatingRelations
 
 export const RatingWithRelationsSchema: z.ZodType<RatingWithRelations> = RatingSchema.merge(z.object({
-  ratingClassModel: z.lazy(() => RatingClassSchema).nullable(),
-  clientModel: z.lazy(() => ClientSchema),
-  methodologyModel: z.lazy(() => MethodologySchema),
-  questionnaireModel: z.lazy(() => QuestionnaireSchema),
-  loeModel: z.lazy(() => LetterOfEngagementSchema).nullable(),
-  invoiceModel: z.lazy(() => InvoiceSchema).nullable(),
-  receiptModel: z.lazy(() => ReceiptSchema).nullable(),
-  reportModel: z.lazy(() => ReportsSchema).array(),
+  ratingClassModel: z.lazy(() => RatingClassWithRelationsSchema).nullable(),
+  clientModel: z.lazy(() => ClientWithRelationsSchema),
+  methodologyModel: z.lazy(() => MethodologyWithRelationsSchema),
+  questionnaireModel: z.lazy(() => QuestionnaireWithRelationsSchema),
+  loeModel: z.lazy(() => LetterOfEngagementWithRelationsSchema).nullable(),
+  invoiceModel: z.lazy(() => InvoiceWithRelationsSchema).nullable(),
+  receiptModel: z.lazy(() => ReceiptWithRelationsSchema).nullable(),
+  reportModel: z.lazy(() => ReportsWithRelationsSchema).array(),
 }))
 
 // RATING OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type RatingOptionalDefaultsRelations = {
-  ratingClassModel?: RatingClass | null;
-  clientModel: Client;
-  methodologyModel: Methodology;
-  questionnaireModel: Questionnaire;
-  loeModel?: LetterOfEngagement | null;
-  invoiceModel?: Invoice | null;
-  receiptModel?: Receipt | null;
-  reportModel: Reports[];
+  ratingClassModel?: RatingClassOptionalDefaultsWithRelations | null;
+  clientModel: ClientOptionalDefaultsWithRelations;
+  methodologyModel: MethodologyOptionalDefaultsWithRelations;
+  questionnaireModel: QuestionnaireOptionalDefaultsWithRelations;
+  loeModel?: LetterOfEngagementOptionalDefaultsWithRelations | null;
+  invoiceModel?: InvoiceOptionalDefaultsWithRelations | null;
+  receiptModel?: ReceiptOptionalDefaultsWithRelations | null;
+  reportModel: ReportsOptionalDefaultsWithRelations[];
 };
 
 export type RatingOptionalDefaultsWithRelations = z.infer<typeof RatingOptionalDefaultsSchema> & RatingOptionalDefaultsRelations
 
 export const RatingOptionalDefaultsWithRelationsSchema: z.ZodType<RatingOptionalDefaultsWithRelations> = RatingOptionalDefaultsSchema.merge(z.object({
-  ratingClassModel: z.lazy(() => RatingClassSchema).nullable(),
-  clientModel: z.lazy(() => ClientSchema),
-  methodologyModel: z.lazy(() => MethodologySchema),
-  questionnaireModel: z.lazy(() => QuestionnaireSchema),
-  loeModel: z.lazy(() => LetterOfEngagementSchema).nullable(),
-  invoiceModel: z.lazy(() => InvoiceSchema).nullable(),
-  receiptModel: z.lazy(() => ReceiptSchema).nullable(),
-  reportModel: z.lazy(() => ReportsSchema).array(),
+  ratingClassModel: z.lazy(() => RatingClassOptionalDefaultsWithRelationsSchema).nullable(),
+  clientModel: z.lazy(() => ClientOptionalDefaultsWithRelationsSchema),
+  methodologyModel: z.lazy(() => MethodologyOptionalDefaultsWithRelationsSchema),
+  questionnaireModel: z.lazy(() => QuestionnaireOptionalDefaultsWithRelationsSchema),
+  loeModel: z.lazy(() => LetterOfEngagementOptionalDefaultsWithRelationsSchema).nullable(),
+  invoiceModel: z.lazy(() => InvoiceOptionalDefaultsWithRelationsSchema).nullable(),
+  receiptModel: z.lazy(() => ReceiptOptionalDefaultsWithRelationsSchema).nullable(),
+  reportModel: z.lazy(() => ReportsOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -544,26 +544,26 @@ export type RatingClassOptionalDefaults = z.infer<typeof RatingClassOptionalDefa
 //------------------------------------------------------
 
 export type RatingClassRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingWithRelations[];
 };
 
 export type RatingClassWithRelations = z.infer<typeof RatingClassSchema> & RatingClassRelations
 
 export const RatingClassWithRelationsSchema: z.ZodType<RatingClassWithRelations> = RatingClassSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
 }))
 
 // RATING CLASS OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type RatingClassOptionalDefaultsRelations = {
-  ratingModel: Rating[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
 };
 
 export type RatingClassOptionalDefaultsWithRelations = z.infer<typeof RatingClassOptionalDefaultsSchema> & RatingClassOptionalDefaultsRelations
 
 export const RatingClassOptionalDefaultsWithRelationsSchema: z.ZodType<RatingClassOptionalDefaultsWithRelations> = RatingClassOptionalDefaultsSchema.merge(z.object({
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -610,34 +610,34 @@ export type ClientOptionalDefaults = z.infer<typeof ClientOptionalDefaultsSchema
 //------------------------------------------------------
 
 export type ClientRelations = {
-  industryModel: Industry;
-  contactModel: Contact[];
-  ratingModel: Rating[];
+  industryModel: IndustryWithRelations;
+  contactModel: ContactWithRelations[];
+  ratingModel: RatingWithRelations[];
 };
 
 export type ClientWithRelations = z.infer<typeof ClientSchema> & ClientRelations
 
 export const ClientWithRelationsSchema: z.ZodType<ClientWithRelations> = ClientSchema.merge(z.object({
-  industryModel: z.lazy(() => IndustrySchema),
-  contactModel: z.lazy(() => ContactSchema).array(),
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  industryModel: z.lazy(() => IndustryWithRelationsSchema),
+  contactModel: z.lazy(() => ContactWithRelationsSchema).array(),
+  ratingModel: z.lazy(() => RatingWithRelationsSchema).array(),
 }))
 
 // CLIENT OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type ClientOptionalDefaultsRelations = {
-  industryModel: Industry;
-  contactModel: Contact[];
-  ratingModel: Rating[];
+  industryModel: IndustryOptionalDefaultsWithRelations;
+  contactModel: ContactOptionalDefaultsWithRelations[];
+  ratingModel: RatingOptionalDefaultsWithRelations[];
 };
 
 export type ClientOptionalDefaultsWithRelations = z.infer<typeof ClientOptionalDefaultsSchema> & ClientOptionalDefaultsRelations
 
 export const ClientOptionalDefaultsWithRelationsSchema: z.ZodType<ClientOptionalDefaultsWithRelations> = ClientOptionalDefaultsSchema.merge(z.object({
-  industryModel: z.lazy(() => IndustrySchema),
-  contactModel: z.lazy(() => ContactSchema).array(),
-  ratingModel: z.lazy(() => RatingSchema).array(),
+  industryModel: z.lazy(() => IndustryOptionalDefaultsWithRelationsSchema),
+  contactModel: z.lazy(() => ContactOptionalDefaultsWithRelationsSchema).array(),
+  ratingModel: z.lazy(() => RatingOptionalDefaultsWithRelationsSchema).array(),
 }))
 
 /////////////////////////////////////////
@@ -677,26 +677,26 @@ export type ContactOptionalDefaults = z.infer<typeof ContactOptionalDefaultsSche
 //------------------------------------------------------
 
 export type ContactRelations = {
-  clientModel: Client;
+  clientModel: ClientWithRelations;
 };
 
 export type ContactWithRelations = z.infer<typeof ContactSchema> & ContactRelations
 
 export const ContactWithRelationsSchema: z.ZodType<ContactWithRelations> = ContactSchema.merge(z.object({
-  clientModel: z.lazy(() => ClientSchema),
+  clientModel: z.lazy(() => ClientWithRelationsSchema),
 }))
 
 // CONTACT OPTIONAL DEFAULTS RELATION SCHEMA
 //------------------------------------------------------
 
 export type ContactOptionalDefaultsRelations = {
-  clientModel: Client;
+  clientModel: ClientOptionalDefaultsWithRelations;
 };
 
 export type ContactOptionalDefaultsWithRelations = z.infer<typeof ContactOptionalDefaultsSchema> & ContactOptionalDefaultsRelations
 
 export const ContactOptionalDefaultsWithRelationsSchema: z.ZodType<ContactOptionalDefaultsWithRelations> = ContactOptionalDefaultsSchema.merge(z.object({
-  clientModel: z.lazy(() => ClientSchema),
+  clientModel: z.lazy(() => ClientOptionalDefaultsWithRelationsSchema),
 }))
 
 /////////////////////////////////////////
@@ -729,10 +729,6 @@ export const LogOptionalDefaultsSchema = LogSchema.merge(z.object({
 export type LogOptionalDefaults = z.infer<typeof LogOptionalDefaultsSchema>
 
 /////////////////////////////////////////
-// MONGODB TYPES
-/////////////////////////////////////////
-
-/////////////////////////////////////////
 // SELECT & INCLUDE
 /////////////////////////////////////////
 
@@ -742,12 +738,12 @@ export type LogOptionalDefaults = z.infer<typeof LogOptionalDefaultsSchema>
 export const MethodologyIncludeSchema: z.ZodType<Prisma.MethodologyInclude> = z.object({
 }).strict()
 
-export const MethodologyArgsSchema= z.object({
+export const MethodologyArgsSchema: z.ZodType<Prisma.MethodologyDefaultArgs> = z.object({
   select: z.lazy(() => MethodologySelectSchema).optional(),
   include: z.lazy(() => MethodologyIncludeSchema).optional(),
 }).strict();
 
-export const MethodologyCountOutputTypeArgsSchema= z.object({
+export const MethodologyCountOutputTypeArgsSchema: z.ZodType<Prisma.MethodologyCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => MethodologyCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -772,12 +768,12 @@ export const MethodologySelectSchema: z.ZodType<Prisma.MethodologySelect> = z.ob
 export const QuestionnaireIncludeSchema: z.ZodType<Prisma.QuestionnaireInclude> = z.object({
 }).strict()
 
-export const QuestionnaireArgsSchema= z.object({
+export const QuestionnaireArgsSchema: z.ZodType<Prisma.QuestionnaireDefaultArgs> = z.object({
   select: z.lazy(() => QuestionnaireSelectSchema).optional(),
   include: z.lazy(() => QuestionnaireIncludeSchema).optional(),
 }).strict();
 
-export const QuestionnaireCountOutputTypeArgsSchema= z.object({
+export const QuestionnaireCountOutputTypeArgsSchema: z.ZodType<Prisma.QuestionnaireCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => QuestionnaireCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -802,12 +798,12 @@ export const QuestionnaireSelectSchema: z.ZodType<Prisma.QuestionnaireSelect> = 
 export const LetterOfEngagementIncludeSchema: z.ZodType<Prisma.LetterOfEngagementInclude> = z.object({
 }).strict()
 
-export const LetterOfEngagementArgsSchema= z.object({
+export const LetterOfEngagementArgsSchema: z.ZodType<Prisma.LetterOfEngagementDefaultArgs> = z.object({
   select: z.lazy(() => LetterOfEngagementSelectSchema).optional(),
   include: z.lazy(() => LetterOfEngagementIncludeSchema).optional(),
 }).strict();
 
-export const LetterOfEngagementCountOutputTypeArgsSchema= z.object({
+export const LetterOfEngagementCountOutputTypeArgsSchema: z.ZodType<Prisma.LetterOfEngagementCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => LetterOfEngagementCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -831,12 +827,12 @@ export const LetterOfEngagementSelectSchema: z.ZodType<Prisma.LetterOfEngagement
 export const InvoiceIncludeSchema: z.ZodType<Prisma.InvoiceInclude> = z.object({
 }).strict()
 
-export const InvoiceArgsSchema= z.object({
+export const InvoiceArgsSchema: z.ZodType<Prisma.InvoiceDefaultArgs> = z.object({
   select: z.lazy(() => InvoiceSelectSchema).optional(),
   include: z.lazy(() => InvoiceIncludeSchema).optional(),
 }).strict();
 
-export const InvoiceCountOutputTypeArgsSchema= z.object({
+export const InvoiceCountOutputTypeArgsSchema: z.ZodType<Prisma.InvoiceCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => InvoiceCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -860,12 +856,12 @@ export const InvoiceSelectSchema: z.ZodType<Prisma.InvoiceSelect> = z.object({
 export const ReceiptIncludeSchema: z.ZodType<Prisma.ReceiptInclude> = z.object({
 }).strict()
 
-export const ReceiptArgsSchema= z.object({
+export const ReceiptArgsSchema: z.ZodType<Prisma.ReceiptDefaultArgs> = z.object({
   select: z.lazy(() => ReceiptSelectSchema).optional(),
   include: z.lazy(() => ReceiptIncludeSchema).optional(),
 }).strict();
 
-export const ReceiptCountOutputTypeArgsSchema= z.object({
+export const ReceiptCountOutputTypeArgsSchema: z.ZodType<Prisma.ReceiptCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => ReceiptCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -889,12 +885,12 @@ export const ReceiptSelectSchema: z.ZodType<Prisma.ReceiptSelect> = z.object({
 export const IndustryIncludeSchema: z.ZodType<Prisma.IndustryInclude> = z.object({
 }).strict()
 
-export const IndustryArgsSchema= z.object({
+export const IndustryArgsSchema: z.ZodType<Prisma.IndustryDefaultArgs> = z.object({
   select: z.lazy(() => IndustrySelectSchema).optional(),
   include: z.lazy(() => IndustryIncludeSchema).optional(),
 }).strict();
 
-export const IndustryCountOutputTypeArgsSchema= z.object({
+export const IndustryCountOutputTypeArgsSchema: z.ZodType<Prisma.IndustryCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => IndustryCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -917,7 +913,7 @@ export const IndustrySelectSchema: z.ZodType<Prisma.IndustrySelect> = z.object({
 export const ReportsIncludeSchema: z.ZodType<Prisma.ReportsInclude> = z.object({
 }).strict()
 
-export const ReportsArgsSchema= z.object({
+export const ReportsArgsSchema: z.ZodType<Prisma.ReportsDefaultArgs> = z.object({
   select: z.lazy(() => ReportsSelectSchema).optional(),
   include: z.lazy(() => ReportsIncludeSchema).optional(),
 }).strict();
@@ -942,12 +938,12 @@ export const ReportsSelectSchema: z.ZodType<Prisma.ReportsSelect> = z.object({
 export const RatingIncludeSchema: z.ZodType<Prisma.RatingInclude> = z.object({
 }).strict()
 
-export const RatingArgsSchema= z.object({
+export const RatingArgsSchema: z.ZodType<Prisma.RatingDefaultArgs> = z.object({
   select: z.lazy(() => RatingSelectSchema).optional(),
   include: z.lazy(() => RatingIncludeSchema).optional(),
 }).strict();
 
-export const RatingCountOutputTypeArgsSchema= z.object({
+export const RatingCountOutputTypeArgsSchema: z.ZodType<Prisma.RatingCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => RatingCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -997,12 +993,12 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
 export const RatingClassIncludeSchema: z.ZodType<Prisma.RatingClassInclude> = z.object({
 }).strict()
 
-export const RatingClassArgsSchema= z.object({
+export const RatingClassArgsSchema: z.ZodType<Prisma.RatingClassDefaultArgs> = z.object({
   select: z.lazy(() => RatingClassSelectSchema).optional(),
   include: z.lazy(() => RatingClassIncludeSchema).optional(),
 }).strict();
 
-export const RatingClassCountOutputTypeArgsSchema= z.object({
+export const RatingClassCountOutputTypeArgsSchema: z.ZodType<Prisma.RatingClassCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => RatingClassCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -1025,12 +1021,12 @@ export const RatingClassSelectSchema: z.ZodType<Prisma.RatingClassSelect> = z.ob
 export const ClientIncludeSchema: z.ZodType<Prisma.ClientInclude> = z.object({
 }).strict()
 
-export const ClientArgsSchema= z.object({
+export const ClientArgsSchema: z.ZodType<Prisma.ClientDefaultArgs> = z.object({
   select: z.lazy(() => ClientSelectSchema).optional(),
   include: z.lazy(() => ClientIncludeSchema).optional(),
 }).strict();
 
-export const ClientCountOutputTypeArgsSchema= z.object({
+export const ClientCountOutputTypeArgsSchema: z.ZodType<Prisma.ClientCountOutputTypeDefaultArgs> = z.object({
   select: z.lazy(() => ClientCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -1069,7 +1065,7 @@ export const ClientSelectSchema: z.ZodType<Prisma.ClientSelect> = z.object({
 export const ContactIncludeSchema: z.ZodType<Prisma.ContactInclude> = z.object({
 }).strict()
 
-export const ContactArgsSchema= z.object({
+export const ContactArgsSchema: z.ZodType<Prisma.ContactDefaultArgs> = z.object({
   select: z.lazy(() => ContactSelectSchema).optional(),
   include: z.lazy(() => ContactIncludeSchema).optional(),
 }).strict();
@@ -1093,7 +1089,7 @@ export const ContactSelectSchema: z.ZodType<Prisma.ContactSelect> = z.object({
 // LOG
 //------------------------------------------------------
 
-export const LogArgsSchema= z.object({
+export const LogArgsSchema: z.ZodType<Prisma.LogDefaultArgs> = z.object({
   select: z.lazy(() => LogSelectSchema).optional(),
 }).strict();
 
