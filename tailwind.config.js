@@ -15,14 +15,14 @@ module.exports = {
     themes: [
       {
         light: {
-          // ...require('daisyui/src/theming/themes')['light'],
+          // ...require('daisyui/theme')['light'],
           primary: '#002d53',
           secondary: '#FF7D55',
           accent: '#E0E0E0',
           info: '#EEA71E',
         },
         dark: {
-          // ...require('daisyui/src/theming/themes')['dark'],
+          // ...require('daisyui/theme')['dark'],
           primary: '#171717',
           secondary: '#FF7D55',
           accent: '#2A2A2A',
