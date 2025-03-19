@@ -742,12 +742,12 @@ export type LogOptionalDefaults = z.infer<typeof LogOptionalDefaultsSchema>
 export const MethodologyIncludeSchema: z.ZodType<Prisma.MethodologyInclude> = z.object({
 }).strict()
 
-export const MethodologyArgsSchema= z.object({
+export const MethodologyArgsSchema: z.object({
   select: z.lazy(() => MethodologySelectSchema).optional(),
   include: z.lazy(() => MethodologyIncludeSchema).optional(),
 }).strict();
 
-export const MethodologyCountOutputTypeArgsSchema= z.object({
+export const MethodologyCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => MethodologyCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -772,12 +772,12 @@ export const MethodologySelectSchema: z.ZodType<Prisma.MethodologySelect> = z.ob
 export const QuestionnaireIncludeSchema: z.ZodType<Prisma.QuestionnaireInclude> = z.object({
 }).strict()
 
-export const QuestionnaireArgsSchema= z.object({
+export const QuestionnaireArgsSchema: z.object({
   select: z.lazy(() => QuestionnaireSelectSchema).optional(),
   include: z.lazy(() => QuestionnaireIncludeSchema).optional(),
 }).strict();
 
-export const QuestionnaireCountOutputTypeArgsSchema= z.object({
+export const QuestionnaireCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => QuestionnaireCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -802,12 +802,12 @@ export const QuestionnaireSelectSchema: z.ZodType<Prisma.QuestionnaireSelect> = 
 export const LetterOfEngagementIncludeSchema: z.ZodType<Prisma.LetterOfEngagementInclude> = z.object({
 }).strict()
 
-export const LetterOfEngagementArgsSchema= z.object({
+export const LetterOfEngagementArgsSchema: z.object({
   select: z.lazy(() => LetterOfEngagementSelectSchema).optional(),
   include: z.lazy(() => LetterOfEngagementIncludeSchema).optional(),
 }).strict();
 
-export const LetterOfEngagementCountOutputTypeArgsSchema= z.object({
+export const LetterOfEngagementCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => LetterOfEngagementCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -831,12 +831,12 @@ export const LetterOfEngagementSelectSchema: z.ZodType<Prisma.LetterOfEngagement
 export const InvoiceIncludeSchema: z.ZodType<Prisma.InvoiceInclude> = z.object({
 }).strict()
 
-export const InvoiceArgsSchema= z.object({
+export const InvoiceArgsSchema: z.object({
   select: z.lazy(() => InvoiceSelectSchema).optional(),
   include: z.lazy(() => InvoiceIncludeSchema).optional(),
 }).strict();
 
-export const InvoiceCountOutputTypeArgsSchema= z.object({
+export const InvoiceCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => InvoiceCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -860,12 +860,12 @@ export const InvoiceSelectSchema: z.ZodType<Prisma.InvoiceSelect> = z.object({
 export const ReceiptIncludeSchema: z.ZodType<Prisma.ReceiptInclude> = z.object({
 }).strict()
 
-export const ReceiptArgsSchema= z.object({
+export const ReceiptArgsSchema: z.object({
   select: z.lazy(() => ReceiptSelectSchema).optional(),
   include: z.lazy(() => ReceiptIncludeSchema).optional(),
 }).strict();
 
-export const ReceiptCountOutputTypeArgsSchema= z.object({
+export const ReceiptCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => ReceiptCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -889,12 +889,12 @@ export const ReceiptSelectSchema: z.ZodType<Prisma.ReceiptSelect> = z.object({
 export const IndustryIncludeSchema: z.ZodType<Prisma.IndustryInclude> = z.object({
 }).strict()
 
-export const IndustryArgsSchema= z.object({
+export const IndustryArgsSchema: z.object({
   select: z.lazy(() => IndustrySelectSchema).optional(),
   include: z.lazy(() => IndustryIncludeSchema).optional(),
 }).strict();
 
-export const IndustryCountOutputTypeArgsSchema= z.object({
+export const IndustryCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => IndustryCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -917,7 +917,7 @@ export const IndustrySelectSchema: z.ZodType<Prisma.IndustrySelect> = z.object({
 export const ReportsIncludeSchema: z.ZodType<Prisma.ReportsInclude> = z.object({
 }).strict()
 
-export const ReportsArgsSchema= z.object({
+export const ReportsArgsSchema: z.object({
   select: z.lazy(() => ReportsSelectSchema).optional(),
   include: z.lazy(() => ReportsIncludeSchema).optional(),
 }).strict();
@@ -942,12 +942,12 @@ export const ReportsSelectSchema: z.ZodType<Prisma.ReportsSelect> = z.object({
 export const RatingIncludeSchema: z.ZodType<Prisma.RatingInclude> = z.object({
 }).strict()
 
-export const RatingArgsSchema= z.object({
+export const RatingArgsSchema: z.object({
   select: z.lazy(() => RatingSelectSchema).optional(),
   include: z.lazy(() => RatingIncludeSchema).optional(),
 }).strict();
 
-export const RatingCountOutputTypeArgsSchema= z.object({
+export const RatingCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => RatingCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -997,12 +997,12 @@ export const RatingSelectSchema: z.ZodType<Prisma.RatingSelect> = z.object({
 export const RatingClassIncludeSchema: z.ZodType<Prisma.RatingClassInclude> = z.object({
 }).strict()
 
-export const RatingClassArgsSchema= z.object({
+export const RatingClassArgsSchema: z.object({
   select: z.lazy(() => RatingClassSelectSchema).optional(),
   include: z.lazy(() => RatingClassIncludeSchema).optional(),
 }).strict();
 
-export const RatingClassCountOutputTypeArgsSchema= z.object({
+export const RatingClassCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => RatingClassCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -1025,12 +1025,12 @@ export const RatingClassSelectSchema: z.ZodType<Prisma.RatingClassSelect> = z.ob
 export const ClientIncludeSchema: z.ZodType<Prisma.ClientInclude> = z.object({
 }).strict()
 
-export const ClientArgsSchema= z.object({
+export const ClientArgsSchema: z.object({
   select: z.lazy(() => ClientSelectSchema).optional(),
   include: z.lazy(() => ClientIncludeSchema).optional(),
 }).strict();
 
-export const ClientCountOutputTypeArgsSchema= z.object({
+export const ClientCountOutputTypeArgsSchema: z.object({
   select: z.lazy(() => ClientCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -1069,7 +1069,7 @@ export const ClientSelectSchema: z.ZodType<Prisma.ClientSelect> = z.object({
 export const ContactIncludeSchema: z.ZodType<Prisma.ContactInclude> = z.object({
 }).strict()
 
-export const ContactArgsSchema= z.object({
+export const ContactArgsSchema: z.object({
   select: z.lazy(() => ContactSelectSchema).optional(),
   include: z.lazy(() => ContactIncludeSchema).optional(),
 }).strict();
@@ -1093,7 +1093,7 @@ export const ContactSelectSchema: z.ZodType<Prisma.ContactSelect> = z.object({
 // LOG
 //------------------------------------------------------
 
-export const LogArgsSchema= z.object({
+export const LogArgsSchema: z.object({
   select: z.lazy(() => LogSelectSchema).optional(),
 }).strict();
 
