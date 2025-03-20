@@ -61,8 +61,9 @@ export default function RatingLayout({
     );
     return thisReports?.length ? thisReports.length + 1 : 1;
   };
- 
+
   const onUploadHandler = (name: string) => {
+    console.log(name, "this is where the upload is happening first");
     if (name === "Draft Report") {
       const version = getVersion(name);
       setReportType(name);
@@ -106,7 +107,6 @@ export default function RatingLayout({
     ratingRef.current?.showModal();
   }, []);
  */
- 
 
   return (
     <div className="flex flex-col flex-1 h-full gap-6 overflow-auto">
@@ -271,26 +271,24 @@ export default function RatingLayout({
               {rating?.reportModel?.map((report, i) => (
                 <React.Fragment key={report?.id}>
                   <Tr
-                  key={report?.id}
-                  index={i + 1}
-                  name={report?.reportTitle}
-                  version={report?.version}
-                  status={report?.status}
-                  link={report?.reportFileUrl || ""}
-                />
-                 {report?.finalLetterUrl && (
-                <Tr
-                  index={i + 1} // Keep the same index since it's part of the same Final Report
-                  name="Final Letter"
-                  version={report?.version}
-                 status={report?.status}
-                 link={report?.finalLetterUrl}
-                />
-                )}
-                  </React.Fragment>
-                ))}
-                
-              
+                    key={report?.id}
+                    index={i + 1}
+                    name={report?.reportTitle}
+                    version={report?.version}
+                    status={report?.status}
+                    link={report?.reportFileUrl || ""}
+                  />
+                  {report?.finalLetterUrl && (
+                    <Tr
+                      index={i + 1} // Keep the same index since it's part of the same Final Report
+                      name="Final Letter"
+                      version={report?.version}
+                      status={report?.status}
+                      link={report?.finalLetterUrl}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
             </ul>
             <div
               className={`flex flex-col md:flex-row items-center ${
@@ -402,28 +400,30 @@ export default function RatingLayout({
                     <i className="ri-file-text-line" />
                     Invoice
                   </a>
-                  {!isClientOnly && !rating?.receipt && rating?.reportModel?.length === 0 && (
-                    <i
-                      className="ri-edit-line cursor-pointer text-secondary"
-                      onClick={() => setShowInvoiceModal(true)}
-                    />
-                  )}
+                  {!isClientOnly &&
+                    !rating?.receipt &&
+                    rating?.reportModel?.length === 0 && (
+                      <i
+                        className="ri-edit-line cursor-pointer text-secondary"
+                        onClick={() => setShowInvoiceModal(true)}
+                      />
+                    )}
                 </li>
               )}
-              { !isClientOnly && rating?.invoice && rating?.reportModel?.length === 0 && !rating?.receipt && (
-                <li className="p-4 bg-base-100 flex gap-4 text-sm relative text-secondary cursor-pointer"
-                 onClick={() => setShowReceiptModal(true)}>
-             
-                  <i className="ri-file-text-line link-secondary" />
-                  Receipt
-                  <i
-                    className="ri-edit-line cursor-pointer text-secondary"
-                    
-                  />
-              
-              </li>
-            )}
-               {rating.receipt && (
+              {!isClientOnly &&
+                rating?.invoice &&
+                rating?.reportModel?.length === 0 &&
+                !rating?.receipt && (
+                  <li
+                    className="p-4 bg-base-100 flex gap-4 text-sm relative text-secondary cursor-pointer"
+                    onClick={() => setShowReceiptModal(true)}
+                  >
+                    <i className="ri-file-text-line link-secondary" />
+                    Receipt
+                    <i className="ri-edit-line cursor-pointer text-secondary" />
+                  </li>
+                )}
+              {rating.receipt && (
                 <li className="p-4 bg-base-100">
                   <a
                     href={`${rating?.receiptModel?.url}`}
@@ -436,7 +436,6 @@ export default function RatingLayout({
                   </a>
                 </li>
               )}
-
             </ul>
             {showInvoiceModal && (
               <EditInvoice onClose={() => setShowInvoiceModal(false)} />
@@ -444,7 +443,6 @@ export default function RatingLayout({
             {showReceiptModal && (
               <AddReceipt onClose={() => setShowReceiptModal(false)} />
             )}
-            
           </div>
         </div>
       </div>

@@ -14,7 +14,6 @@ import numeral from "numeral";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-
 const allowFileTypes = [
   "image/png",
   "image/jpeg",
@@ -63,10 +62,9 @@ const uploadCache = new Map<
   { timeout: NodeJS.Timeout; files: { name: string }[] }
 >();
 
-
 const delayEmailNotification = (
-  analystEmail: string,
-  supervisor:string,
+  primaryAnalyst: string,
+  supervisor: string,
   secondaryAnalyst: string | null,
   primaryAnalystName: string,
   company: string,
@@ -74,9 +72,10 @@ const delayEmailNotification = (
   appUrl: string,
   newFiles: { name: string }[]
 ) => {
-  const existingData = uploadCache.get(analystEmail);
-  const accumulatedFiles = existingData ? [...existingData.files, ...newFiles] : newFiles;
-
+  const existingData = uploadCache.get(primaryAnalyst);
+  const accumulatedFiles = existingData
+    ? [...existingData.files, ...newFiles]
+    : newFiles;
 
   if (existingData) {
     clearTimeout(existingData.timeout);
@@ -89,32 +88,30 @@ const delayEmailNotification = (
 
     // const ccEmail = secondaryAnalyst ? [secondaryAnalyst] : [];
     const ccEmails = secondaryAnalyst
-          ? [supervisor, secondaryAnalyst]
-          : [supervisor];
+      ? [supervisor, secondaryAnalyst]
+      : [supervisor];
 
     sendEmail({
-      to: analystEmail,
-      email: analystEmail,
+      to: primaryAnalystName,
+      email: primaryAnalyst,
       cc: ccEmails,
       subject: `${company} File Upload`,
       html: `
         <p> Dear ${primaryAnalystName},</p>
         <p>${company} has uploaded the following file${
         accumulatedFiles.length > 1 ? "s" : ""
-        } for the ${ratingname} on the Agusto & Co. RMS.</p>
+      } for the ${ratingname} on the Agusto & Co. RMS.</p>
         <p> ${fileList.toString()} </p>
         <p>Please log in to the <a href="${appUrl}">RMS</a> to view and download the information submitted.</p>
         <p>Best Regards,</p>
         <p>Agusto & Co RMS Team</p>`,
     });
 
-    uploadCache.delete(analystEmail);
+    uploadCache.delete(primaryAnalyst);
   }, 120000); // 2 minute delay
 
-  uploadCache.set(analystEmail, { timeout: timer, files: accumulatedFiles });
+  uploadCache.set(primaryAnalyst, { timeout: timer, files: accumulatedFiles });
 };
-
-
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { token, client } = await validateCookie(request);
@@ -148,7 +145,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     )
       .then(async (res) => {
         const files = Object.fromEntries(res.entries());
-
         const supervisor = files.supervisor as string;
         const primaryAnalyst = files.primaryAnalyst as string;
         const secondaryAnalyst = files.secondaryAnalyst as string;
@@ -184,18 +180,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         );
         const fileArray = saveFiles.filter((file) => file?.name !== undefined);
 
-        if(fileArray.length>0){
+        if (fileArray.length > 0) {
           delayEmailNotification(
-            supervisor,
             primaryAnalyst,
+            supervisor,
             secondaryAnalyst,
             primaryAnalystName,
             company as string,
             ratingname as string,
             appUrl as string,
             fileArray
-      )}
-       /* const fileList = fileArray
+          );
+        }
+        /* const fileList = fileArray
           .map((el, index) => `${index + 1}. ${el?.name} <br/> <br/>`)
           .join("\n");
 

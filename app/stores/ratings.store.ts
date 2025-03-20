@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 type RatingsProp = {
   id: string;
@@ -23,7 +23,7 @@ export const useRatingStore = create<RatingStore<any>>()(
       setRatings: (ratingsData) => set({ ratingsData }),
     }),
     {
-      name: 'rating-data',
+      name: "rating-data",
       storage: createJSONStorage(() => sessionStorage),
     }
   )

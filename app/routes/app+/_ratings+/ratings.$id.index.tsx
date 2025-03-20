@@ -12,6 +12,7 @@ import {
 } from "@remix-run/node";
 import RatingLayout from "@layouts/rating-layout";
 import { useEffect } from "react";
+import { statSync } from "fs";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const id = params.id as string;
@@ -69,15 +70,24 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({ rating: rating as typeof rating, id, error });
 };
 
+// const uploadHandler = unstable_composeUploadHandlers(
+//   unstable_createFileUploadHandler({
+//     maxPartSize: 100_000_000,
+//     directory: "/tmp",
+//     file: ({ filename }) => filename,
+//   }),
+//   unstable_createMemoryUploadHandler()
+// );
+
 const uploadHandler = unstable_composeUploadHandlers(
   unstable_createFileUploadHandler({
     maxPartSize: 100_000_000,
     directory: "/tmp",
     file: ({ filename }) => filename,
+    // You can also add a filter here if needed
   }),
   unstable_createMemoryUploadHandler()
 );
-
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const method = request.method;
   const id = params.id as string;
@@ -93,6 +103,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       request,
       uploadHandler
     );
+
     const body = Object.fromEntries(formData.entries()) as unknown as any;
 
     const allowedIds = [
@@ -127,28 +138,28 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const year = body?.year;
     const title = body?.title;
 
-    if (file?.size > 0) {
+    if (file && file.size > 0) {
       let fileName = `${id}-${reportTitle}.${version}`;
       const upload = await uploadStreamToSpaces(file, fileName, version);
       if (upload?.$metadata?.httpStatusCode === 200)
         data.reportFileUrl = upload?.Location as any;
     }
 
-    if (finalLetter && finalLetter.size > 0) {
+    if (finalLetter && finalLetter?.size > 0) {
       let fileName = `${id}-${reportTitle}-letter.${version}`;
       const upload = await uploadStreamToSpaces(finalLetter, fileName, version);
       if (upload?.$metadata?.httpStatusCode === 200)
         data.finalLetterUrl = upload?.Location as any;
     }
-    
 
-    if (consentLetter.size > 0) {
+    if (consentLetter && consentLetter?.size > 0) {
       let fileName = `${id}-${reportTitle}-consent-letter.${version}`;
       const upload = await uploadStreamToSpaces(
         consentLetter,
         fileName,
         version
       );
+
       if (upload?.$metadata?.httpStatusCode === 200)
         data.consentLetterUrl = upload?.Location as any;
     }
@@ -168,20 +179,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       data,
     });
 
-   
-
     if (CreateReport) {
       if (reportTitle?.toLowerCase().includes("final")) {
-         sendEmail({
+        sendEmail({
           to: body.supervisorEmail,
           email: body.supervisorEmail,
-           subject: "Final Rating Report Uploaded",
+          subject: "Final Rating Report Uploaded",
           html: `<p>Dear Team Lead,</p>
           <p> ${user?.firstname} ${user?.lastname} has uploaded the final rating report for ${title} and accompanying letter on the Agusto RMS portal.</p>
 
           <p>Best Regards,</p>
             <p>Agusto & Co RMS Team</p>`,
-         });
+        });
 
         //notify client
         contacts.forEach((el: any) => {
@@ -203,7 +212,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           to: body.supervisorEmail,
           email: body.supervisorEmail,
           subject: "Draft Rating Report Uploaded",
-         html: `<p>Dear Team Lead,</p>
+          html: `<p>Dear Team Lead,</p>
          <p> ${user?.firstname} ${user?.lastname} has uploaded the draft rating for ${title}.</p>
 
             <p>Best Regards,</p>

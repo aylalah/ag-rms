@@ -151,7 +151,7 @@ export default function Ratings() {
       <aside className="flex-1 h-full py-4 overflow-auto ">
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {storeQueryData?.tbody?.map((el: any) => (
-            <RatingsCard key={el.id} el={el as any} />
+            <RatingsCard key={el?.id} el={el as any} />
           ))}
         </div>
       </aside>
