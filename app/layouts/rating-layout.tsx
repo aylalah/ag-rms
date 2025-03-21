@@ -63,7 +63,6 @@ export default function RatingLayout({
   };
 
   const onUploadHandler = (name: string) => {
-    console.log(name, "this is where the upload is happening first");
     if (name === "Draft Report") {
       const version = getVersion(name);
       setReportType(name);
@@ -73,7 +72,6 @@ export default function RatingLayout({
     if (name === "Final Report") {
       const version = getVersion(name);
       if (!rating?.issueDate || !rating?.expiryDate || !rating?.ratingClass) {
-        // console.log(`/app/ratings/${rating?.id}/edit-rating`);
         window.location.href = `/app/ratings/${rating?.id}/edit-rating`;
         //toast.error("Please fill in the required fields before uploading the final report", { toastId: "error" });
         return;
