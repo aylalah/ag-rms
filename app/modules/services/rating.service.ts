@@ -6,6 +6,7 @@ import { DefaultArgs } from "@prisma/client/runtime/library";
 import { MainClass } from "./main.service";
 import { Prisma } from "@prisma/client";
 import { RatingSchema, RatingStatusSchema } from "@helpers/zodPrisma";
+import { send } from "node:process";
 
 interface AllArgs extends Prisma.RatingFindManyArgs {
   limit: number;
@@ -20,7 +21,7 @@ export class RatingClass extends MainClass {
     try {
       await this.hasAccess("all");
       const unit = this.user?.unit;
-   
+
       const whereUnit = unit === "Information Technology" ? {} : { unit };
 
       const { where, orderBy, page, limit, include } = args;
@@ -59,7 +60,6 @@ export class RatingClass extends MainClass {
     }
   }
 
-
   async one(input: {
     id: string;
     include?: Prisma.RatingInclude<DefaultArgs>;
@@ -78,7 +78,7 @@ export class RatingClass extends MainClass {
           clientModel: { include: { contactModel: true } },
           loeModel: true,
           invoiceModel: true,
-          receiptModel:true,
+          receiptModel: true,
           ...include,
         },
       });
@@ -95,7 +95,7 @@ export class RatingClass extends MainClass {
       //await this.hasAccess(["admin", "hod", "all"]);
       await this.hasAccess("all");
       const unit = this.user?.unit;
-    
+
       //const check for existing rating with year and client
       const check = await dbQuery.rating.findFirst({
         where: {
@@ -112,10 +112,11 @@ export class RatingClass extends MainClass {
         data: { ...data, unit },
         include: { clientModel: true },
       });
-  
+
       const contacts = await dbQuery.contact.findMany({
         where: { client: result.clientModel.id },
       });
+      const supervisor = JSON.parse(result?.supervisor || "{}");
 
       contacts.forEach((el) => {
         const HtmlBody = `<p>Dear Client,</p>
@@ -130,6 +131,18 @@ export class RatingClass extends MainClass {
           subject: `New Rating - ${result.ratingTitle} `,
           html: HtmlBody,
         });
+      });
+
+      sendEmail({
+        to: `${supervisor?.firstname} ${supervisor?.lastname}`,
+        email: supervisor?.email,
+        subject: `New Rating - ${result.ratingTitle} `,
+        html: `<p>Dear ${supervisor?.firstname} ${supervisor?.lastname},</p>
+       <p> Please be informed that ${result.ratingTitle} has been created on the Agusto RMS portal.</p>
+       <p>Please log in to your account to view</p>
+
+       <p>Best Regards,</p>
+       <p>Agusto & Co RMS Team</p>`,
       });
 
       this.LogAction({
@@ -203,7 +216,7 @@ export class RatingClass extends MainClass {
       // const user = await appDecryptData(token);
 
       const unit = user?.unit;
-   
+
       const endPoint = process.env.AGUSTO_SERVICES;
 
       let unitMembers: any = [];
@@ -245,7 +258,6 @@ export class RatingClass extends MainClass {
           )
           .sort((a: any, b: any) => a.firstname.localeCompare(b.firstname));
       }
-
 
       const objData = convertZodSchema(RatingSchema);
 
@@ -308,7 +320,6 @@ export class RatingClass extends MainClass {
                 }),
                 name: `${el?.firstname} ${el?.lastname}`,
               }));
-           
 
             el.value = sup?.[0]?.id || "";
             el.type = "object";
@@ -325,11 +336,9 @@ export class RatingClass extends MainClass {
                 email: el?.corporate_email,
                 employee_id: el?.employee_id,
               }),
-          
+
               name: `${el?.firstname} ${el?.lastname}`,
-          
             }));
-          
           }
 
           if (el.field === "secondaryAnalyst") {
