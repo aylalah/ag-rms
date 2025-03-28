@@ -101,41 +101,66 @@ export default function UploadedFiles() {
     setAllFiles(filtered as any);
   };
 
-  const onAcceptAction = (value: string) => {
-    if (value === "Disable Questionnaire Upload") {
-      const confirm = window.confirm(
-        "Are you sure you want to accept this questionnaire?"
-      );
-      if (!confirm) return;
-      Fetcher.submit({ requireQuestionnaireFiles: false }, { method: "patch" });
-    }
+  // const onAcceptAction = (value: string) => {
+  //   if (value === "Disable Questionnaire Upload") {
+  //     const confirm = window.confirm(
+  //       "Are you sure you want to accept this questionnaire?"
+  //     );
+  //     if (!confirm) return;
+  //     Fetcher.submit({ requireQuestionnaireFiles: false }, { method: "patch" });
+  //   }
 
-    if (value === "Enable Questionnaire Upload") {
-      const confirm = window.confirm(
-        "Are you sure you want to request questionnaire info?"
-      );
-      if (!confirm) return;
-      Fetcher.submit({ requireQuestionnaireFiles: true }, { method: "patch" });
-    }
+  //   if (value === "Enable Questionnaire Upload") {
+  //     const confirm = window.confirm(
+  //       "Are you sure you want to request questionnaire info?"
+  //     );
+  //     if (!confirm) return;
+  //     Fetcher.submit({ requireQuestionnaireFiles: true }, { method: "patch" });
+  //   }
 
-    if (value === "Disable Additional Docs Upload") {
-      const confirm = window.confirm(
-        "Are you sure you want to accept this additional info?"
-      );
-      if (!confirm) return;
-      Fetcher.submit({ requireAdditionalFiles: false }, { method: "patch" });
-    }
+  //   if (value === "Disable Additional Docs Upload") {
+  //     const confirm = window.confirm(
+  //       "Are you sure you want to accept this additional info?"
+  //     );
+  //     if (!confirm) return;
+  //     Fetcher.submit({ requireAdditionalFiles: false }, { method: "patch" });
+  //   }
 
-    if (value === "Enable Additional Docs Upload") {
-      const confirm = window.confirm(
-        "Are you sure you want to request additional info?"
-      );
-      if (!confirm) return;
-      Fetcher.submit({ requireAdditionalFiles: true }, { method: "patch" });
-    }
-  };
+  //   if (value === "Enable Additional Docs Upload") {
+  //     const confirm = window.confirm(
+  //       "Are you sure you want to request additional info?"
+  //     );
+  //     if (!confirm) return;
+  //     Fetcher.submit({ requireAdditionalFiles: true }, { method: "patch" });
+  //   }
+  // };
 
   //download files section
+  const onAcceptAction = (value: string) => {
+    if (!rating) return;
+  
+    const confirm = window.confirm(`Are you sure you want to ${value.toLowerCase()}?`);
+    if (!confirm) return;
+  
+    // Preserve existing values and only update the relevant one
+    const update = {
+      requireQuestionnaireFiles: rating.requireQuestionnaireFiles,
+      requireAdditionalFiles: rating.requireAdditionalFiles,
+    };
+  
+    if (value === "Disable Questionnaire Upload") {
+      update.requireQuestionnaireFiles = false;
+    } else if (value === "Enable Questionnaire Upload") {
+      update.requireQuestionnaireFiles = true;
+    } else if (value === "Disable Additional Docs Upload") {
+      update.requireAdditionalFiles = false;
+    } else if (value === "Enable Additional Docs Upload") {
+      update.requireAdditionalFiles = true;
+    }
+  
+    Fetcher.submit(update, { method: "patch" });
+  };
+  
   const { saveAs } = pkg;
 
   const toggleFileSelection = (fileUrl: string) => {
@@ -153,7 +178,7 @@ export default function UploadedFiles() {
       setSelectedFiles(allFiles ? allFiles.map((file) => file.url) : []);
     }
   };
- 
+
   const downloadFiles = async () => {
     if (selectedFiles.length === 1) {
       window.open(selectedFiles[0], "_blank");
@@ -179,9 +204,6 @@ export default function UploadedFiles() {
     if (FetcherData?.error) toast.error(FetcherData?.error);
     if (FetcherData?.updateRating) toast.success("Rating Updated Successfully");
   }, [FetcherData]);
-
-  
-
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
@@ -268,7 +290,9 @@ export default function UploadedFiles() {
       {/* Select All & Download Buttons */}
       <div className="flex justify-between items-center py-3">
         <button className="btn btn-secondary" onClick={toggleSelectAll}>
-          {selectedFiles.length === allFiles?.length ? "Deselect All" : "Select All"}
+          {selectedFiles.length === allFiles?.length
+            ? "Deselect All"
+            : "Select All"}
         </button>
         <button
           className="btn btn-primary"
@@ -280,11 +304,10 @@ export default function UploadedFiles() {
       </div>
       <div className="flex flex-col flex-1 overflow-y-scroll border-b bg-base-200">
         <table>
-         
           <thead>
-          <tr className="text-sm text-left bg-primary text-base-100">
-          <th className="w-[2em] p-3 text-center">#</th>
-            
+            <tr className="text-sm text-left bg-primary text-base-100">
+              <th className="w-[2em] p-3 text-center">#</th>
+
               <th className="w-[2em] p-3 text-center"></th>
               <th className="p-3">FileName</th>
               <th className="p-3">Size</th>
