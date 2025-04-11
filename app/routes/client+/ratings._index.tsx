@@ -22,6 +22,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const page = Number(new URL(request.url).searchParams.get("page")) || 1;
   const limit = Number(new URL(request.url).searchParams.get("limit")) || 15;
 
+  const videoUrl =
+    "https://agustoportals.sfo3.cdn.digitaloceanspaces.com/rating-mgt-portal/video/client-file%20upload.mp4";
+
   const queryData = RMSservice(token)
     .ratings.all({
       limit,
@@ -59,13 +62,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
       return { thead, tbody, meta, error, searchTitle: "Search by ratings" };
     });
-  return defer({ queryData });
+  return defer({ queryData, videoUrl });
 };
 
 export default function Ratings() {
-  const { queryData } = useLoaderData<typeof loader>();
+  const { queryData, videoUrl } = useLoaderData<typeof loader>();
   const { setQueryData, storeQueryData } = useRatingStore((state) => state);
   const [meta, setMeta] = useState<any>({});
+  const [showVideo, setShowVideo] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,12 +132,58 @@ export default function Ratings() {
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden ">
-      <aside className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      {/* <aside className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <p className="text-[2rem] font-bold capitalize"> Ratings</p>
+          <button
+            onClick={() => setShowVideo(true)}
+            className="bg-secondary text-base text-white"
+          >
+            {" "}
+            🎥 Watch Instructional Video
+          </button>
         </div>
         <div className="flex items-center justify-end flex-1 gap-2"></div>
+      </aside> */}
+      <aside className="flex items-center justify-between">
+        <p className="text-[2rem] font-bold capitalize">Ratings</p>
+
+        <button
+          onClick={() => setShowVideo(true)}
+          className="bg-secondary text-base text-white px-4 py-2 rounded-md"
+        >
+          <i className="ri-live-fill pr-1"></i> Watch Instructional Video
+        </button>
       </aside>
+      {showVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg max-w-3xl w-full mx-4 p-4 relative">
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl font-bold"
+              aria-label="Close video"
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-semibold mb-4">Instructional Video</h2>
+            <video
+              controls
+              autoPlay
+              className="w-full rounded-md shadow"
+              preload="metadata"
+            >
+              <source src={videoUrl} type="video/mp4" />
+              <p>
+                Your browser doesn’t support HTML5 video.
+                <a href={videoUrl} className="text-blue-600 underline">
+                  Download the video
+                </a>{" "}
+                instead.
+              </p>
+            </video>
+          </div>
+        </div>
+      )}
 
       <aside className="flex items-center justify-between overflow-hidden border rounded border-line bg-surface">
         <div className="flex-1">
