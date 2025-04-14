@@ -132,19 +132,7 @@ export default function Ratings() {
 
   return (
     <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden ">
-      {/* <aside className="flex items-center justify-between">
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-[2rem] font-bold capitalize"> Ratings</p>
-          <button
-            onClick={() => setShowVideo(true)}
-            className="bg-secondary text-base text-white"
-          >
-            {" "}
-            🎥 Watch Instructional Video
-          </button>
-        </div>
-        <div className="flex items-center justify-end flex-1 gap-2"></div>
-      </aside> */}
+   
       <aside className="flex items-center justify-between">
         <p className="text-[2rem] font-bold capitalize">Ratings</p>
 

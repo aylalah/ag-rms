@@ -14,6 +14,7 @@ import { on } from "nodemailer/lib/xoauth2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { token, user } = await validateCookie(request);
 
@@ -30,8 +31,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!rating) {
     throw new Error("Rating not found");
   }
+ 
 
-  return json({ rating: rating as typeof rating, id, error });
+  return json({ rating: rating as any, id, error });
 };
 
 const uploadHandler = unstable_composeUploadHandlers(
@@ -45,7 +47,7 @@ const uploadHandler = unstable_composeUploadHandlers(
 );
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const { token } = await validateCookie(request);
+  const { token, user } = await validateCookie(request);
 
   if (!token) {
     return redirect("/", {
@@ -59,6 +61,22 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   const id = params.id as string;
   const invoice = data.invoice as File;
+
+  const allowedIds = [
+    Number(data.supervisorId),
+    Number(data.primaryAnalystId),
+    Number(data.secondaryAnalystId),
+  ];
+
+  if (!allowedIds.includes(Number(user?.employee_id))) {
+    return json(
+      {
+        error: "You are not allowed to upload report for this rating",
+        success: false,
+      },
+      { status: 403 }
+    );
+  }
 
   if (!invoice || invoice.size === 0) {
     return json({ error: "Please upload an invoice" });
@@ -132,18 +150,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }
     }
 */
-const supervisorData = updatedRating?.supervisor ? JSON.parse(updatedRating.supervisor) : null;
-   sendEmail({
-    to: `${supervisorData?.firstname} ${supervisorData?.lastname}`,
-    email: supervisorData?.email,
-    subject: "New Invoice",
-    html: `<p>Dear ${supervisorData?.firstname} ${supervisorData?.lastname},</p>
+    const supervisorData = updatedRating?.supervisor
+      ? JSON.parse(updatedRating.supervisor)
+      : null;
+    sendEmail({
+      to: `${supervisorData?.firstname} ${supervisorData?.lastname}`,
+      email: supervisorData?.email,
+      subject: "New Invoice",
+      html: `<p>Dear ${supervisorData?.firstname} ${supervisorData?.lastname},</p>
       <p> An updated invoice  for ${updatedRating?.ratingTitle} has been uploaded on the Agusto RMS portal.</p>
-        <p>Please log in to the RMS to view</p>
+        <p>Please log in to the <a href="https://arms.agusto.com">RMS portal</a> to view</p>
         <p>Best Regards,</p>
        <p>Agusto & Co RMS Team</p>
         `,
-   })
+    });
     const contacts = updatedRating?.clientModel?.contactModel || [];
     //notify contacts of new invoice upload
     const emailPromises = contacts.map((el) =>
@@ -153,7 +173,7 @@ const supervisorData = updatedRating?.supervisor ? JSON.parse(updatedRating.supe
         subject: "New Invoice",
         html: `<p>Dear ${el.fullName},</p>
         <p> An updated invoice  for ${updatedRating?.ratingTitle} has been uploaded on the Agusto RMS portal.</p>
-        <p>Please log in to your account to view</p>
+        <p>Please log in to your <a href="https://arms.agusto.com">RMS portal</a> to view</p>
 
         <p>Best Regards,</p>
        <p>Agusto & Co RMS Team</p>
@@ -187,7 +207,7 @@ export default function EditInvoice({ onClose }: { onClose: () => void }) {
     error?: string;
 
     message?: string;
-    rating?: typeof rating; // ✅ Works if rating is already typed
+    rating?: typeof rating;
   }
   const fetcher = useFetcher<FetcherData>();
 
@@ -198,7 +218,10 @@ export default function EditInvoice({ onClose }: { onClose: () => void }) {
     if (fetcher.data?.success === false) {
       toast.error(fetcher.data?.error, { toastId: "error" });
     }
-    if (fetcher.state === "idle" && fetcher.data?.message) {
+    if (
+      (fetcher.state === "idle" && fetcher.data?.message) ||
+      fetcher.data?.error
+    ) {
       onClose();
     }
   }, [fetcher.state, fetcher.data, onClose]);
@@ -225,6 +248,21 @@ export default function EditInvoice({ onClose }: { onClose: () => void }) {
             value={rating?.ratingTitle || ""}
           />
           <input type="hidden" name="id" value={rating?.id} />
+          <input
+            type="hidden"
+            name="supervisorId"
+            value={rating?.SupervisorObject?.employee_id as any}
+          />
+          <input
+            type="hidden"
+            name="primaryAnalystId"
+            value={rating?.PrimaryAnalystObject?.employee_id}
+          />
+          <input
+            type="hidden"
+            name="secondaryAnalystId"
+            value={rating?.SecondaryAnalystObject?.employee_id}
+          />
           <input type="file" name="invoice" id="invoice" accept=".pdf" />
           <button
             type="submit"
