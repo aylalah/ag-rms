@@ -59,7 +59,7 @@ export const uploadClientStreamToSpace = async (file: any, fileName: string) => 
       Body: file,
       ACL: "public-read",
     },
-    partSize: 10 * 1024 * 1024, 
+    partSize: 100 * 1024 * 1024, 
     leavePartsOnError: false,
   });
 
@@ -169,7 +169,7 @@ export const deleteFileFromSpaces = async (fileName: string) => {
 
 const uploadHandler = unstable_composeUploadHandlers(
   unstable_createFileUploadHandler({
-    maxPartSize: 5_000_000,
+    maxPartSize: 50_000_000,
     file: ({ filename }) => filename,
   }),
   unstable_createMemoryUploadHandler()
